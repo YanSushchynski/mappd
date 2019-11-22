@@ -4,12 +4,12 @@ The main goal of the project is to create an architecture that simplifies the de
 ## How it works
 ### Networking
 
-![](image_url)
+![](https://github.com/OlegShishlyannikov/mappd/blob/master/pic/net.png)
 
 Let's consider this case. Several nodes connected to some local network it may be VPN or Mesh. Each node has local IP address and connected by "each to each" scheme with others.
 Let's explain more detailed:
 
-![](image_url)
+![](https://github.com/OlegShishlyannikov/mappd/blob/master/pic/net_expl.png)
 
 Network has one or two (or more) multicast points -- several ip addresses used as "directory". Each node able to use one or more multicast points. These are serve to discover other "peer" environments which will be explained later. UDP protocol is used for multicasting and receiveing data. All traffic is encrypted by AES. To discover ip addresses and ports that will be used in future TLS connections each node must to receive and decrypt these messages. When environments are discovered and their credentials are cached, node follows to creating of secure connections with others. During TLS handshake we use generated certificate-key pairs and local storaged CA keypair. This pair used for signing of generated pairs and verifying of peer certificates. Meanwhile, user code starts executing. Let's consider mappd workflow:
 
@@ -64,7 +64,7 @@ Each entity, such as compositions, ports, components can be loaded/unloaded/repl
 5. Use inotify to detect if config file changed.
 6. Goto point 1.
 
-![](image_url)
+![](https://github.com/OlegShishlyannikov/mappd/blob/master/pic/arch.png)
 
 ### Environment
 - Root composition
