@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+message port_info_t {
+  required bytes id = 1 [default = ""];
+  required bytes name_hash = 2 [default = ""];
+  required bytes port_type_hash = 3 [default = ""];
+  required bytes composition_id = 4 [default = ""];
+  required bytes component_id = 5 [default = ""];
+};

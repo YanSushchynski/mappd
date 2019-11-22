@@ -1,0 +1,13 @@
+#!/bin/bash
+
+ROOT="${PROJECT_ROOT_DIR}"
+BUILD_DIR="$ROOT/build"
+COVERAGE_OUT_DIR_NAME="${COVERAGE_OUT_DIR_NAME}"
+PROJECT_NAME=${CMAKE_PROJECT_NAME}
+
+cd $BUILD_DIR
+lcov -c -i -b $BUILD_DIR -d $BUILD_DIR -o coverage.baseline
+"$BUILD_DIR/$PROJECT_NAME.elf"
+lcov -c -d $BUILD_DIR -b $BUILD_DIR -o coverage.out
+lcov -a coverage.baseline -a coverage.out -o coverage.combined
+genhtml -o $COVERAGE_OUT_DIR_NAME/ coverage.combined

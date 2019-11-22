@@ -1,0 +1,9 @@
+[submodule "utils/fmt"]
+	path = utils/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "utils/misc/timercpp"]
+	path = utils/misc/timercpp
+	url = https://github.com/99xt/timercpp.git
+[submodule "utils/threads/CTPL"]
+	path = utils/threads/CTPL
+	url = https://github.com/OlegShishlyannikov/CTPL.git

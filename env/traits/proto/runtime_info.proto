@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+message runtime_list_info_t {
+  required bytes id = 1 [default = ""];
+  required bytes name_hash = 2 [default = ""];
+  required bytes hostid = 3 [default = ""];
+  required bytes composition_id = 4 [default = ""];
+  required bytes component_id = 5 [default = ""];
+  required int32 pid = 6 [default = 0];
+  required bytes thread_id = 7 [default = ""];
+}
