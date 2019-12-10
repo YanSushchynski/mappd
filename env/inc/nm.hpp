@@ -130,7 +130,7 @@ public:
 
     ipv4_stream_srv.start();
     ipv4_dgram_srv.start();
-    auto run_thr = std::thread(&this_t::run_probing_, this, 15u, 1000u);
+    auto run_thr = std::thread(&this_t::run_probing_, this, 60u, 1000u);
 
     run_thr.join();
     stop();

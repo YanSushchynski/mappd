@@ -49,7 +49,7 @@ public:
   };
 
   explicit base_socket(const std::string &iface)
-      : if_(iface), iface_info_(get_iface_info_(iface)), tp_(ctpl::thread_pool(4u)){};
+      : if_(iface), iface_info_(get_iface_info_(iface)), tp_(ctpl::thread_pool(2u)){};
 
   const iface_netinfo_t &iface_info() const { return iface_info_; }
 
