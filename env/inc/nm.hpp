@@ -259,7 +259,8 @@ private:
           std::lock_guard<std::recursive_mutex> lock_peers(peers_lock_);
           peers_.insert(std::make_pair(peer_hash, std::make_tuple(header, std::string(peer_addr), std::move(unit))));
         } else {
-
+		  
+		  unit->stop_threads();
           unit.reset();
           rc = -1;
         }
