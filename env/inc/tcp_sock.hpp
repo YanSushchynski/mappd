@@ -803,7 +803,7 @@ private:
       } else {
         FD_ZERO(&read_fd_set);
         FD_SET(sock_fd_, &read_fd_set);
-
+		
         if ((rc = ::select(sock_fd_ + 1, &read_fd_set, nullptr, nullptr, &read_timeout)) <= 0) {
           goto disconnect;
         } else

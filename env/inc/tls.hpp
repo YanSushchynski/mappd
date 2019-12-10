@@ -102,7 +102,7 @@ private:
                               fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
         } else if (!std::strncmp(split_list, (std::string(locality_name_token()) + "=").c_str(),
                                  std::strlen(locality_name_token()) + 1u)) {
-
+		  
           char *pch = std::strtok(split_list, "=");
           if (!pch)
             throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
@@ -132,7 +132,7 @@ private:
                               fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
         } else if (!std::strncmp(split_list, (std::string(common_name_token()) + "=").c_str(),
                                  std::strlen(common_name_token()) + 1u)) {
-
+		  
           char *pch = std::strtok(split_list, "=");
           if (!pch)
             goto error;
