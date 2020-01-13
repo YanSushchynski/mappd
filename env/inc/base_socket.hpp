@@ -1,5 +1,5 @@
-#ifndef SOCKET_HPP
-#define SOCKET_HPP
+#ifndef BASE_SOCKET_HPP
+#define BASE_SOCKET_HPP
 
 #include <cstdint>
 #include <cstdio>
@@ -35,10 +35,12 @@
 #include "property.hpp"
 #include "thread_pool.hpp"
 
-template <uint32_t family, uint32_t socktype, uint32_t protocol, bool is_network> struct base_socket {
+template <uint32_t family, uint32_t socktype, uint32_t protocol> struct base_socket {
 public:
-  using this_t = base_socket<family, socktype, protocol, is_network>;
-  static constexpr bool is_ipv6 = (family == AF_INET6);
+  using this_t = base_socket<family, socktype, protocol>;
+  static constexpr bool is_network = family == AF_INET || family == AF_INET6;
+  static constexpr bool is_domain = family == AF_UNIX;
+  static constexpr bool is_ipv6 = is_network && family == AF_INET6;
   static constexpr int32_t addrlen = this_t::is_ipv6 ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN;
   static constexpr uint32_t num_threads = 2u;
 
@@ -163,4 +165,4 @@ private:
   }
 };
 
-#endif /* SOCKET_HPP */
+#endif /* BASE_SOCKET_HPP */

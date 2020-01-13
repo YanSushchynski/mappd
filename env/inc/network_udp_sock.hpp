@@ -9,7 +9,7 @@
 #include <thread>
 
 template <uint32_t family, udp_sock_t socket_class>
-struct network_udp_socket_impl : public base_socket<family, SOCK_DGRAM, IPPROTO_UDP, true> {
+struct network_udp_socket_impl : public base_socket<family, SOCK_DGRAM, IPPROTO_UDP> {
 public:
   static constexpr int32_t socktype = SOCK_DGRAM;
   static constexpr int32_t protocol = IPPROTO_UDP;
@@ -20,7 +20,7 @@ public:
   enum struct send_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
 
   using this_t = network_udp_socket_impl<family, socket_class>;
-  using base_t = base_socket<family, socktype, protocol, true>;
+  using base_t = base_socket<family, socktype, protocol>;
 
   static constexpr bool is_ipv6 = base_t::is_ipv6;
 
@@ -74,7 +74,7 @@ public:
   const auto &on_receive() const { return on_receive_; }
   const auto &on_send() const { return on_send_; }
 
-  void stop_threads() const { return const_cast<const base_t *>(this)->stop_tp(); }
+  void stop_threads() const { return static_cast<const base_t *>(this)->stop_tp(); }
   template <udp_sock_t sc = socket_class, typename RetType = bool>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                               sc == udp_sock_t::SERVER_MULTICAST,
@@ -144,7 +144,7 @@ public:
         ::freeaddrinfo(dgram_addrinfo);
         void *data = std::calloc(size, sizeof(char));
         std::memcpy(data, msg, size);
-        this->tp().push([this, to, size, data](int32_t thr_id) -> void {
+        this->tp().push([this, to, size, data]() -> void {
           this->on_send()(to, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                           this);
         });
@@ -217,7 +217,7 @@ public:
         ::freeaddrinfo(dgram_addrinfo);
         void *data = std::calloc(size, sizeof(char));
         std::memcpy(data, msg, size);
-        this->tp().push([this, to, data, size](int32_t thr_id) -> void {
+        this->tp().push([this, to, data, size]() -> void {
           this->on_send()(to, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                           this);
         });
@@ -280,7 +280,7 @@ public:
         } else if (recvd) {
           *(reinterpret_cast<char *>(data) + recvd) = '\0';
           if constexpr (rb == recv_behavior_t::HOOK) {
-            this->tp().push([this, from, data, size = recvd](int32_t thr_id) -> void {
+            this->tp().push([this, from, data, size = recvd]() -> void {
               this->on_receive()(from, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                                  size, this);
             });
@@ -291,10 +291,9 @@ public:
                                 std::move(from)));
 
             if constexpr (rb == recv_behavior_t::HOOK_RET) {
-              this->tp().push([this, peer = std::get<2u>(ret.back()), data = std::get<1u>(ret.back()),
-                               size = data = std::get<0u>(ret.back())](int32_t thr_id) -> void {
-                this->on_receive()(peer, data, size, this);
-              });
+              this->tp().push(
+                  [this, peer = std::get<2u>(ret.back()), data = std::get<1u>(ret.back()),
+                   size = std::get<0u>(ret.back())]() -> void { this->on_receive()(peer, data, size, this); });
             }
           }
 
@@ -323,7 +322,7 @@ public:
 
     } else {
       this->tp().push(
-          [this](int32_t thr_id, uint64_t duration_ms, std::atomic_bool *trigger) -> void {
+          [this](uint64_t duration_ms, std::atomic_bool *trigger) -> void {
             std::this_thread::sleep_for(std::chrono::milliseconds(duration_ms));
             *trigger = false;
           },

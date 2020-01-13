@@ -9,7 +9,7 @@
 
 /* @brief: This template class is wrapper of Berkley sockets */
 template <uint32_t family, tcp_sock_t socket_class>
-struct network_tcp_socket_impl : public base_socket<family, SOCK_STREAM, IPPROTO_TCP, true> {
+struct network_tcp_socket_impl : public base_socket<family, SOCK_STREAM, IPPROTO_TCP> {
 public:
   static constexpr int32_t socktype = SOCK_STREAM;
   static constexpr int32_t protocol = IPPROTO_TCP;
@@ -21,7 +21,7 @@ public:
   enum struct connect_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
 
   using this_t = network_tcp_socket_impl<family, socket_class>;
-  using base_t = base_socket<family, socktype, protocol, true>;
+  using base_t = base_socket<family, socktype, protocol>;
 
   static constexpr bool is_ipv6 = base_t::is_ipv6;
   static constexpr int32_t addrlen = base_t::addrlen;
@@ -55,7 +55,7 @@ public:
   const auto &on_send() const { return on_send_; }
   std::atomic<state_t> &state() const { return state_; }
 
-  void stop_threads() const { return const_cast<const base_t *>(this)->stop_tp(); }
+  void stop_threads() const { return static_cast<const base_t *>(this)->stop_tp(); }
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
             typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type connect(const std::string &addr,
@@ -342,8 +342,7 @@ private:
           connected_info_lock_.lock();
           auto it = connected_.find(peer_fd);
           if (it != connected_.end()) {
-            this->tp().push(
-                [this, peer_addr = *peer_addr]() -> void { this->on_disconnect()(peer_addr, this); });
+            this->tp().push([this, peer_addr = *peer_addr]() -> void { this->on_disconnect()(peer_addr, this); });
             static_cast<void>(disconnect_peer_(peer_fd));
           }
 
@@ -404,8 +403,7 @@ private:
           if (state_ == state_t::CONNECTED) {
 
             connected_info_lock_.lock();
-            this->tp().push(
-                [this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
+            this->tp().push([this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
             std::memset(&connected_, 0x0, sizeof(connected_));
             state_ = state_t::DISCONNECTED;
             connected_info_lock_.unlock();
@@ -485,8 +483,7 @@ private:
             disconnect:
               if (state_ == state_t::CONNECTED) {
                 connected_info_lock_.lock();
-                this->tp().push(
-                    [this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
+                this->tp().push([this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
                 std::memset(&connected_, 0x0, sizeof(connected_));
                 state_ = state_t::DISCONNECTED;
                 connected_info_lock_.unlock();
@@ -639,8 +636,7 @@ private:
     stop();
     connected_info_lock_.lock();
     for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
-      this->tp().push(
-          [this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
+      this->tp().push([this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
       if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, it->first, nullptr) < 0u)
         throw std::runtime_error(
             fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
@@ -696,8 +692,7 @@ private:
   typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type clear_() {
     connected_info_lock_.lock();
     if (state_ == state_t::CONNECTED) {
-      this->tp().push(
-          [this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
+      this->tp().push([this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
       std::memset(&connected_, 0x0, sizeof(connected_));
     }
 
@@ -771,8 +766,7 @@ private:
           connected_info_lock_.lock();
           for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
             if (fd == it->first) {
-              this->tp().push(
-                  [this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
+              this->tp().push([this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
               static_cast<void>(disconnect_peer_(fd));
               connected_info_lock_.unlock();
 
@@ -812,8 +806,7 @@ private:
       connected_info_lock_.lock();
       for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
         if (fd == it->first) {
-          this->tp().push(
-              [this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
+          this->tp().push([this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
           static_cast<void>(disconnect_peer_(fd));
           connected_info_lock_.unlock();
 

@@ -3,7 +3,7 @@
 
 #include "env_base.hpp"
 #include "env_utils.hpp"
-#include "nm.hpp"
+#include "network_manager.hpp"
 #include "port_manager.hpp"
 
 template <typename... Compositions> struct env_static_t : public env_base_t {

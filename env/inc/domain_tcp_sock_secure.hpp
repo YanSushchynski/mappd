@@ -1,23 +1,21 @@
-#ifndef NETWORK_TCP_SOCK_SECURE_HPP
-#define NETWORK_TCP_SOCK_SECURE_HPP
+#ifndef DOMAIN_TCP_SOCK_SECURE_HPP
+#define DOMAIN_TCP_SOCK_SECURE_HPP
 
-#include "network_tcp_sock.hpp"
+#include "domain_tcp_sock.hpp"
 #include "secure_layer.hpp"
 #include "tcp_sock_secure_type.hpp"
 
 template <uint32_t family, tcp_sock_secure_t secure_socket_class>
-struct network_tcp_socket_secure_impl
-    : protected network_tcp_socket_impl<family,
-                                        static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)> {
+struct domain_tcp_socket_secure_impl
+    : protected domain_tcp_socket_impl<family,
+                                       static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)> {
 public:
   static constexpr uint32_t aes_key_size_bits = 256u;
   static constexpr uint32_t rsa_key_size_bits = 2048u;
 
   using base_t =
-      network_tcp_socket_impl<family, static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)>;
-  using this_t = network_tcp_socket_secure_impl<family, secure_socket_class>;
-
-  static constexpr bool is_ipv6 = base_t::is_ipv6;
+      domain_tcp_socket_impl<family, static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)>;
+  using this_t = domain_tcp_socket_secure_impl<family, secure_socket_class>;
   static constexpr int32_t addrlen = base_t::addrlen;
 
   using sockaddr_inet_t = typename base_t::sockaddr_inet_t;
@@ -25,12 +23,13 @@ public:
   using connected_peer_info_t = typename base_t::connected_peer_info_t;
 
   template <tcp_sock_secure_t sc = secure_socket_class>
-  explicit network_tcp_socket_secure_impl(
-      const std::string &iface, const std::string &ca_cert_file, const std::string &ca_priv_key_file,
-      typename tls_sl_t<sc, rsa_key_size_bits>::x509_cert_info_t cert_info, uint64_t exp_time,
-      typename std::enable_if<sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS ||
-                                  sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
-                              tcp_sock_secure_t>::type * = nullptr)
+  explicit domain_tcp_socket_secure_impl(const std::string &iface, const std::string &ca_cert_file,
+                                         const std::string &ca_priv_key_file,
+                                         typename tls_sl_t<sc, rsa_key_size_bits>::x509_cert_info_t cert_info,
+                                         uint64_t exp_time,
+                                         typename std::enable_if<sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS ||
+                                                                     sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
+                                                                 tcp_sock_secure_t>::type * = nullptr)
       : base_t(iface), sl_(ca_cert_file, ca_priv_key_file, cert_info, exp_time) {
 
     /* Add hook to base class for clearing credentials in secure layer after disconnect case */
@@ -38,7 +37,7 @@ public:
       this->set_on_disconnect_internal_hook__([this](int32_t fd) -> void { sl_.clear_peer_creds(fd); });
   }
 
-  virtual ~network_tcp_socket_secure_impl() = default;
+  virtual ~domain_tcp_socket_secure_impl() = default;
 
   const auto &on_connect() const { return static_cast<const base_t *>(this)->on_connect(); }
   const auto &on_disconnect() const { return static_cast<const base_t *>(this)->on_disconnect(); }
@@ -345,12 +344,8 @@ private:
   }
 };
 
-template <tcp_sock_secure_t sc> struct network_tcp_socket_secure_ipv4 : network_tcp_socket_secure_impl<AF_INET, sc> {
-  using network_tcp_socket_secure_impl<AF_INET, sc>::network_tcp_socket_secure_impl;
+template <tcp_sock_secure_t sc> struct domain_tcp_socket_secure : domain_tcp_socket_secure_impl<AF_UNIX, sc> {
+  using domain_tcp_socket_secure_impl<AF_UNIX, sc>::domain_tcp_socket_secure_impl;
 };
 
-template <tcp_sock_secure_t sc> struct network_tcp_socket_secure_ipv6 : network_tcp_socket_secure_impl<AF_INET6, sc> {
-  using network_tcp_socket_secure_impl<AF_INET6, sc>::network_tcp_socket_secure_impl;
-};
-
-#endif /* NETWORK_TCP_SOCK_SECURE_HPP */
+#endif /* DOMAIN_TCP_SOCK_SECURE_HPP */

@@ -7,10 +7,9 @@
 #include <errno.h>
 #include <thread>
 
-template <tcp_sock_t socket_class>
-struct domain_tcp_socket_impl : public base_socket<AF_UNIX, SOCK_STREAM, IPPROTO_TCP, false> {
+template <uint32_t family, tcp_sock_t socket_class>
+struct domain_tcp_socket_impl : public base_socket<family, SOCK_STREAM, IPPROTO_TCP> {
 public:
-  static constexpr int32_t family = AF_UNIX;
   static constexpr int32_t socktype = SOCK_STREAM;
   static constexpr int32_t protocol = IPPROTO_TCP;
   static constexpr int32_t epollevents = EPOLLIN | EPOLLET;
@@ -20,11 +19,8 @@ public:
   enum struct send_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
   enum struct connect_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
 
-  using this_t = domain_tcp_socket_impl<socket_class>;
-  using base_t = base_socket<family, socktype, protocol, false>;
-
-  static constexpr bool is_ipv6 = base_t::is_ipv6;
-  static constexpr int32_t addrlen = base_t::addrlen;
+  using this_t = domain_tcp_socket_impl<family, socket_class>;
+  using base_t = base_socket<family, socktype, protocol>;
 
   using connected_peer_info_t = std::conditional_t<
       socket_class == tcp_sock_t::CLIENT_UNICAST, struct sockaddr_un,
@@ -52,7 +48,7 @@ public:
   const auto &on_send() const { return on_send_; }
   std::atomic<state_t> &state() const { return state_; }
 
-  void stop_threads() const { return const_cast<const base_t *>(this)->stop_tp(); }
+  void stop_threads() const { return static_cast<const base_t *>(this)->stop_tp(); }
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
             typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type connect(const std::string &addr,
@@ -153,7 +149,7 @@ private:
     int32_t rc;
     fd_set write_fd_set;
     struct timeval write_timeout = {base_t::send_timeout() / 1000, 0u};
-	
+
   send:
     if ((rc = send_function(peer_fd, msg, size, MSG_NOSIGNAL)) < 0) {
       if (errno != EAGAIN) {
@@ -163,8 +159,7 @@ private:
           connected_info_lock_.lock();
           auto it = connected_.find(peer_fd);
           if (it != connected_.end()) {
-            this->tp().push(
-                [this, peer_addr = *peer_addr](int32_t thr_id) -> void { this->on_disconnect()(peer_addr, this); });
+            this->tp().push([this, peer_addr = *peer_addr]() -> void { this->on_disconnect()(peer_addr, this); });
             static_cast<void>(disconnect_peer_(peer_fd));
           }
 
@@ -225,8 +220,7 @@ private:
           if (state_ == state_t::CONNECTED) {
 
             connected_info_lock_.lock();
-            this->tp().push(
-                [this, connected = connected_](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+            this->tp().push([this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
             std::memset(&connected_, 0x0, sizeof(connected_));
             state_ = state_t::DISCONNECTED;
             connected_info_lock_.unlock();
@@ -251,7 +245,7 @@ private:
         void *data = std::malloc(size * sizeof(char));
         std::memcpy(data, msg, size);
         connected_info_lock_.lock();
-        this->tp().push([this, connected = connected_, data, size](int32_t thr_id) -> void {
+        this->tp().push([this, connected = connected_, data, size]() -> void {
           this->on_send()(connected, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                           size, this);
         });
@@ -306,8 +300,7 @@ private:
             disconnect:
               if (state_ == state_t::CONNECTED) {
                 connected_info_lock_.lock();
-                this->tp().push(
-                    [this, connected = connected_](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+                this->tp().push([this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
                 std::memset(&connected_, 0x0, sizeof(connected_));
                 state_ = state_t::DISCONNECTED;
                 connected_info_lock_.unlock();
@@ -337,7 +330,7 @@ private:
           if constexpr (rb == recv_behavior_t::HOOK) {
 
             connected_info_lock_.lock();
-            this->tp().push([this, connected = connected_, data, size = recvd](int32_t thr_id) -> void {
+            this->tp().push([this, connected = connected_, data, size = recvd]() -> void {
               this->on_receive()(connected,
                                  std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                                  this);
@@ -351,7 +344,7 @@ private:
 
             if constexpr (rb == recv_behavior_t::HOOK_RET) {
               connected_info_lock_.lock();
-              this->tp().push([this, connected = connected_, size = recvd, data](int32_t thr_id) -> void {
+              this->tp().push([this, connected = connected_, size = recvd, data]() -> void {
                 this->on_receive()(connected,
                                    std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                                    this);
@@ -375,8 +368,95 @@ private:
     }
   }
 
-  template <connect_behavior_t cb = connect_behavior_t::HOOK_ON>
-  int32_t setup_(const std::string &path = "") {
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type bind_(const char *path) {
+    int32_t rc;
+    struct sockaddr_un addr;
+    std::strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1u);
+
+    if ((rc = ::bind(sock_fd_, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr))) != 0) {
+      clear_();
+      throw std::runtime_error(fmt::format("Could not bind TCP socket (errno = {0}), ({1}), {2}:{3}", strerror(rc),
+                                           __func__, __FILE__, __LINE__));
+    }
+
+    return rc;
+  }
+
+  template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
+            typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type connect_(const char *path) {
+    struct epoll_event event;
+    struct sockaddr_un addr;
+    std::strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1u);
+
+    state_ = state_t::CONNECTING;
+    std::memset(&event, 0x0, sizeof(event));
+    event.events = epollevents | EPOLLOUT;
+    event.data.fd = sock_fd_;
+
+    if (::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event) < 0u)
+      throw std::runtime_error(
+          fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+
+    int32_t rc;
+    if ((rc = ::connect(sock_fd_, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr))) < 0) {
+      if (errno != EINPROGRESS) {
+        throw std::runtime_error(fmt::format("Connection error (errno = {0}), ({1}), {2}:{3}", strerror(errno),
+                                             __func__, __FILE__, __LINE__));
+      }
+    }
+
+    int32_t num_ready;
+    if ((num_ready = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::connect_timeout())) < 0) {
+      throw std::runtime_error(
+          fmt::format("Epoll wait error (errno = {0}), ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+    }
+
+    for (int32_t i = 0; i < num_ready; i++) {
+      if (events_[i].data.fd == sock_fd_) {
+        int32_t epoll_error = 0u, rc;
+        socklen_t epoll_errlen = sizeof(epoll_error);
+        if ((rc = ::getsockopt(sock_fd_, SOL_SOCKET, SO_ERROR, reinterpret_cast<void *>(&epoll_error), &epoll_errlen)) <
+            0) {
+          throw std::runtime_error(fmt::format("getsockopt() error (errno = {0}) ({1}), {2}:{3}", strerror(errno),
+                                               __func__, __FILE__, __LINE__));
+        }
+
+        struct sockaddr_un server;
+        std::memcpy(&server, &addr, sizeof(addr));
+
+        std::memset(&event, 0x0, sizeof(event));
+        event.events = epollevents;
+        event.data.fd = sock_fd_;
+
+        if (::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event) < 0u)
+          throw std::runtime_error(fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno),
+                                               __func__, __FILE__, __LINE__));
+
+        if (epoll_error) {
+          this->tp().push([this, server]() -> void { this->on_disconnect()(server, this); });
+          disconnect();
+          state_ = state_t::DISCONNECTED;
+        } else {
+
+          connected_info_lock_.lock();
+          std::memcpy(&connected_, &server, sizeof(server));
+          connected_info_lock_.unlock();
+
+          if constexpr (cb == connect_behavior_t::HOOK_ON) {
+            this->tp().push([this, server]() -> void { this->on_connect()(server, this); });
+          }
+
+          state_ = state_t::CONNECTED;
+        }
+      }
+    }
+
+    return state_ == state_t::CONNECTED ? 0 : -1;
+  }
+
+  template <connect_behavior_t cb = connect_behavior_t::HOOK_ON> int32_t setup_(const std::string &path = "") {
     int32_t rc, trueflag = 1, try_count = 0;
 
     open_();
@@ -394,9 +474,9 @@ private:
     }
 
     if constexpr (socket_class == tcp_sock_t::CLIENT_UNICAST) {
-      rc = connect_<cb>(addr_info);
+      rc = connect_<cb>(path);
     } else if constexpr (socket_class == tcp_sock_t::SERVER_UNICAST) {
-      rc = bind_(addr_info);
+      rc = bind_(path);
     }
 
     return rc;
@@ -417,193 +497,120 @@ private:
       throw std::runtime_error(
           fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
   }
+
+  void clear_epoll_() {
+    epoll_fd_lock_.lock();
+    ::close(epfd_);
+    std::free(events_);
+    events_ = nullptr;
+    epoll_fd_lock_.unlock();
+  }
+
+  void clear_hooks_() {
+    this->on_connect().clear();
+    this->on_disconnect().clear();
+    this->on_receive().clear();
+    this->on_send().clear();
+  }
+
+  template <tcp_sock_t sc = socket_class, typename RetType = void>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type stop() {
+    listen_enabled_ = false;
+    if (listen_thread_.joinable())
+      listen_thread_.join();
+  }
+
+  template <tcp_sock_t sc = socket_class, typename RetType = void>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type clear_() {
+    stop();
+    connected_info_lock_.lock();
+    for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
+      this->tp().push([this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
+      if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, it->first, nullptr) < 0u)
+        throw std::runtime_error(
+            fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      ::close(it->first);
+    }
+
+    connected_.clear();
+    if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr) < 0u)
+      throw std::runtime_error(
+          fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+
+    ::close(sock_fd_);
+    state_ = state_t::STOPPED;
+    connected_info_lock_.unlock();
+  }
+
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
+  get_connected_peer_(const std::string &addr, uint16_t port, sockaddr_un **peer_addr) const {
+    sockaddr_un net_addr;
+    int32_t rc;
+    void *dst_addr, *dst_port;
+
+    if ((rc = ::inet_pton(family, addr.c_str(), dst_addr)) <= 0) {
+      return rc;
+    }
+
+    connected_info_lock_.lock();
+    for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
+      if (!std::memcmp(&net_addr.sun_path, &it->second.sun_path, sizeof(it->second.sun_path))) {
+
+        if (peer_addr)
+          *peer_addr = &it->second;
+
+        connected_info_lock_.unlock();
+        return it->first;
+      }
+    }
+
+    connected_info_lock_.unlock();
+    return -1;
+  }
+
+  template <tcp_sock_t sc = socket_class, typename RetType = void>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
+  get_connected_peer_(int32_t fd, sockaddr_un **peer_addr) const {
+    connected_info_lock_.lock();
+    for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
+      if (fd == it->first) {
+        if (peer_addr)
+          *peer_addr = &it->second;
+
+        connected_info_lock_.unlock();
+        return;
+      }
+    }
+
+    if (peer_addr)
+      *peer_addr = nullptr;
+
+    connected_info_lock_.unlock();
+  }
+
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type disconnect_peer_(const std::string &addr,
+                                                                                            uint16_t srv) const {
+    int16_t peer_fd;
+
+    if ((peer_fd = get_connected_peer_(addr, srv, nullptr)) < 0)
+      return peer_fd;
+    else {
+      ::close(peer_fd);
+
+      connected_info_lock_.lock();
+      connected_.erase(peer_fd);
+      connected_info_lock_.unlock();
+
+      on_disconnect_internal_hook_(peer_fd);
+      return peer_fd;
+    }
+  }
 };
 
-static int32_t sock_fd, epfd;
-static constexpr uint32_t recv_timeout_s = 1u;
-static struct epoll_event events[16u]{0x0};
+template <tcp_sock_t sc> struct domain_tcp_socket : domain_tcp_socket_impl<AF_UNIX, sc> {
+  using domain_tcp_socket_impl<AF_UNIX, sc>::domain_tcp_socket_impl;
+};
 
-int32_t setup_client(const std::string &addr) {
-  int32_t rc, trueflag = 1;
-  struct sockaddr_un server_addr;
-
-  epfd = epoll_create1(EPOLL_CLOEXEC);
-
-  std::memset(&server_addr, '\0', sizeof(server_addr));
-  server_addr.sun_family = AF_UNIX;
-  std::strcpy(server_addr.sun_path, addr.c_str());
-
-  if ((sock_fd = ::socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0u)) < 0) {
-    perror("socket() error\r\n");
-    std::exit(1);
-  }
-
-  struct epoll_event event;
-  std::memset(&event, 0x0, sizeof(event));
-  event.events = EPOLLIN | EPOLLET;
-  event.data.fd = sock_fd;
-
-  if (::epoll_ctl(epfd, EPOLL_CTL_ADD, sock_fd, &event) < 0u) {
-    perror("epoll_ctl() error\r\n");
-    std::exit(1);
-  }
-
-  struct timeval recv_timeout = {recv_timeout_s, 0u};
-  struct timeval send_timeout = {recv_timeout_s, 0u};
-
-  if ((rc = ::setsockopt(sock_fd, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(recv_timeout))) < 0) {
-    perror("setsockopt() error\r\n");
-    std::exit(1);
-  }
-
-  if ((rc = ::setsockopt(sock_fd, SOL_SOCKET, SO_SNDTIMEO, &send_timeout, sizeof(send_timeout))) < 0) {
-    perror("setsockopt() error\r\n");
-    std::exit(1);
-  }
-
-  std::memset(&event, 0x0, sizeof(event));
-  event.events = EPOLLIN | EPOLLET | EPOLLOUT;
-  event.data.fd = sock_fd;
-
-  if (::epoll_ctl(epfd, EPOLL_CTL_MOD, sock_fd, &event) < 0u) {
-    perror("epoll_ctl() error\r\n");
-    std::exit(1);
-  }
-
-  if ((rc = ::connect(sock_fd, reinterpret_cast<struct sockaddr *>(&server_addr), sizeof(struct sockaddr_un))) < 0) {
-    if (errno != EINPROGRESS) {
-      perror("connect() error\r\n");
-      std::exit(1);
-    }
-  }
-
-  int32_t ready;
-  if ((ready = ::epoll_wait(epfd, events, 16u, recv_timeout_s)) < 0) {
-    perror("epoll_wait() error\r\n");
-    std::exit(1);
-  }
-
-  for (int32_t i = 0; i < ready; i++) {
-    if (events[i].data.fd == sock_fd && (events[i].events & EPOLLOUT) == EPOLLOUT) {
-      int32_t error = 0u, rc;
-      socklen_t errlen = sizeof(error);
-
-      if ((rc = ::getsockopt(sock_fd, SOL_SOCKET, SO_ERROR, reinterpret_cast<void *>(&error), &errlen)) < 0) {
-        perror("epoll_wait() error\r\n");
-        std::exit(1);
-      }
-
-      std::memset(&event, 0x0, sizeof(event));
-      event.events = EPOLLIN | EPOLLET;
-      event.data.fd = sock_fd;
-
-      if (::epoll_ctl(epfd, EPOLL_CTL_MOD, sock_fd, &event) < 0u) {
-        perror("epoll_ctl() error\r\n");
-        std::exit(1);
-      }
-
-      rc = error;
-    }
-  }
-
-  return rc;
-}
-
-void reset_client(){
-  if (::epoll_ctl(epfd, EPOLL_CTL_DEL, sock_fd, nullptr) < 0u) {
-    perror("epoll_ctl() error\r\n");
-    std::exit(1);
-  }
-
-  ::close(epfd);
-  ::close(sock_fd);
-}
-
-int32_t recv(void (*recv_callback)(const void *const, size_t)) {
-  int32_t ready, recvd_size = 0;
-
-  if ((ready = ::epoll_wait(epfd, events, 16u, recv_timeout_s * 1000)) < 0) {
-    perror("epoll_wait() error\r\n");
-    std::exit(1);
-  }
-
-  for (uint32_t i = 0u; i < ready; i++) {
-    if ((events[i].data.fd == sock_fd) && ((events[i].events & EPOLLIN) == EPOLLIN)) {
-      int32_t rc, bytes_pending, recvd;
-
-      if ((rc = ::ioctl(sock_fd, FIONREAD, &bytes_pending)) < 0) {
-        perror("ioctl() error\r\n");
-        std::exit(1);
-      }
-
-      void *data = std::malloc(bytes_pending);
-    recv:
-      if ((recvd = ::recv(sock_fd, data, bytes_pending, MSG_CMSG_CLOEXEC)) < 0) {
-        if (errno != EAGAIN) {
-          perror("recv() error\r\n");
-          std::exit(1);
-        } else
-          goto recv;
-      } else {
-
-        recvd_size += recvd;
-        recv_callback(data, recvd);
-        std::free(data);
-      }
-    }
-  }
-
-  return recvd_size;
-}
-
-int32_t send(const void *const msg, size_t size, void (*send_callback)(size_t, const void *const, size_t)) {
-send:
-  int32_t rc;
-  if ((rc = ::send(sock_fd, msg, size, MSG_NOSIGNAL)) < 0) {
-    if (errno != EAGAIN) {
-      perror("send() error\r\n");
-      std::exit(1);
-    } else
-      goto send;
-  } else if (!rc) {
-    std::printf("Connection refused\r\n");
-    std::exit(1);
-  } else {
-    send_callback(rc, msg, size);
-    return rc;
-  }
-}
-
-void on_receive(const void *const msg, size_t size) {
-  char *to_print = reinterpret_cast<char *>(std::malloc(size)), *start = to_print;
-  std::memcpy(to_print, msg, size);
-  std::printf("Received message! size = %lu, msg = \r\n", size);
-  for (char *max = to_print + size; to_print != max; std::printf("%c ", *to_print++))
-    ;
-  std::printf("\r\n");
-  std::free(start);
-}
-
-void on_send(size_t snd_size, const void *const msg, size_t size) {
-  char *to_print = reinterpret_cast<char *>(std::malloc(size)), *start = to_print;
-  std::memcpy(to_print, msg, size);
-  std::printf("Sent message! size = %lu, msg = \r\n", size);
-  for (char *max = to_print + size; to_print != max; std::printf("%c ", *to_print++))
-    ;
-  std::printf("\r\n");
-  std::free(start);  
-}
-
-int32_t main(int32_t argc, char *argv[]) {
-  char msg[] = {0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x9, 0x0, 0x0, 0x0, 'l', 'o', 'c', 'a', 'l', 'h', 'o', 's', 't', 0x0}; // request
-  char *service_select = &msg[4u];
-
-  for (uint32_t i = 0x0; i < 0xf; i++, (*service_select)++) {
-    setup_client("/var/run/nscd/socket");               // connect to socket
-    static_cast<void>(send(msg, sizeof(msg), on_send)); // send request
-    static_cast<void>(recv(on_receive));                // receive response
-	reset_client();
-  }
-}
-
-#endif /* DOMAIN_SOCK_HPP */
+#endif /* DOMAIN_TCP_SOCK_HPP */

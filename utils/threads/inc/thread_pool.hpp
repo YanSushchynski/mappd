@@ -12,7 +12,7 @@
 #include <vector>
 
 template <uint32_t num_threads = 1u>
-struct thread_pool : public std::queue<std::function<void(void)>>, public std::vector<std::thread> {
+struct thread_pool : std::queue<std::function<void(void)>>, std::vector<std::thread> {
   using tasks_base_t = std::queue<std::function<void(void)>>;
   using workers_base_t = std::vector<std::thread>;
 

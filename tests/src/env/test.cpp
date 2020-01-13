@@ -226,7 +226,6 @@ env_static_t env(
                         {{"foo0", "sig0", foo0}, {"foo1", "sig1", foo1}, {"foo2", "sig2", foo2}}))))));
 
 TEST(EnvTesting, SimpleTestCase) {
-
   auto &env_local = env;
   std::printf("Size : %lu\r\n", sizeof(env_local));
   const port_node_t &p = env_local.port_manager().find_port("Composition0", "Component0", "Port0");

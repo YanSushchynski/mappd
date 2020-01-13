@@ -1,10 +1,10 @@
-#ifndef NETWORK_MANAGER_HPP
-#define NETWORK_MANAGER_HPP
+#ifndef DOMAIN_NETWORK_MANAGER_HPP
+#define DOMAIN_NETWORK_MANAGER_HPP
 
 #include "env_base.hpp"
-#include "network_tcp_sock_secure.hpp"
-#include "network_udp_sock_secure.hpp"
-#include "nm_base.hpp"
+#include "network_manager_base.hpp"
+#include "domain_tcp_sock_secure.hpp"
+#include "domain_udp_sock_secure.hpp"
 #include "sha256.hpp"
 
 #include <forward_list>
@@ -275,4 +275,4 @@ private:
   }
 };
 
-#endif /* NETWORK_MANAGER_HPP */
+#endif /* DOMAIN_NETWORK_MANAGER_HPP */

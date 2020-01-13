@@ -145,10 +145,9 @@ public:
       auto [dec_data, plain_size] = sl_.decrypt(std::get<1u>(transaction).get(), std::get<0u>(transaction));
 
       if constexpr (rb == base_t::recv_behavior_t::HOOK) {
-        this->tp().push(
-            [this, peer = std::get<2u>(transaction), data = dec_data, size = plain_size]() -> void {
-              this->on_receive()(peer, data, size, static_cast<const base_t *>(this));
-            });
+        this->tp().push([this, peer = std::get<2u>(transaction), data = dec_data, size = plain_size]() -> void {
+          this->on_receive()(peer, data, size, static_cast<const base_t *>(this));
+        });
 
       } else if constexpr (rb == base_t::recv_behavior_t::RET || rb == base_t::recv_behavior_t::HOOK_RET) {
 
