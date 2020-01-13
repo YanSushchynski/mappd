@@ -15,7 +15,7 @@
 -I/home/user/Software/mappd/utils/string/inc
 -I/home/user/Software/mappd/env/traits/inc
 -I/home/user/Software/mappd/utils/libcidr/inc
--I/home/user/Software/mappd/utils/threads/CTPL
+-I/home/user/Software/mappd/utils/threads/inc
 
 -std=gnu++17
 -fconstexpr-steps=2000000000

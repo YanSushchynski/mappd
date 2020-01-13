@@ -25,20 +25,18 @@ public:
 
   virtual ~env_static_t() = default;
 
-  const struct port_manager_base_t &port_manager() const { return port_manager_; }
-  const struct nm_t &network_manager() const { return network_manager_; }
-  const struct composition_list_static_t<Compositions...> &compositions() const {
-    return compositions_;
-  }
+  port_manager_base_t &port_manager() { return port_manager_; }
+  nm_t<> &network_manager() { return network_manager_; }
+  composition_list_static_t<Compositions...> &compositions() { return compositions_; }
 
   virtual void
-  configure(const libconfig::Setting &env_config) const override{};
-  virtual int32_t run(int32_t argc, char *argv[]) const override { return 0; };
+  configure(const libconfig::Setting &env_config) override{};
+  virtual int32_t run(int32_t argc, char *argv[]) override { return 0; };
 
 private:
-  const nm_t network_manager_;
-  const port_manager_t<Compositions...> port_manager_;
-  const composition_list_static_t<Compositions...> compositions_;
+  mutable nm_t<> network_manager_;
+  mutable port_manager_t<Compositions...> port_manager_;
+  mutable composition_list_static_t<Compositions...> compositions_;
 };
 
 #endif /* ENV_STATIC_HPP */

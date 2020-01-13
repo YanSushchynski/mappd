@@ -249,6 +249,6 @@ TEST(EnvTesting, SimpleTestCase) {
   c(0u, nullptr, "sig0");
   c(0u, nullptr, "sig1");
   c(0u, nullptr, "sig2");
-
+  
   env_local.network_manager().run();
 }

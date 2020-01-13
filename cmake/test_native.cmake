@@ -17,7 +17,7 @@ set( FNV1A_HASH_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/hash/fnv1a/inc" CAC
 set( SHA256_HASH_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/hash/sha256" CACHE INTERNAL "CMake include directory for compile time sha256 hashing" )
 set( STRING_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/string/inc" CACHE INTERNAL "CMake include directory for compile time strings" )
 set( NET_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/net/inc" CACHE INTERNAL "CMake include directory for networking" )
-set( THREAD_POOL_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/threads/CTPL" CACHE INTERNAL "CMake include directory for thread pool" )
+set( THREAD_POOL_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/threads/inc" CACHE INTERNAL "CMake include directory for thread pool" )
 set( CIDR_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/libcidr/inc" CACHE INTERNAL "CMake include directory for CIDR manipulating" )
 
 # Sources #

@@ -1,5 +1,5 @@
-#ifndef UDP_SOCK_HPP
-#define UDP_SOCK_HPP
+#ifndef NETWORK_UDP_SOCK_HPP
+#define NETWORK_UDP_SOCK_HPP
 
 #include "base_socket.hpp"
 #include "udp_sock_type.hpp"
@@ -9,7 +9,7 @@
 #include <thread>
 
 template <uint32_t family, udp_sock_t socket_class>
-struct udp_socket : public base_socket<family, SOCK_DGRAM, IPPROTO_UDP> {
+struct network_udp_socket_impl : public base_socket<family, SOCK_DGRAM, IPPROTO_UDP, true> {
 public:
   static constexpr int32_t socktype = SOCK_DGRAM;
   static constexpr int32_t protocol = IPPROTO_UDP;
@@ -19,8 +19,8 @@ public:
   enum struct recv_behavior_t : uint32_t { HOOK, RET, HOOK_RET };
   enum struct send_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
 
-  using this_t = udp_socket<family, socket_class>;
-  using base_t = base_socket<family, socktype, protocol>;
+  using this_t = network_udp_socket_impl<family, socket_class>;
+  using base_t = base_socket<family, socktype, protocol, true>;
 
   static constexpr bool is_ipv6 = base_t::is_ipv6;
 
@@ -28,7 +28,7 @@ public:
   using inet_addr_t = std::conditional_t<is_ipv6, struct in6_addr, struct in_addr>;
 
   template <udp_sock_t sc = socket_class>
-  explicit udp_socket(
+  explicit network_udp_socket_impl(
       const std::string &iface,
       typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                                   sc == udp_sock_t::SERVER_MULTICAST,
@@ -38,7 +38,7 @@ public:
             std::malloc(this->epoll_max_events() * sizeof(struct epoll_event)))) {}
 
   template <udp_sock_t sc = socket_class>
-  explicit udp_socket(
+  explicit network_udp_socket_impl(
       const std::string &iface,
       typename std::enable_if<sc == udp_sock_t::CLIENT_UNICAST || (!is_ipv6 && sc == udp_sock_t::CLIENT_BROADCAST),
                               udp_sock_t>::type * = nullptr)
@@ -49,8 +49,9 @@ public:
   }
 
   template <udp_sock_t sc = socket_class>
-  explicit udp_socket(const std::string &iface, const std::string &mcast_gr_addr, uint16_t srv,
-                      typename std::enable_if<sc == udp_sock_t::CLIENT_MULTICAST, udp_sock_t>::type * = nullptr)
+  explicit network_udp_socket_impl(
+      const std::string &iface, const std::string &mcast_gr_addr, uint16_t srv,
+      typename std::enable_if<sc == udp_sock_t::CLIENT_MULTICAST, udp_sock_t>::type * = nullptr)
       : base_t(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)),
         events_(reinterpret_cast<struct epoll_event *>(
             std::malloc(this->epoll_max_events() * sizeof(struct epoll_event)))) {
@@ -346,7 +347,7 @@ public:
     clear_hooks_();
   }
 
-  virtual ~udp_socket() {
+  virtual ~network_udp_socket_impl() {
     reset();
     clear_epoll_();
   }
@@ -611,4 +612,12 @@ private:
   }
 };
 
-#endif /* UDP_SOCK_HPP */
+template <udp_sock_t sc> struct network_udp_socket_ipv4 : network_udp_socket_impl<AF_INET, sc> {
+  using network_udp_socket_impl<AF_INET, sc>::network_udp_socket_impl;
+};
+
+template <udp_sock_t sc> struct network_udp_socket_ipv6 : network_udp_socket_impl<AF_INET6, sc> {
+  using network_udp_socket_impl<AF_INET6, sc>::network_udp_socket_impl;
+};
+
+#endif /* NETWORK_UDP_SOCK_HPP */

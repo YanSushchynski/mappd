@@ -2,16 +2,16 @@
 #define NETWORK_MANAGER_HPP
 
 #include "env_base.hpp"
+#include "network_tcp_sock_secure.hpp"
+#include "network_udp_sock_secure.hpp"
 #include "nm_base.hpp"
 #include "sha256.hpp"
-#include "tcp_sock_secure.hpp"
-#include "udp_sock_secure.hpp"
 
 #include <forward_list>
 #include <shared_mutex>
 #include <thread>
 
-struct nm_t : public nm_base_t {
+template <nm_networking_t nt = nm_networking_t::IPV4> struct nm_t : public nm_base_t {
 public:
   using this_t = nm_t;
   using base_t = nm_base_t;
@@ -19,19 +19,20 @@ public:
 
   explicit nm_t(
       const char (&dgram_aes_key)
-          [(udp_socket_secure<AF_INET, udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES>::dgram_aes_key_size_bits / 8u) +
+          [(network_udp_socket_secure_ipv4<udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES>::dgram_aes_key_size_bits /
+            8u) +
            1u],
       const struct env_base_t *const p_env)
       : p_env_(p_env),
 
-        ipv4_dgram_srv(udp_socket_secure<AF_INET, udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES>(
+        ipv4_dgram_srv(network_udp_socket_secure_ipv4<udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES>(
             p_env->info().env_network_ifname(), dgram_aes_key)),
 
-        ipv4_dgram_cli(udp_socket_secure<AF_INET, udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES>(
+        ipv4_dgram_cli(network_udp_socket_secure_ipv4<udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES>(
             p_env->info().env_network_ifname(), p_env->info().env_ipv4_multicast_group_addr(),
             p_env->info().env_ipv4_multicast_port(), dgram_aes_key)),
 
-        ipv4_stream_srv(tcp_socket_secure<AF_INET, tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS>(
+        ipv4_stream_srv(network_tcp_socket_secure_ipv4<tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS>(
             p_env->info().env_network_ifname(), p_env->info().env_ca_cert_file(), p_env->info().env_ca_priv_key_file(),
             p_env->info().env_cert_info(), p_env->info().env_cert_exp_time())) {
 
@@ -52,14 +53,13 @@ public:
     EVP_cleanup();
   };
 
-  virtual void run() const override final {
+  virtual void run() override final {
     ipv4_stream_srv.setup(this->env_()->info().env_ipv4_stream_port());
     ipv4_dgram_srv.setup(this->env_()->info().env_ipv4_multicast_group_addr(),
                          this->env_()->info().env_ipv4_multicast_port());
 
     ipv4_dgram_srv.on_receive().add(
-        "OnReceiveProbe",
-        [this](struct sockaddr_in peer, std::shared_ptr<void> data, size_t size, const auto *unit) -> void {
+        "OnReceiveProbe", [this](struct sockaddr_in peer, std::shared_ptr<void> data, size_t size, auto *unit) -> void {
           env_config_header_t header;
           char peer_addr[INET_ADDRSTRLEN] = {0x0};
           uint16_t peer_srv = ::htons(peer.sin_port);
@@ -102,7 +102,7 @@ public:
           }
         });
 
-    ipv4_stream_srv.on_connect().add("OnConnectHook", [this](struct sockaddr_in peer, const auto *unit) -> void {
+    ipv4_stream_srv.on_connect().add("OnConnectHook", [this](struct sockaddr_in peer, auto *unit) -> void {
       std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
       uint16_t peer_srv = ::htons(peer.sin_port);
       char peer_addr[INET_ADDRSTRLEN] = {0x0};
@@ -110,7 +110,7 @@ public:
       fmt::print("Server: peer {0}:{1} connected!\r\n", peer_addr, peer_srv);
     });
 
-    ipv4_stream_srv.on_disconnect().add("OnDisonnectHook", [this](struct sockaddr_in peer, const auto *unit) -> void {
+    ipv4_stream_srv.on_disconnect().add("OnDisonnectHook", [this](struct sockaddr_in peer, auto *unit) -> void {
       std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
       uint16_t peer_srv = ::htons(peer.sin_port);
       char peer_addr[INET_ADDRSTRLEN] = {0x0};
@@ -119,8 +119,7 @@ public:
     });
 
     ipv4_stream_srv.on_receive().add(
-        "OnReceiveHook",
-        [this](struct sockaddr_in peer, std::shared_ptr<void> data, size_t size, const auto *unit) -> void {
+        "OnReceiveHook", [this](struct sockaddr_in peer, std::shared_ptr<void> data, size_t size, auto *unit) -> void {
           uint16_t peer_srv = ::htons(peer.sin_port);
           char peer_addr[INET_ADDRSTRLEN] = {0x0};
           ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
@@ -136,7 +135,7 @@ public:
     stop();
   }
 
-  virtual void stop() const override final {
+  virtual void stop() override final {
     ipv4_dgram_srv.stop();
     ipv4_dgram_srv.reset();
 
@@ -145,7 +144,7 @@ public:
     ipv4_stream_srv.stop();
     ipv4_stream_srv.reset();
 
-    std::vector<tcp_socket_secure<AF_INET, tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS> *> peers;
+    std::vector<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS> *> peers;
 
     peers_lock_.lock();
     for (auto &peer : peers_) {
@@ -160,15 +159,15 @@ public:
   }
 
 private:
-  mutable udp_socket_secure<AF_INET, udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES> ipv4_dgram_srv;
-  mutable udp_socket_secure<AF_INET, udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES> ipv4_dgram_cli;
-  mutable tcp_socket_secure<AF_INET, tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS> ipv4_stream_srv;
+  mutable network_udp_socket_secure_ipv4<udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES> ipv4_dgram_srv;
+  mutable network_udp_socket_secure_ipv4<udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES> ipv4_dgram_cli;
+  mutable network_tcp_socket_secure_ipv4<tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS> ipv4_stream_srv;
 
   mutable std::vector<std::pair<sha256::sha256_hash_type, uint16_t>> known_envs_;
   mutable std::map<
       sha256::sha256_hash_type,
       std::tuple<env_config_header_t, std::string,
-                 std::shared_ptr<tcp_socket_secure<AF_INET, tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>>>>
+                 std::shared_ptr<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>>>>
       peers_;
 
   mutable std::recursive_mutex known_envs_lock_;
@@ -186,7 +185,7 @@ private:
     return ipv4_stream_srv.is_peer_connected(hash, port);
   }
 
-  void run_probing_(uint64_t times, uint64_t interval_ms) const {
+  void run_probing_(uint64_t times, uint64_t interval_ms) {
 
     /* Get some info from host environment */
     void *payload = nullptr;
@@ -209,7 +208,7 @@ private:
         }
       }
 
-      size_t payload_size = header.ByteSize();
+      size_t payload_size = header.ByteSizeLong();
       payload = std::malloc(payload_size);
       header.SerializeToArray(payload, payload_size);
       ipv4_dgram_cli.send(mcast_addr, mcast_srv, payload, payload_size);
@@ -227,16 +226,16 @@ private:
 
       typename decltype(peers_)::iterator it;
       if ((it = peers_.find(peer_hash)) == peers_.end()) {
-        std::shared_ptr<tcp_socket_secure<AF_INET, tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>> unit(
-            std::shared_ptr<tcp_socket_secure<AF_INET, tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>>(
-                new tcp_socket_secure<AF_INET, tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>(
+        std::shared_ptr<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>> unit(
+            std::shared_ptr<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>>(
+                new network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>(
                     this->env_()->info().env_network_ifname(), this->env_()->info().env_ca_cert_file(),
                     this->env_()->info().env_ca_priv_key_file(), this->env_()->info().env_cert_info(),
                     this->env_()->info().env_cert_exp_time())));
 
         unit->on_connect().add("OnConnectHook",
                                [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
-                                   struct sockaddr_in peer, const auto *unit) -> void {
+                                   struct sockaddr_in peer, auto *unit) -> void {
                                  uint16_t peer_srv = ::htons(peer.sin_port);
                                  char peer_addr[INET_ADDRSTRLEN] = {0};
                                  ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
@@ -245,7 +244,7 @@ private:
 
         unit->on_disconnect().add("OnDisconnectHook",
                                   [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
-                                      struct sockaddr_in peer, const auto *unit) -> void {
+                                      struct sockaddr_in peer, auto *unit) -> void {
                                     std::lock_guard<std::recursive_mutex> lock(peers_lock_);
                                     uint16_t peer_srv = ::htons(peer.sin_port);
                                     char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -259,8 +258,8 @@ private:
           std::lock_guard<std::recursive_mutex> lock_peers(peers_lock_);
           peers_.insert(std::make_pair(peer_hash, std::make_tuple(header, std::string(peer_addr), std::move(unit))));
         } else {
-		  
-		  unit->stop_threads();
+
+          unit->stop_threads();
           unit.reset();
           rc = -1;
         }

@@ -26,19 +26,21 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/un.h>
 #include <unistd.h>
 
-#include "ctpl_stl.h"
 #include "fmt/format.h"
 #include "hook.hpp"
 #include "libcidr.hpp"
 #include "property.hpp"
+#include "thread_pool.hpp"
 
-template <uint32_t family, uint32_t socktype, uint32_t protocol> struct base_socket {
+template <uint32_t family, uint32_t socktype, uint32_t protocol, bool is_network> struct base_socket {
 public:
-  using this_t = base_socket<family, socktype, protocol>;
+  using this_t = base_socket<family, socktype, protocol, is_network>;
   static constexpr bool is_ipv6 = (family == AF_INET6);
   static constexpr int32_t addrlen = this_t::is_ipv6 ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN;
+  static constexpr uint32_t num_threads = 2u;
 
   struct iface_netinfo_t {
     std::array<char, this_t::addrlen> host_addr{0};
@@ -48,10 +50,22 @@ public:
     uint32_t scopeid;
   };
 
-  explicit base_socket(const std::string &iface)
-      : if_(iface), iface_info_(get_iface_info_(iface)), tp_(ctpl::thread_pool(2u)){};
+  template <bool networking = is_network>
+  explicit base_socket(const std::string &iface, typename std::enable_if<networking, bool>::type * = nullptr)
+      : if_(iface), iface_info_(get_iface_info_(iface)), tp_(thread_pool<num_threads>()){};
 
-  const iface_netinfo_t &iface_info() const { return iface_info_; }
+  template <bool networking = is_network>
+  explicit base_socket(typename std::enable_if<!networking, bool>::type * = nullptr)
+      : tp_(thread_pool<num_threads>()){};
+  
+  template <bool networking = is_network>
+  explicit base_socket(const std::string &path = "", typename std::enable_if<!networking, bool>::type * = nullptr)
+      : tp_(thread_pool<num_threads>()){};
+
+  template <bool networking = is_network, typename RetType = iface_netinfo_t>
+  const typename std::enable_if<networking, RetType>::type &iface_info() const {
+    return iface_info_;
+  }
 
   static constexpr uint32_t epoll_max_events() { return epoll_max_events_; }
   static constexpr uint32_t send_timeout() { return send_timeout_ms_; }
@@ -62,8 +76,8 @@ public:
   static constexpr int32_t sock_socktype() { return socktype; }
   static constexpr int32_t sock_protocol() { return protocol; }
 
-  ctpl::thread_pool &tp() const { return tp_; }
-  void stop_tp() const { return tp_.stop(true); }
+  thread_pool<num_threads> &tp() { return tp_; }
+  void stop_tp() { return tp_.stop(); }
   virtual ~base_socket() { stop_tp(); };
 
 private:
@@ -73,11 +87,12 @@ private:
   static constexpr uint32_t connect_timeout_ms_ = 1000u;
   static constexpr uint32_t accept_timeout_ms_ = 1000u;
 
-  const std::string if_;
-  const struct iface_netinfo_t iface_info_;
-  mutable ctpl::thread_pool tp_;
-  
-  const iface_netinfo_t get_iface_info_(const std::string &ifname) {
+  std::conditional_t<is_network, const std::string, uint8_t> if_;
+  std::conditional_t<is_network, const struct iface_netinfo_t, uint8_t> iface_info_;
+  thread_pool<num_threads> tp_;
+
+  template <typename RetType = iface_netinfo_t>
+  const typename std::enable_if<is_network, RetType>::type get_iface_info_(const std::string &ifname) {
     using addr_inet_t = std::conditional_t<this_t::is_ipv6, in6_addr, in_addr>;
     using sockaddr_inet_t = std::conditional_t<is_ipv6, struct sockaddr_in6, struct sockaddr_in>;
     using num_addr_t = std::conditional_t<this_t::is_ipv6, __uint128_t, uint32_t>;

@@ -1,17 +1,15 @@
-#ifndef TCP_SOCK_HPP
-#define TCP_SOCK_HPP
+#ifndef NETWORK_TCP_SOCK_HPP
+#define NETWORK_TCP_SOCK_HPP
 
 #include "base_socket.hpp"
-#include "function_traits.hpp"
 #include "tcp_sock_type.hpp"
 
 #include <errno.h>
-#include <future>
 #include <thread>
 
 /* @brief: This template class is wrapper of Berkley sockets */
 template <uint32_t family, tcp_sock_t socket_class>
-struct tcp_socket : public base_socket<family, SOCK_STREAM, IPPROTO_TCP> {
+struct network_tcp_socket_impl : public base_socket<family, SOCK_STREAM, IPPROTO_TCP, true> {
 public:
   static constexpr int32_t socktype = SOCK_STREAM;
   static constexpr int32_t protocol = IPPROTO_TCP;
@@ -22,8 +20,8 @@ public:
   enum struct send_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
   enum struct connect_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
 
-  using this_t = tcp_socket<family, socket_class>;
-  using base_t = base_socket<family, socktype, protocol>;
+  using this_t = network_tcp_socket_impl<family, socket_class>;
+  using base_t = base_socket<family, socktype, protocol, true>;
 
   static constexpr bool is_ipv6 = base_t::is_ipv6;
   static constexpr int32_t addrlen = base_t::addrlen;
@@ -36,16 +34,16 @@ public:
       std::conditional_t<socket_class == tcp_sock_t::SERVER_UNICAST, std::map<int32_t, sockaddr_inet_t>, void *>>;
 
   template <tcp_sock_t sc = socket_class>
-  explicit tcp_socket(const std::string &iface,
-                      typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, tcp_sock_t>::type * = nullptr)
+  explicit network_tcp_socket_impl(
+      const std::string &iface, typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, tcp_sock_t>::type * = nullptr)
       : base_t(iface), state_(state_t::DISCONNECTED), epfd_(epoll_create1(EPOLL_CLOEXEC)),
         events_(reinterpret_cast<struct epoll_event *>(
             std::malloc(base_t::epoll_max_events() * sizeof(struct epoll_event)))),
         on_disconnect_internal_hook_([](int32_t) {}), on_connect_internal_hook_([](int32_t) {}) {}
 
   template <tcp_sock_t sc = socket_class>
-  explicit tcp_socket(const std::string &iface,
-                      typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, tcp_sock_t>::type * = nullptr)
+  explicit network_tcp_socket_impl(
+      const std::string &iface, typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, tcp_sock_t>::type * = nullptr)
       : base_t(iface), state_(state_t::STOPPED), epfd_(epoll_create1(EPOLL_CLOEXEC)),
         events_(reinterpret_cast<struct epoll_event *>(
             std::malloc(base_t::epoll_max_events() * sizeof(struct epoll_event)))),
@@ -55,7 +53,7 @@ public:
   const auto &on_disconnect() const { return on_disconnect_; }
   const auto &on_receive() const { return on_receive_; }
   const auto &on_send() const { return on_send_; }
-  property_t<state_t> &state_prop() const { return state_; }
+  std::atomic<state_t> &state() const { return state_; }
 
   void stop_threads() const { return const_cast<const base_t *>(this)->stop_tp(); }
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
@@ -194,7 +192,7 @@ public:
       listen_thread_ = std::thread([this]() -> void { listen_(); });
     } else {
       this->tp().push(
-          [this](int32_t thr_id, uint64_t duration_ms, std::atomic_bool *trigger) -> void {
+          [this](uint64_t duration_ms, std::atomic_bool *trigger) -> void {
             std::this_thread::sleep_for(std::chrono::milliseconds(duration_ms));
             *trigger = false;
           },
@@ -215,7 +213,7 @@ public:
     clear_hooks_();
   }
 
-  virtual ~tcp_socket() {
+  virtual ~network_tcp_socket_impl() {
     reset();
     clear_epoll_();
   };
@@ -238,7 +236,7 @@ protected:
                 std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
                                    std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  handle_incoming_data__(int32_t fd, RecvFunction recv_function = ::recv) const {
+  handle_incoming_data__(int32_t fd, RecvFunction recv_function = ::recv) {
     return this->template handle_incoming_data_<rb, RecvFunction>(fd, recv_function);
   }
 
@@ -311,7 +309,7 @@ private:
   mutable std::recursive_mutex listen_thread_lock_;
 
   mutable std::atomic_bool listen_enabled_;
-  mutable property_t<state_t> state_;
+  mutable std::atomic<state_t> state_;
 
   /* Hooks interface */
   const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_t *)> on_receive_;
@@ -345,7 +343,7 @@ private:
           auto it = connected_.find(peer_fd);
           if (it != connected_.end()) {
             this->tp().push(
-                [this, peer_addr = *peer_addr](int32_t thr_id) -> void { this->on_disconnect()(peer_addr, this); });
+                [this, peer_addr = *peer_addr]() -> void { this->on_disconnect()(peer_addr, this); });
             static_cast<void>(disconnect_peer_(peer_fd));
           }
 
@@ -407,7 +405,7 @@ private:
 
             connected_info_lock_.lock();
             this->tp().push(
-                [this, connected = connected_](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+                [this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
             std::memset(&connected_, 0x0, sizeof(connected_));
             state_ = state_t::DISCONNECTED;
             connected_info_lock_.unlock();
@@ -432,7 +430,7 @@ private:
         void *data = std::malloc(size * sizeof(char));
         std::memcpy(data, msg, size);
         connected_info_lock_.lock();
-        this->tp().push([this, connected = connected_, data, size](int32_t thr_id) -> void {
+        this->tp().push([this, connected = connected_, data, size]() -> void {
           this->on_send()(connected, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                           size, this);
         });
@@ -488,7 +486,7 @@ private:
               if (state_ == state_t::CONNECTED) {
                 connected_info_lock_.lock();
                 this->tp().push(
-                    [this, connected = connected_](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+                    [this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
                 std::memset(&connected_, 0x0, sizeof(connected_));
                 state_ = state_t::DISCONNECTED;
                 connected_info_lock_.unlock();
@@ -518,7 +516,7 @@ private:
           if constexpr (rb == recv_behavior_t::HOOK) {
 
             connected_info_lock_.lock();
-            this->tp().push([this, connected = connected_, data, size = recvd](int32_t thr_id) -> void {
+            this->tp().push([this, connected = connected_, data, size = recvd]() -> void {
               this->on_receive()(connected,
                                  std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                                  this);
@@ -532,7 +530,7 @@ private:
 
             if constexpr (rb == recv_behavior_t::HOOK_RET) {
               connected_info_lock_.lock();
-              this->tp().push([this, connected = connected_, size = recvd, data](int32_t thr_id) -> void {
+              this->tp().push([this, connected = connected_, size = recvd, data]() -> void {
                 this->on_receive()(connected,
                                    std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                                    this);
@@ -642,7 +640,7 @@ private:
     connected_info_lock_.lock();
     for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
       this->tp().push(
-          [this, connected = it->second](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+          [this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
       if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, it->first, nullptr) < 0u)
         throw std::runtime_error(
             fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
@@ -699,7 +697,7 @@ private:
     connected_info_lock_.lock();
     if (state_ == state_t::CONNECTED) {
       this->tp().push(
-          [this, connected = connected_](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+          [this, connected = connected_]() -> void { this->on_disconnect()(connected, this); });
       std::memset(&connected_, 0x0, sizeof(connected_));
     }
 
@@ -751,7 +749,7 @@ private:
                 std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
                                    std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  handle_incoming_data_(int32_t fd, RecvFunction recv_function = ::recv) const {
+  handle_incoming_data_(int32_t fd, RecvFunction recv_function = ::recv) {
     int32_t recvd, rc, bytes_pending;
     fd_set read_fd_set;
     struct timeval read_timeout = {base_t::receive_timeout() / 1000, 0u};
@@ -774,7 +772,7 @@ private:
           for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
             if (fd == it->first) {
               this->tp().push(
-                  [this, connected = it->second](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+                  [this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
               static_cast<void>(disconnect_peer_(fd));
               connected_info_lock_.unlock();
 
@@ -803,7 +801,7 @@ private:
       } else {
         FD_ZERO(&read_fd_set);
         FD_SET(sock_fd_, &read_fd_set);
-		
+
         if ((rc = ::select(sock_fd_ + 1, &read_fd_set, nullptr, nullptr, &read_timeout)) <= 0) {
           goto disconnect;
         } else
@@ -815,7 +813,7 @@ private:
       for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
         if (fd == it->first) {
           this->tp().push(
-              [this, connected = it->second](int32_t thr_id) -> void { this->on_disconnect()(connected, this); });
+              [this, connected = it->second]() -> void { this->on_disconnect()(connected, this); });
           static_cast<void>(disconnect_peer_(fd));
           connected_info_lock_.unlock();
 
@@ -849,7 +847,7 @@ private:
       }
 
       if constexpr (rb == recv_behavior_t::HOOK) {
-        this->tp().push([this, peer, data, size = recvd](int32_t thr_id) -> void {
+        this->tp().push([this, peer, data, size = recvd]() -> void {
           this->on_receive()(peer, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                              this);
         });
@@ -859,7 +857,7 @@ private:
         if constexpr (rb == recv_behavior_t::HOOK_RET) {
           void *data_copy = std::malloc(recvd);
           std::memcpy(data_copy, data, recvd);
-          this->tp().push([this, peer, data_copy, size = recvd](int32_t thr_id) -> void {
+          this->tp().push([this, peer, data_copy, size = recvd]() -> void {
             this->on_receive()(
                 peer, std::shared_ptr<void>(data_copy, [](const auto &data) -> void { std::free(data); }), size, this);
           });
@@ -920,7 +918,7 @@ private:
                                                __func__, __FILE__, __LINE__));
 
         if (epoll_error) {
-          this->tp().push([this, server](int32_t thr_id) -> void { this->on_disconnect()(server, this); });
+          this->tp().push([this, server]() -> void { this->on_disconnect()(server, this); });
           disconnect();
           state_ = state_t::DISCONNECTED;
         } else {
@@ -930,7 +928,7 @@ private:
           connected_info_lock_.unlock();
 
           if constexpr (cb == connect_behavior_t::HOOK_ON) {
-            this->tp().push([this, server](int32_t thr_id) -> void { this->on_connect()(server, this); });
+            this->tp().push([this, server]() -> void { this->on_connect()(server, this); });
           }
 
           state_ = state_t::CONNECTED;
@@ -1088,7 +1086,7 @@ private:
     connected_info_lock_.unlock();
 
     if constexpr (cb == connect_behavior_t::HOOK_ON) {
-      this->tp().push([this, peer_addr](int32_t thr_id) -> void { this->on_connect()(peer_addr, this); });
+      this->tp().push([this, peer_addr]() -> void { this->on_connect()(peer_addr, this); });
       return peer_fd;
     } else if constexpr (cb == connect_behavior_t::HOOK_OFF) {
 
@@ -1131,4 +1129,12 @@ private:
   }
 };
 
-#endif /* TCP_SOCK_HPP */
+template <tcp_sock_t sc> struct network_tcp_socket_ipv4 : network_tcp_socket_impl<AF_INET, sc> {
+  using network_tcp_socket_impl<AF_INET, sc>::network_tcp_socket_impl;
+};
+
+template <tcp_sock_t sc> struct network_tcp_socket_ipv6 : network_tcp_socket_impl<AF_INET6, sc> {
+  using network_tcp_socket_impl<AF_INET6, sc>::network_tcp_socket_impl;
+};
+
+#endif /* NETWORK_TCP_SOCK_HPP */

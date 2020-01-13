@@ -1,20 +1,22 @@
-#ifndef TCP_SOCK_SECURE_HPP
-#define TCP_SOCK_SECURE_HPP
+#ifndef NETWORK_TCP_SOCK_SECURE_HPP
+#define NETWORK_TCP_SOCK_SECURE_HPP
 
 #include "function_traits.hpp"
+#include "network_tcp_sock.hpp"
 #include "secure_layer.hpp"
-#include "tcp_sock.hpp"
 #include "tcp_sock_secure_type.hpp"
 
 template <uint32_t family, tcp_sock_secure_t secure_socket_class>
-struct tcp_socket_secure
-    : protected tcp_socket<family, static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)> {
+struct network_tcp_socket_secure_impl
+    : protected network_tcp_socket_impl<family,
+                                        static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)> {
 public:
   static constexpr uint32_t aes_key_size_bits = 256u;
   static constexpr uint32_t rsa_key_size_bits = 2048u;
 
-  using base_t = tcp_socket<family, static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)>;
-  using this_t = tcp_socket_secure<family, secure_socket_class>;
+  using base_t =
+      network_tcp_socket_impl<family, static_cast<tcp_sock_t>(static_cast<uint32_t>(secure_socket_class) % 2u)>;
+  using this_t = network_tcp_socket_secure_impl<family, secure_socket_class>;
 
   static constexpr bool is_ipv6 = base_t::is_ipv6;
   static constexpr int32_t addrlen = base_t::addrlen;
@@ -24,12 +26,12 @@ public:
   using connected_peer_info_t = typename base_t::connected_peer_info_t;
 
   template <tcp_sock_secure_t sc = secure_socket_class>
-  explicit tcp_socket_secure(const std::string &iface, const std::string &ca_cert_file,
-                             const std::string &ca_priv_key_file,
-                             typename tls_sl_t<sc, rsa_key_size_bits>::x509_cert_info_t cert_info, uint64_t exp_time,
-                             typename std::enable_if<sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS ||
-                                                         sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
-                                                     tcp_sock_secure_t>::type * = nullptr)
+  explicit network_tcp_socket_secure_impl(
+      const std::string &iface, const std::string &ca_cert_file, const std::string &ca_priv_key_file,
+      typename tls_sl_t<sc, rsa_key_size_bits>::x509_cert_info_t cert_info, uint64_t exp_time,
+      typename std::enable_if<sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS ||
+                                  sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
+                              tcp_sock_secure_t>::type * = nullptr)
       : base_t(iface), sl_(ca_cert_file, ca_priv_key_file, cert_info, exp_time) {
 
     /* Add hook to base class for clearing credentials in secure layer after disconnect case */
@@ -37,14 +39,14 @@ public:
       this->set_on_disconnect_internal_hook__([this](int32_t fd) -> void { sl_.clear_peer_creds(fd); });
   }
 
-  virtual ~tcp_socket_secure() = default;
+  virtual ~network_tcp_socket_secure_impl() = default;
 
   const auto &on_connect() const { return static_cast<const base_t *>(this)->on_connect(); }
   const auto &on_disconnect() const { return static_cast<const base_t *>(this)->on_disconnect(); }
   const auto &on_receive() const { return static_cast<const base_t *>(this)->on_receive(); }
   const auto &on_send() const { return static_cast<const base_t *>(this)->on_send(); }
 
-  void stop_threads() const { return static_cast<const typename base_t::base_t *>(this)->stop_tp(); }
+  void stop_threads() { return static_cast<typename base_t::base_t *>(this)->stop_tp(); }
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type setup(uint16_t port) {
     return static_cast<base_t *>(this)->setup(port);
@@ -61,26 +63,26 @@ public:
       return rc;
     }
 
-    this->state_prop() = base_t::state_t::CONNECTING;
+    this->state() = base_t::state_t::CONNECTING;
 
     /* Do TLS connection */
     if ((rc = sl_.connect(this->fd__()))) {
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
-        this->tp().push([this, peer = this->connected__()](int32_t thr_id) -> void {
+        this->tp().push([this, peer = this->connected__()]() -> void {
           this->on_disconnect()(peer, static_cast<const base_t *>(this));
         });
       }
 
-      this->state_prop() = base_t::state_t::DISCONNECTED;
+      this->state() = base_t::state_t::DISCONNECTED;
       return -1;
     } else {
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
-        this->tp().push([this, peer = this->connected__()](int32_t thr_id) -> void {
+        this->tp().push([this, peer = this->connected__()]() -> void {
           this->on_connect()(peer, static_cast<const base_t *>(this));
         });
       }
 
-      this->state_prop() = base_t::state_t::CONNECTED;
+      this->state() = base_t::state_t::CONNECTED;
       return 0;
     }
   }
@@ -146,13 +148,10 @@ public:
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type connecting() const {
-    return this->state_prop() == base_t::state_t::CONNECTING;
+    return this->state() == base_t::state_t::CONNECTING;
   }
 
-  template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = property_t<typename base_t::state_t>>
-  typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type &state() const {
-    return this->state_prop();
-  }
+  std::atomic<typename base_t::state_t> &state() const { return this->state(); }
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
@@ -181,14 +180,14 @@ public:
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = void>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
-  start(uint64_t duration_ms = 0) const {
+  start(uint64_t duration_ms = 0) {
     bool nonblock = duration_ms == 0;
     if (nonblock) {
       this->listen_thread__() = std::thread([this]() -> void { listen_(); });
 
     } else {
       this->tp().push(
-          [this](int32_t thr_id, uint64_t duration_ms, std::atomic_bool *trigger) -> void {
+          [this](uint64_t duration_ms, std::atomic_bool *trigger) -> void {
             std::this_thread::sleep_for(std::chrono::milliseconds(duration_ms));
             *trigger = false;
           },
@@ -249,7 +248,7 @@ private:
                 std::conditional_t<rb == base_t::recv_behavior_t::RET || rb == base_t::recv_behavior_t::HOOK_RET,
                                    std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>, void>>>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
-  handle_incoming_data_(int32_t fd) const {
+  handle_incoming_data_(int32_t fd) {
     return this->template handle_incoming_data__<rb>(
         fd, [this](int32_t fd, void *buffer, size_t size, int32_t flags) -> int32_t {
           static_cast<void>(flags);
@@ -262,21 +261,21 @@ private:
             typename RetType = std::conditional_t<cb == base_t::connect_behavior_t::HOOK_ON, int32_t,
                                                   std::pair<typename base_t::sockaddr_inet_t, int32_t>>>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
-  handle_incoming_peer_() const {
+  handle_incoming_peer_() {
     int32_t rc;
 
     /* Underlaying peer handling */
     auto [peer, peer_fd] = this->template handle_incoming_peer__<base_t::connect_behavior_t::HOOK_OFF>();
 
-    this->state_prop() = base_t::state_t::CONNECTING;
+    this->state() = base_t::state_t::CONNECTING;
     if (peer_fd <= 0) {
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
 
-        this->state_prop() = base_t::state_t::DISCONNECTED;
+        this->state() = base_t::state_t::DISCONNECTED;
         return -1;
       } else if constexpr (cb == base_t::connect_behavior_t::HOOK_OFF) {
 
-        this->state_prop() = base_t::state_t::DISCONNECTED;
+        this->state() = base_t::state_t::DISCONNECTED;
         return {sockaddr_inet_t(), -1};
       }
     }
@@ -288,33 +287,32 @@ private:
       sl_.clear_peer_creds(peer_fd);
 
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
-        this->tp().push([this, peer = peer](int32_t thr_id) -> void {
+        this->tp().push([this, peer = peer]() -> void {
           this->on_disconnect()(peer, static_cast<const base_t *>(this));
         });
-        this->state_prop() = base_t::state_t::DISCONNECTED;
+        this->state() = base_t::state_t::DISCONNECTED;
         return -1;
       } else if constexpr (cb == base_t::connect_behavior_t::HOOK_OFF) {
 
-        this->state_prop() = base_t::state_t::DISCONNECTED;
+        this->state() = base_t::state_t::DISCONNECTED;
         return {sockaddr_inet_t(), -1};
       }
     }
 
     if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
-      this->tp().push(
-          [this, peer = peer](int32_t thr_id) -> void { this->on_connect()(peer, static_cast<const base_t *>(this)); });
-      this->state_prop() = base_t::state_t::CONNECTED;
+      this->tp().push([this, peer = peer]() -> void { this->on_connect()(peer, static_cast<const base_t *>(this)); });
+      this->state() = base_t::state_t::CONNECTED;
       return peer_fd;
     } else if constexpr (cb == base_t::connect_behavior_t::HOOK_OFF) {
 
-      this->state_prop() = base_t::state_t::CONNECTED;
+      this->state() = base_t::state_t::CONNECTED;
       return {std::move(peer), peer_fd};
     }
   }
 
   template <typename base_t::connect_behavior_t cb = base_t::connect_behavior_t::HOOK_ON,
             tcp_sock_secure_t sc = secure_socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type listen_() const {
+  typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type listen_() {
     this->listen_enabled__() = true;
     int32_t rc;
     if ((rc = ::listen(this->fd__(), SOMAXCONN)) < 0) {
@@ -322,7 +320,7 @@ private:
                                            __func__, __FILE__, __LINE__));
     }
 
-    this->state_prop() = base_t::state_t::LISTENING;
+    this->state() = base_t::state_t::LISTENING;
     while (this->listen_enabled__()) {
 
       int32_t num_ready;
@@ -346,8 +344,16 @@ private:
       }
     }
 
-    this->state_prop() = base_t::state_t::STOPPED;
+    this->state() = base_t::state_t::STOPPED;
   }
 };
 
-#endif /* TCP_SOCK_SECURE_HPP */
+template <tcp_sock_secure_t sc> struct network_tcp_socket_secure_ipv4 : network_tcp_socket_secure_impl<AF_INET, sc> {
+  using network_tcp_socket_secure_impl<AF_INET, sc>::network_tcp_socket_secure_impl;
+};
+
+template <tcp_sock_secure_t sc> struct network_tcp_socket_secure_ipv6 : network_tcp_socket_secure_impl<AF_INET6, sc> {
+  using network_tcp_socket_secure_impl<AF_INET6, sc>::network_tcp_socket_secure_impl;
+};
+
+#endif /* NETWORK_TCP_SOCK_SECURE_HPP */

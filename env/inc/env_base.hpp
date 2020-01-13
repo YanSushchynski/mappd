@@ -58,11 +58,11 @@ struct env_base_t {
 
   virtual ~env_base_t() = default;
 
-  virtual void configure(const libconfig::Setting &env_config) const {
+  virtual void configure(const libconfig::Setting &env_config) {
     throw std::runtime_error("Runtime configuration allowed only in dynamic evironments");
   };
 
-  virtual int run(int argc, char *argv[]) const = 0;
+  virtual int run(int argc, char *argv[]) = 0;
   const env_config_t &info() const { return info_; }
   const env_config_header_t info_header() const { return get_info_header_(info_); }
   const std::string &name() const { return name_; };
