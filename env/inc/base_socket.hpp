@@ -40,7 +40,7 @@ public:
   using this_t = base_socket<family, socktype, protocol>;
   static constexpr bool is_network = family == AF_INET || family == AF_INET6;
   static constexpr bool is_domain = family == AF_UNIX;
-  static constexpr bool is_ipv6 = is_network && family == AF_INET6;
+  static constexpr bool is_ipv6 = is_network && !is_domain && family == AF_INET6;
   static constexpr int32_t addrlen = this_t::is_ipv6 ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN;
   static constexpr uint32_t num_threads = 2u;
 
@@ -52,21 +52,26 @@ public:
     uint32_t scopeid;
   };
 
-  template <bool networking = is_network>
-  explicit base_socket(const std::string &iface, typename std::enable_if<networking, bool>::type * = nullptr)
-      : if_(iface), iface_info_(get_iface_info_(iface)), tp_(thread_pool<num_threads>()){};
+  template <bool network = is_network, bool domain = is_domain>
+  explicit base_socket(const std::string &iface, typename std::enable_if<network && !domain, bool>::type * = nullptr)
+      : if_(iface), iface_path_info_(get_iface_info_(iface)), tp_(thread_pool<num_threads>()){};
 
-  template <bool networking = is_network>
-  explicit base_socket(typename std::enable_if<!networking, bool>::type * = nullptr)
-      : tp_(thread_pool<num_threads>()){};
-  
-  template <bool networking = is_network>
-  explicit base_socket(const std::string &path = "", typename std::enable_if<!networking, bool>::type * = nullptr)
+  template <bool network = is_network, bool domain = is_domain>
+  explicit base_socket(const std::string &path, typename std::enable_if<!network && domain, bool>::type * = nullptr)
+      : if_(path), tp_(thread_pool<num_threads>()){};
+
+  template <bool network = is_network, bool domain = is_domain>
+  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr)
       : tp_(thread_pool<num_threads>()){};
 
-  template <bool networking = is_network, typename RetType = iface_netinfo_t>
-  const typename std::enable_if<networking, RetType>::type &iface_info() const {
-    return iface_info_;
+  template <bool network = is_network, typename RetType = iface_netinfo_t>
+  const typename std::enable_if<network, RetType>::type &iface() const {
+    return iface_path_info_;
+  }
+
+  template <bool domain = is_domain, typename RetType = const std::string &>
+  const typename std::enable_if<domain, RetType>::type &path() const {
+    return iface_path_info_;
   }
 
   static constexpr uint32_t epoll_max_events() { return epoll_max_events_; }
@@ -89,8 +94,10 @@ private:
   static constexpr uint32_t connect_timeout_ms_ = 1000u;
   static constexpr uint32_t accept_timeout_ms_ = 1000u;
 
-  std::conditional_t<is_network, const std::string, uint8_t> if_;
-  std::conditional_t<is_network, const struct iface_netinfo_t, uint8_t> iface_info_;
+  const std::string if_;
+  std::conditional_t<is_network, const struct iface_netinfo_t,
+                     std::conditional_t<is_domain, const std::string, uint8_t>>
+      iface_path_info_;
   thread_pool<num_threads> tp_;
 
   template <typename RetType = iface_netinfo_t>

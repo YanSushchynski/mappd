@@ -568,7 +568,7 @@ private:
       addr_str = addr.c_str();
     } else if constexpr (socket_class == tcp_sock_t::SERVER_UNICAST) {
 
-      addr_str = this->iface_info().host_addr.data();
+      addr_str = this->iface().host_addr.data();
     }
 
     if ((rc = ::getaddrinfo(addr_str, std::to_string(port).c_str(), &hints, &addr_info)) != 0 || addr_info == nullptr) {
@@ -577,7 +577,7 @@ private:
     }
 
     if constexpr (base_t::is_ipv6)
-      reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface_info().scopeid;
+      reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
 
     open_();
     struct timeval recv_timeout = {base_t::receive_timeout(), 0u};

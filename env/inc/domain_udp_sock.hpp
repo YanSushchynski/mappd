@@ -28,23 +28,22 @@ public:
 
   template <udp_sock_t sc = socket_class>
   explicit domain_udp_socket_impl(
-      const std::string &iface, typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, udp_sock_t>::type * = nullptr)
-      : base_t(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)), state_(state_t::STOPPED),
+      const std::string &path, typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, udp_sock_t>::type * = nullptr)
+      : base_t(path), epfd_(::epoll_create1(EPOLL_CLOEXEC)), state_(state_t::STOPPED),
         events_(reinterpret_cast<struct epoll_event *>(
             std::malloc(this->epoll_max_events() * sizeof(struct epoll_event)))) {}
 
   template <udp_sock_t sc = socket_class>
   explicit domain_udp_socket_impl(
-      const std::string &iface, typename std::enable_if<sc == udp_sock_t::CLIENT_UNICAST, udp_sock_t>::type * = nullptr)
-      : base_t(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)),
-        events_(reinterpret_cast<struct epoll_event *>(
-            std::malloc(this->epoll_max_events() * sizeof(struct epoll_event)))) {
+      typename std::enable_if<sc == udp_sock_t::CLIENT_UNICAST, udp_sock_t>::type * = nullptr)
+      : base_t(), epfd_(::epoll_create1(EPOLL_CLOEXEC)), events_(reinterpret_cast<struct epoll_event *>(std::malloc(
+                                                             this->epoll_max_events() * sizeof(struct epoll_event)))) {
     setup_();
   }
 
   template <udp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, RetType>::type setup(uint16_t port) {
-    setup_(port);
+  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, RetType>::type setup() {
+    setup_();
   }
 
   const auto &on_receive() const { return on_receive_; }
@@ -247,26 +246,10 @@ private:
   const hook_t<void(struct sockaddr_un, std::shared_ptr<void>, size_t, const this_t *)> on_send_;
 
   template <udp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::CLIENT_UNICAST, RetType>::type
-  setup_(uint16_t port = 0u) {
-    struct addrinfo *addr_info, hints;
+  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, RetType>::type setup_() {
+    struct sockaddr_un path;
+    std::strncpy(path.sun_path, this->path().c_str(), this->path().size());
     int32_t rc, trueflag = 1;
-    const char *addr_str;
-
-    if constexpr (sc == udp_sock_t::SERVER_UNICAST) {
-      std::memset(&hints, 0x0, sizeof(hints));
-      hints.ai_family = family;
-      hints.ai_socktype = socktype;
-      hints.ai_protocol = protocol;
-      addr_str = this->iface_info().host_addr.data();
-
-      if ((rc = ::getaddrinfo(addr_str, std::to_string(port).c_str(), &hints, &addr_info)) != 0 ||
-          addr_info == nullptr) {
-        throw std::runtime_error(fmt::format("Invalid address or port: \"{0}\",\"{1} (errno : {2}), ({3}), {4}:{5}\"",
-                                             addr_str, std::to_string(port), gai_strerror(rc), __func__, __FILE__,
-                                             __LINE__));
-      }
-    }
 
     open_();
 
@@ -280,9 +263,23 @@ private:
           fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
     }
 
-    if constexpr (sc == udp_sock_t::SERVER_UNICAST) {
-      bind_(addr_info);
-      ::freeaddrinfo(addr_info);
+    bind_(&path);
+  }
+
+  template <udp_sock_t sc = socket_class, typename RetType = void>
+  typename std::enable_if<sc == udp_sock_t::CLIENT_UNICAST, RetType>::type setup_() {
+    int32_t rc, trueflag = 1;
+
+    open_();
+
+    if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &trueflag, sizeof trueflag)) < 0) {
+      throw std::runtime_error(
+          fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+    }
+
+    if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEPORT, &trueflag, sizeof trueflag)) < 0) {
+      throw std::runtime_error(
+          fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
     }
   }
 
@@ -317,11 +314,12 @@ private:
   }
 
   template <udp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, RetType>::type bind_(const struct addrinfo *addr_info) {
+  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, RetType>::type bind_(const struct sockaddr_un *path) {
     int32_t rc;
-    if ((rc = ::bind(sock_fd_, addr_info->ai_addr, addr_info->ai_addrlen)) != 0) {
+
+    if ((rc = ::bind(sock_fd_, reinterpret_cast<const struct sockaddr *>(path), sizeof(path->sun_path))) != 0) {
       clear_<socket_class>();
-      throw std::runtime_error(fmt::format("Could not bind UDP socket (errno = {0}), ({1}), {2}:{3}\"", strerror(rc),
+      throw std::runtime_error(fmt::format("Can't bind UDP socket (errno = {0}), ({1}), {2}:{3}\"", strerror(rc),
                                            __func__, __FILE__, __LINE__));
     }
   }

@@ -100,11 +100,11 @@ public:
     hints.ai_protocol = protocol;
 
     int32_t rc;
-    if ((rc = ::getaddrinfo(this->iface_info().broadcast.data(), std::to_string(port).c_str(), &hints,
+    if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints,
                             &dgram_addrinfo)) != 0 ||
         dgram_addrinfo == nullptr) {
       throw std::runtime_error(fmt::format("Invalid address or port: \"{0}\",\"{1} (errno = {2}), ({3}), {4}:{5}\"",
-                                           this->iface_info().broadcast.data(), std::to_string(port), gai_strerror(rc),
+                                           this->iface().broadcast.data(), std::to_string(port), gai_strerror(rc),
                                            __func__, __FILE__, __LINE__));
     }
 
@@ -366,7 +366,6 @@ private:
   mutable std::atomic_bool listen_enabled_;
   mutable std::mutex mtx_;
   mutable std::atomic<state_t> state_;
-  struct addrinfo *target;
 
   const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_t *)> on_receive_;
   const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_t *)> on_send_;
@@ -383,7 +382,7 @@ private:
       hints.ai_family = family;
       hints.ai_socktype = socktype;
       hints.ai_protocol = protocol;
-      addr_str = this->iface_info().host_addr.data();
+      addr_str = this->iface().host_addr.data();
 
       if ((rc = ::getaddrinfo(addr_str, std::to_string(port).c_str(), &hints, &addr_info)) != 0 ||
           addr_info == nullptr) {
@@ -393,7 +392,7 @@ private:
       }
 
       if constexpr (is_ipv6)
-        reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface_info().scopeid;
+        reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
     }
 
     open_();
@@ -427,16 +426,16 @@ private:
       hints.ai_socktype = socktype;
       hints.ai_protocol = protocol;
 
-      if ((rc = ::getaddrinfo(this->iface_info().broadcast.data(), std::to_string(port).c_str(), &hints, &addr_info)) !=
+      if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints, &addr_info)) !=
               0 ||
           addr_info == nullptr) {
         throw std::runtime_error(fmt::format("Invalid address or port: \"{0}\",\"{1} (errno : {2}), ({3}), {4}:{5}\"",
-                                             this->iface_info().broadcast.data(), std::to_string(port),
+                                             this->iface().broadcast.data(), std::to_string(port),
                                              gai_strerror(rc), __func__, __FILE__, __LINE__));
       }
 
       if constexpr (is_ipv6)
-        reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface_info().scopeid;
+        reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
     }
 
     open_();
@@ -486,7 +485,7 @@ private:
     }
 
     if constexpr (is_ipv6)
-      reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface_info().scopeid;
+      reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
 
     open_();
 

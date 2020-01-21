@@ -21,23 +21,23 @@ public:
 
   template <udp_sock_secure_t sc = secure_socket_class>
   explicit domain_udp_socket_secure_impl(
-      const std::string &iface, const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
+      const std::string &path, const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
       typename std::enable_if<sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES, udp_sock_secure_t>::type * = nullptr)
-      : base_t(iface), sl_(dgram_aes_key) {}
+      : base_t(path), sl_(dgram_aes_key) {}
 
   template <udp_sock_secure_t sc = secure_socket_class>
   explicit domain_udp_socket_secure_impl(
-      const std::string &iface, const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
+      const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
       typename std::enable_if<sc == udp_sock_secure_t::CLIENT_UNICAST_SECURE_AES, udp_sock_secure_t>::type * = nullptr)
-      : base_t(iface), sl_(dgram_aes_key) {}
+      : base_t(), sl_(dgram_aes_key) {}
 
   virtual ~domain_udp_socket_secure_impl() = default;
 
   void stop_threads() const { return const_cast<const typename base_t::base_t *>(this)->stop_tp(); }
 
   template <udp_sock_secure_t sc = secure_socket_class, typename RetType = void>
-  typename std::enable_if<sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES, RetType>::type setup(uint16_t port) {
-    static_cast<const base_t *>(this)->setup(port);
+  typename std::enable_if<sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES, RetType>::type setup() {
+    static_cast<base_t *>(this)->setup();
   }
 
   const auto &on_receive() const { return static_cast<const base_t *>(this)->on_receive(); }
@@ -50,24 +50,23 @@ public:
 
   template <typename base_t::send_behavior_t sb = base_t::send_behavior_t::HOOK_OFF,
             udp_sock_secure_t sc = secure_socket_class,
-            typename RetType =
-                std::conditional_t<sb == base_t::send_behavior_t::HOOK_ON, int32_t,
-                                   std::conditional_t<sb == base_t::send_behavior_t::HOOK_OFF,
-                                                      std::pair<int32_t, typename base_t::sockaddr_inet_t>, void>>>
+            typename RetType = std::conditional_t<sb == base_t::send_behavior_t::HOOK_ON, int32_t,
+                                                  std::conditional_t<sb == base_t::send_behavior_t::HOOK_OFF,
+                                                                     std::pair<int32_t, struct sockaddr_un>, void>>>
   typename std::enable_if<sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES ||
                               sc == udp_sock_secure_t::CLIENT_UNICAST_SECURE_AES,
                           RetType>::type
-  send(const std::string &addr, uint16_t port, const void *const msg, size_t size) {
+  send(const std::string &path, const void *const msg, size_t size) {
     auto [enc_msg, cipher_size] = sl_.encrypt(msg, size);
     if constexpr (sb == base_t::send_behavior_t::HOOK_ON) {
 
-      int32_t snd_size = static_cast<const base_t *>(this)->template send<base_t::send_behavior_t::HOOK_ON>(
-          addr, port, enc_msg.get(), cipher_size);
+      int32_t snd_size = static_cast<base_t *>(this)->template send<base_t::send_behavior_t::HOOK_ON>(
+          path, enc_msg.get(), cipher_size);
       return snd_size;
     } else if constexpr (sb == base_t::send_behavior_t::HOOK_OFF) {
 
-      auto [snd_size, to] = static_cast<const base_t *>(this)->template send<base_t::send_behavior_t::HOOK_OFF>(
-          addr, port, enc_msg.get(), cipher_size);
+      auto [snd_size, to] = static_cast<base_t *>(this)->template send<base_t::send_behavior_t::HOOK_OFF>(
+          path, enc_msg.get(), cipher_size);
 
       void *data = std::calloc(size, sizeof(char));
       std::memcpy(data, msg, size);
@@ -83,9 +82,8 @@ public:
   template <typename base_t::recv_behavior_t rb = base_t::recv_behavior_t::HOOK,
             typename RetType = std::conditional_t<
                 rb == base_t::recv_behavior_t::HOOK, int32_t,
-                std::conditional_t<
-                    rb == base_t::recv_behavior_t::RET || rb == base_t::recv_behavior_t::HOOK_RET,
-                    std::vector<std::tuple<int32_t, std::shared_ptr<void>, typename base_t::sockaddr_inet_t>>, void>>>
+                std::conditional_t<rb == base_t::recv_behavior_t::RET || rb == base_t::recv_behavior_t::HOOK_RET,
+                                   std::vector<std::tuple<int32_t, std::shared_ptr<void>, struct sockaddr_un>>, void>>>
   RetType recv() {
     int32_t recvd_size;
     auto res = static_cast<const base_t *>(this)->template recv<base_t::recv_behavior_t::RET>();

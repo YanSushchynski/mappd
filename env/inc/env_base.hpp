@@ -10,12 +10,12 @@
 struct env_base_t {
   explicit env_base_t(const std::string &name) : name_(name) {
     info_.set_env_name(name_);
-	
+
     info_.set_env_headers_path("./headers");
     info_.set_env_mountpoint("./mountpoint");
     info_.set_env_components_path("./components");
 
-    info_.set_env_network_ifname("enp1s0");
+    info_.set_env_network_ifname("virbr0");
 
     info_.set_env_ipv4_multicast_group_addr("224.0.0.1");
     info_.set_env_ipv4_broadcast_port(4000);
@@ -33,10 +33,11 @@ struct env_base_t {
     info_.set_env_broadcast_interval_ms(100u);
     info_.set_env_pid(getpid());
 
-	const char *ca_files_path = std::getenv("CA_FILES");
-	if(!ca_files_path) throw std::runtime_error(fmt::format("Env initialization error, set CA_FILES env var first"));
+    const char *ca_files_path = std::getenv("CA_FILES");
+    if (!ca_files_path)
+      throw std::runtime_error(fmt::format("Env initialization error, set CA_FILES env var first"));
     std::string ca_files_path_str = ca_files_path;
-	
+
     if (!ca_files_path_str.empty() && ca_files_path[ca_files_path_str.length() - 1u] == '/')
       ca_files_path_str += "/";
 
@@ -72,7 +73,7 @@ private:
   mutable std::mutex access_mtx_;
   env_config_t info_;
   const std::string name_;
-  
+
   const env_config_header_t get_info_header_(const env_config_t &info) const {
     env_config_header_t header;
     header.set_env_name(info.env_name());

@@ -7,6 +7,7 @@ message env_config_header_t {
   required int32 env_pid = 4 [default = 0];
   required bytes env_host_name = 5 [default = ""];
   required bytes env_invite = 6 [default = ""];
+  required bytes domain_stream_socket_path = 7 [default = ""];
 };
 
 message env_config_t {
@@ -29,13 +30,16 @@ message env_config_t {
   required bool env_ipv4_enabled = 14 [default = true];
   required bool env_ipv6_enabled = 15 [default = false];
 
-  required int32 env_max_buffsize = 16 [default = 0];
-  required uint32 env_broadcast_interval_ms = 17 [default = 1000];
-  required int32 env_pid = 18 [default = -1];
-  required bytes env_host_name = 19 [default = ""];
+  required bytes domain_stream_socket_path = 16 [default = ""];
+  required bytes domain_udp_socket_path = 17 [default = ""];	
 
-  required bytes env_ca_cert_file = 20 [default = ""];
-  required bytes env_ca_priv_key_file = 21 [default = ""];
-  required bytes env_cert_info = 22 [default = ""];
-  required uint64 env_cert_exp_time = 23 [default = 0];
+  required int32 env_max_buffsize = 18 [default = 0];
+  required uint32 env_broadcast_interval_ms = 19 [default = 1000];
+  required int32 env_pid = 20 [default = -1];
+  required bytes env_host_name = 21 [default = ""];
+
+  required bytes env_ca_cert_file = 22 [default = ""];
+  required bytes env_ca_priv_key_file = 23 [default = ""];
+  required bytes env_cert_info = 24 [default = ""];
+  required uint64 env_cert_exp_time = 25 [default = 0];
 };

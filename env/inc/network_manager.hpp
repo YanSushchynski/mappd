@@ -43,8 +43,8 @@ public:
     ERR_load_BIO_strings();
 
     uint16_t port = this->env_()->info().env_ipv4_stream_port();
-    host_hash_ = sha256::compute(reinterpret_cast<const uint8_t *>(ipv4_stream_srv.iface_info().host_addr.data()),
-                                 ipv4_stream_srv.iface_info().host_addr.size()) ^
+    host_hash_ = sha256::compute(reinterpret_cast<const uint8_t *>(ipv4_stream_srv.iface().host_addr.data()),
+                                 ipv4_stream_srv.iface().host_addr.size()) ^
                  sha256::compute(reinterpret_cast<const uint8_t *>(&port), sizeof(port));
   }
 
@@ -221,7 +221,7 @@ private:
   int32_t handle_probe_(const std::string &peer_addr, const sha256::sha256_hash_type &peer_hash,
                         const env_config_header_t &header) const {
     int32_t rc;
-    if (peer_addr != ipv4_stream_srv.iface_info().host_addr.data()) {
+    if (peer_addr != ipv4_stream_srv.iface().host_addr.data()) {
       int32_t pid = header.env_pid();
 
       typename decltype(peers_)::iterator it;

@@ -1,14 +1,9 @@
-/*clang++ -g -std=gnu++17 -o test.elf ./test.cpp ../utils/env/src/env_utils.cpp ../utils/fmt/src/*.cc ../build/*.cc -I
- * ../env/inc/ -I ../env/traits/inc/ -I ../utils/array/inc/ -I ../utils/tuple/inc/ -I ../utils/function/inc/ -I
- * ../utils/type/inc/ -I ../utils/hash/inc/ -I ../utils/string/inc/ -I ../utils/env/inc/ -I ../utils/fmt/include/ -I
- * ../utils/jit/inc/ -ldl -lconfig++*/
-
-#include "gtest/gtest.h"
 #include "client_port.hpp"
 #include "env_static.hpp"
 #include "receiver_port.hpp"
 #include "sender_port.hpp"
 #include "server_port.hpp"
+#include "gtest/gtest.h"
 
 void foo0(int argc, char *argv[], const struct env_base_t *const env_) { std::printf("Foo0\r\n"); }
 void foo1(int argc, char *argv[], const struct env_base_t *const env_) { std::printf("Foo1\r\n"); }
@@ -248,6 +243,6 @@ TEST(EnvTesting, SimpleTestCase) {
   c(0u, nullptr, "sig0");
   c(0u, nullptr, "sig1");
   c(0u, nullptr, "sig2");
-  
+
   env_local.network_manager().run();
 }

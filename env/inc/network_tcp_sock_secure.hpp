@@ -203,7 +203,7 @@ public:
   }
 
   void reset() { static_cast<base_t *>(this)->reset(); }
-  const auto &iface_info() const { return static_cast<const base_t *>(this)->iface_info(); }
+  const auto &iface() const { return static_cast<const base_t *>(this)->iface(); }
 
 private:
   mutable secure_layer_t<(is_secure_tcp_aes_type(secure_socket_class))
