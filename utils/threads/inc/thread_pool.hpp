@@ -39,8 +39,14 @@ public:
                 this->tasks_base_t::pop();
 
                 static_cast<void>(std::async(std::launch::deferred, [this]() -> void {
-                  this->workers_base_t::back().join();
-                  this->workers_base_t::pop_back();
+                  if (this->workers_base_t::back().joinable()) {
+                    this->workers_base_t::back().join();
+                  }
+
+                  {
+                    std::unique_lock<std::mutex> lock(mtx_);
+                    this->workers_base_t::pop_back();
+                  }
                 }));
               }
             }
