@@ -33,11 +33,7 @@ public:
 
             static_cast<void>(std::async(std::launch::async, [this]() -> void {
               this->workers_base_t::back().join();
-
-              {
-                std::unique_lock<std::mutex> lock(mtx_);
-                this->workers_base_t::pop_back();
-              }
+              this->workers_base_t::pop_back();
             }));
           }
         })) {}
