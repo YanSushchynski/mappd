@@ -36,7 +36,7 @@ public:
               while (!this->tasks_base_t::empty()) {
 
                 this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
-                // this->tasks_base_t::pop();
+                this->tasks_base_t::pop();
 
                 static_cast<void>(std::async(std::launch::deferred, [this]() -> void {
                   if (this->workers_base_t::back().joinable()) {
