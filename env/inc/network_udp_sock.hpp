@@ -74,7 +74,7 @@ public:
   const auto &on_receive() const { return on_receive_; }
   const auto &on_send() const { return on_send_; }
 
-  void stop_threads() const { return static_cast<const base_t *>(this)->stop_tp(); }
+  void stop_threads() const { return this->base_t::stop_tp(); }
   template <udp_sock_t sc = socket_class, typename RetType = bool>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                               sc == udp_sock_t::SERVER_MULTICAST,
@@ -100,8 +100,8 @@ public:
     hints.ai_protocol = protocol;
 
     int32_t rc;
-    if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints,
-                            &dgram_addrinfo)) != 0 ||
+    if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints, &dgram_addrinfo)) !=
+            0 ||
         dgram_addrinfo == nullptr) {
       throw std::runtime_error(fmt::format("Invalid address or port: \"{0}\",\"{1} (errno = {2}), ({3}), {4}:{5}\"",
                                            this->iface().broadcast.data(), std::to_string(port), gai_strerror(rc),
@@ -426,12 +426,11 @@ private:
       hints.ai_socktype = socktype;
       hints.ai_protocol = protocol;
 
-      if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints, &addr_info)) !=
-              0 ||
+      if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints, &addr_info)) != 0 ||
           addr_info == nullptr) {
         throw std::runtime_error(fmt::format("Invalid address or port: \"{0}\",\"{1} (errno : {2}), ({3}), {4}:{5}\"",
-                                             this->iface().broadcast.data(), std::to_string(port),
-                                             gai_strerror(rc), __func__, __FILE__, __LINE__));
+                                             this->iface().broadcast.data(), std::to_string(port), gai_strerror(rc),
+                                             __func__, __FILE__, __LINE__));
       }
 
       if constexpr (is_ipv6)

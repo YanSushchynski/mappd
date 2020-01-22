@@ -58,7 +58,7 @@ struct component_static_t<port_list_static_t<Ports...>, runtime_list_static_t<ru
   }
 
   void setenv(struct env_base_t *const p_env) const {
-    static_cast<const base_t *>(this)->setenv(p_env);
+    this->base_t::setenv(p_env);
     for (unsigned int i = 0; i < port_list_size; i++)
       std::visit_at(
           i, [&p_env](const auto &port) -> void { port.setenv(p_env); }, port_list_);

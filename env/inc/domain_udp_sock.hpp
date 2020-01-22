@@ -49,7 +49,7 @@ public:
   const auto &on_receive() const { return on_receive_; }
   const auto &on_send() const { return on_send_; }
 
-  void stop_threads() const { return static_cast<const base_t *>(this)->stop_tp(); }
+  void stop_threads() const { return this->base_t::stop_tp(); }
   template <udp_sock_t sc = socket_class, typename RetType = bool>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST, RetType>::type running() const {
     return state_ == state_t::RUNNING;

@@ -27,28 +27,29 @@ public:
 
             if (stop_ && this->tasks_base_t::empty()) {
 
-			  /* Thread pool stopped, terminate observer thread */
+              /* Thread pool stopped, terminate observer thread */
               return;
-            } else if (!this->tasks_base_t::empty()){
+            } else if (!this->tasks_base_t::empty()) {
 
               /* If task queue isn't empty */
-			  /* Run left tasks */
+              /* Run left tasks */
               while (!this->tasks_base_t::empty()) {
 
-                this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
+                this->workers_base_t::emplace_back([this, task = std::move(this->tasks_base_t::front())]() -> void {
+                  task();
+                  // if (this->workers_base_t::back().joinable()) {
+                    // this->workers_base_t::back().join();
+                  // }
+
+                  this->workers_base_t::pop_back();
+                }).detach();
+
                 this->tasks_base_t::pop();
-
-                static_cast<void>(std::async(std::launch::deferred, [this]() -> void {
-                  if (this->workers_base_t::back().joinable()) {
-                    this->workers_base_t::back().join();
-                  }
-
-                  {
-                    std::unique_lock<std::mutex> lock(mtx_);
-                    this->workers_base_t::pop_back();
-                  }
-                }));
               }
+
+              /* Terminate if stopped */
+              if (stop_)
+                return;
             }
           }
         })) {}

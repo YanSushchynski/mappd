@@ -28,7 +28,7 @@ struct composition_static_t<PortList<Ports...>, ComponentList<Components...>> : 
   virtual ~composition_static_t() = default;
 
   void setenv(struct env_base_t *const p_env) const {
-    static_cast<const base_t *>(this)->setenv(p_env);
+    this->base_t::setenv(p_env);
     component_list_.setenv(p_env);
     port_list_.setenv(p_env);
   }
@@ -39,7 +39,7 @@ struct composition_static_t<PortList<Ports...>, ComponentList<Components...>> : 
         sha256::compute(reinterpret_cast<const uint8_t *>(typestr<this_t>.data()), typestr<this_t>.length());
 
     this->info().set_composition_type_hash(type_hash.data(), type_hash.size());
-    static_cast<const base_t *>(this)->update_info_base();
+    this->base_t::update_info_base();
     for (unsigned int i = 0; i < port_list_size; i++)
       std::visit_at(
           i,
@@ -120,7 +120,7 @@ struct composition_static_t<PortList<Ports...>, ComponentList<Components...>, Co
   }
 
   void setenv(struct env_base_t *const p_env) const {
-    static_cast<const base_t *>(this)->setenv(p_env);
+    this->base_t::setenv(p_env);
     component_list_.setenv(p_env);
     port_list_.setenv(p_env);
   }

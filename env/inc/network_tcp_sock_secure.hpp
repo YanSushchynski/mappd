@@ -40,15 +40,15 @@ public:
 
   virtual ~network_tcp_socket_secure_impl() = default;
 
-  const auto &on_connect() const { return static_cast<const base_t *>(this)->on_connect(); }
-  const auto &on_disconnect() const { return static_cast<const base_t *>(this)->on_disconnect(); }
-  const auto &on_receive() const { return static_cast<const base_t *>(this)->on_receive(); }
-  const auto &on_send() const { return static_cast<const base_t *>(this)->on_send(); }
+  const auto &on_connect() const { return this->base_t::on_connect(); }
+  const auto &on_disconnect() const { return this->base_t::on_disconnect(); }
+  const auto &on_receive() const { return this->base_t::on_receive(); }
+  const auto &on_send() const { return this->base_t::on_send(); }
 
-  void stop_threads() { return static_cast<typename base_t::base_t *>(this)->stop_tp(); }
+  void stop_threads() { return this->base_t::stop_tp(); }
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type setup(uint16_t port) {
-    return static_cast<base_t *>(this)->setup(port);
+    return this->base_t::setup(port);
   }
 
   template <typename base_t::connect_behavior_t cb = base_t::connect_behavior_t::HOOK_ON,
@@ -58,7 +58,7 @@ public:
     int32_t rc;
 
     /* Connect underlaying client socket */
-    if ((rc = static_cast<base_t *>(this)->template connect<base_t::connect_behavior_t::HOOK_OFF>(addr, port))) {
+    if ((rc = this->base_t::template connect<base_t::connect_behavior_t::HOOK_OFF>(addr, port))) {
       return rc;
     }
 
@@ -89,7 +89,7 @@ public:
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = void>
   typename std::enable_if<sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type disconnect() {
     /* Disconnect from pure socket */
-    static_cast<base_t *>(this)->disconnect();
+    this->base_t::disconnect();
 
     /* Clear TLS credentials */
     sl_.clear(this->fd__());
@@ -99,7 +99,7 @@ public:
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
   disconnect(const std::string &addr, uint16_t srv) {
     /* Disconnect from pure socket */
-    static_cast<base_t *>(this)->disconnect(addr, srv);
+    this->base_t::disconnect(addr, srv);
 
     /* Clear TLS credentials */
     sl_.clear_peer_creds(addr, srv);
@@ -137,12 +137,12 @@ public:
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type running() const {
-    return static_cast<const base_t *>(this)->running();
+    return this->base_t::running();
   }
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type connected() const {
-    return static_cast<const base_t *>(this)->connected();
+    return this->base_t::connected();
   }
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
@@ -168,12 +168,10 @@ public:
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
   is_peer_connected(const sha256::sha256_hash_type &hash, uint16_t srv) const {
-    return static_cast<const base_t *>(this)->is_peer_connected(hash, srv);
+    return this->base_t::is_peer_connected(hash, srv);
   }
 
-  int32_t peer_fd(const std::string &addr, uint16_t srv) const {
-    return static_cast<const base_t *>(this)->peer_fd(addr, srv, nullptr);
-  }
+  int32_t peer_fd(const std::string &addr, uint16_t srv) const { return this->base_t::peer_fd(addr, srv, nullptr); }
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = void>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
@@ -200,8 +198,8 @@ public:
       this->listen_thread__().join();
   }
 
-  void reset() { static_cast<base_t *>(this)->reset(); }
-  const auto &iface() const { return static_cast<const base_t *>(this)->iface(); }
+  void reset() { this->base_t::reset(); }
+  const auto &iface() const { return this->base_t::iface(); }
 
 private:
   mutable secure_layer_t<(is_secure_tcp_aes_type(secure_socket_class))
@@ -217,7 +215,7 @@ private:
                 std::conditional_t<sb == base_t::send_behavior_t::HOOK_OFF,
                                    std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>>, void>>>
   RetType send_(const void *const msg, size_t size) const {
-    return static_cast<const base_t *>(this)->template send<sb>(
+    return this->base_t::template send<sb>(
         msg, size, [this](int32_t fd, const void *buffer, size_t size, int32_t flags) -> int32_t {
           static_cast<void>(flags);
           return sl_.send(fd, buffer, size);
@@ -231,11 +229,10 @@ private:
                 std::conditional_t<rb == base_t::recv_behavior_t::RET || rb == base_t::recv_behavior_t::HOOK_RET,
                                    std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>>, void>>>
   typename std::enable_if<sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type recv_() const {
-    return static_cast<const base_t *>(this)->template recv<rb>(
-        [this](int32_t fd, void *buffer, size_t size, int32_t flags) -> int32_t {
-          static_cast<void>(flags);
-          return sl_.recv(fd, buffer, size);
-        });
+    return this->base_t::template recv<rb>([this](int32_t fd, void *buffer, size_t size, int32_t flags) -> int32_t {
+      static_cast<void>(flags);
+      return sl_.recv(fd, buffer, size);
+    });
   }
 
   template <typename base_t::recv_behavior_t rb = base_t::recv_behavior_t::HOOK,

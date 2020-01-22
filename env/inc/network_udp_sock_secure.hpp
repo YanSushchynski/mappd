@@ -44,7 +44,7 @@ public:
   template <udp_sock_secure_t sc = secure_socket_class, typename RetType = void>
   typename std::enable_if<sc == udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES, RetType>::type
   setup(const std::string &mcast_gr_addr, uint16_t port) {
-    static_cast<base_t *>(this)->setup(mcast_gr_addr, port);
+    this->base_t::setup(mcast_gr_addr, port);
   }
 
   template <udp_sock_secure_t sc = secure_socket_class, typename RetType = void>
@@ -52,11 +52,11 @@ public:
                               (!is_ipv6 && sc == udp_sock_secure_t::SERVER_BROADCAST_SECURE_AES),
                           RetType>::type
   setup(uint16_t port) {
-    static_cast<const base_t *>(this)->setup(port);
+    this->base_t::setup(port);
   }
 
-  const auto &on_receive() const { return static_cast<const base_t *>(this)->on_receive(); }
-  const auto &on_send() const { return static_cast<const base_t *>(this)->on_send(); }
+  const auto &on_receive() const { return this->base_t::on_receive(); }
+  const auto &on_send() const { return this->base_t::on_send(); }
 
   template <udp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES ||
@@ -64,7 +64,7 @@ public:
                               sc == udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES,
                           RetType>::type
   running() const {
-    return static_cast<const base_t *>(this)->running();
+    return this->base_t::running();
   }
 
   template <typename base_t::send_behavior_t sb = base_t::send_behavior_t::HOOK_OFF,
@@ -80,13 +80,13 @@ public:
     auto [enc_msg, cipher_size] = sl_.encrypt(msg, size);
     if constexpr (sb == base_t::send_behavior_t::HOOK_ON) {
 
-      int32_t snd_size = static_cast<const base_t *>(this)->template send<base_t::send_behavior_t::HOOK_ON>(
-          port, enc_msg.get(), cipher_size);
+      int32_t snd_size =
+          this->base_t::template send<base_t::send_behavior_t::HOOK_ON>(port, enc_msg.get(), cipher_size);
       return snd_size;
     } else if constexpr (sb == base_t::send_behavior_t::HOOK_OFF) {
 
-      auto [snd_size, to] = static_cast<const base_t *>(this)->template send<base_t::send_behavior_t::HOOK_OFF>(
-          port, enc_msg.get(), cipher_size);
+      auto [snd_size, to] =
+          this->base_t::template send<base_t::send_behavior_t::HOOK_OFF>(port, enc_msg.get(), cipher_size);
 
       void *data = std::calloc(size, sizeof(char));
       std::memcpy(data, msg, size);
@@ -113,13 +113,13 @@ public:
     auto [enc_msg, cipher_size] = sl_.encrypt(msg, size);
     if constexpr (sb == base_t::send_behavior_t::HOOK_ON) {
 
-      int32_t snd_size = static_cast<const base_t *>(this)->template send<base_t::send_behavior_t::HOOK_ON>(
-          addr, port, enc_msg.get(), cipher_size);
+      int32_t snd_size =
+          this->base_t::template send<base_t::send_behavior_t::HOOK_ON>(addr, port, enc_msg.get(), cipher_size);
       return snd_size;
     } else if constexpr (sb == base_t::send_behavior_t::HOOK_OFF) {
 
-      auto [snd_size, to] = static_cast<const base_t *>(this)->template send<base_t::send_behavior_t::HOOK_OFF>(
-          addr, port, enc_msg.get(), cipher_size);
+      auto [snd_size, to] =
+          this->base_t::template send<base_t::send_behavior_t::HOOK_OFF>(addr, port, enc_msg.get(), cipher_size);
 
       void *data = std::calloc(size, sizeof(char));
       std::memcpy(data, msg, size);
@@ -140,7 +140,7 @@ public:
                     std::vector<std::tuple<int32_t, std::shared_ptr<void>, typename base_t::sockaddr_inet_t>>, void>>>
   RetType recv() {
     int32_t recvd_size;
-    auto res = static_cast<const base_t *>(this)->template recv<base_t::recv_behavior_t::RET>();
+    auto res = this->base_t::template recv<base_t::recv_behavior_t::RET>();
     for (auto &transaction : res) {
       auto [dec_data, plain_size] = sl_.decrypt(std::get<1u>(transaction).get(), std::get<0u>(transaction));
 
@@ -197,10 +197,10 @@ public:
                               (!is_ipv6 && sc == udp_sock_secure_t::SERVER_BROADCAST_SECURE_AES),
                           RetType>::type
   stop() {
-    return static_cast<base_t *>(this)->stop();
+    return this->base_t::stop();
   }
 
-  void reset() { static_cast<base_t *>(this)->reset(); }
+  void reset() { this->base_t::reset(); }
 
 private:
   const secure_layer_t<dgram_aes_key_size_bits, udp_sock_secure_t, secure_socket_class> sl_;
