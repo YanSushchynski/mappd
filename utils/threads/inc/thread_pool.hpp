@@ -46,7 +46,7 @@ public:
                       cv_.notify_one();
                     });
 
-                std::shared_ptr<std::thread> p(&this->workers_base_t::back());
+                std::shared_ptr<std::thread> p(&this->workers_base_t::back(), [](auto &thread) -> void {});
                 thr_ptr.swap(p);
                 this->tasks_base_t::pop();
               } break;
