@@ -32,6 +32,7 @@ public:
               return;
             } else if (notified_) {
 
+              std::unique_lock<std::mutex> lock(mtx_);
               switch (event_) {
 
               case event_t::ADDED: {
