@@ -22,14 +22,14 @@ public:
           while (true) {
             {
               std::unique_lock<std::mutex> lock(mtx_);
-              cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
+              cv_.wait(lock, [this]() -> bool { return stop_ || notified_ || !this->tasks_base_t::empty(); });
             }
 
             if (stop_ && this->tasks_base_t::empty()) {
 
               /* Thread pool stopped, terminate observer thread */
               return;
-            } else if (!this->tasks_base_t::empty()) {
+            } else if (notified_ || !this->tasks_base_t::empty()) {
 
               /* If task queue isn't empty */
               /* Run left tasks */
@@ -50,9 +50,7 @@ public:
                 }));
               }
 
-              /* Terminate if stopped */
-              if (stop_)
-                return;
+			  notified_ = false;
             }
           }
         })) {}
@@ -85,6 +83,7 @@ public:
       this->tasks_base_t::emplace([task]() -> void { (*task)(); });
     }
 
+	notified_ = true;
     cv_.notify_one();
     return std::move(res);
   }
@@ -105,6 +104,7 @@ public:
       this->tasks_base_t::emplace([task]() -> void { (*task)(); });
     }
 
+	notified_ = true;
     cv_.notify_one();
     return std::move(res);
   }
@@ -112,7 +112,7 @@ public:
 private:
   mutable std::mutex mtx_;
   mutable std::condition_variable cv_;
-  mutable std::atomic<bool> stop_;
+  mutable std::atomic<bool> stop_, notified_;
 };
 
 #endif /* THREAD_POOL_HPP */
