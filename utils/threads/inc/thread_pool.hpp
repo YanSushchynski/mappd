@@ -20,8 +20,10 @@ public:
   explicit thread_pool()
       : stop_(false), observer_base_t(std::thread([this]() -> auto {
           while (true) {
-            std::unique_lock<std::mutex> lock(mtx_);
-            cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
+            {
+              std::unique_lock<std::mutex> lock(mtx_);
+              cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
+            }
 
             if (stop_ && this->tasks_base_t::empty())
               return;
