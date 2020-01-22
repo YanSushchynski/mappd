@@ -15,32 +15,30 @@ struct thread_pool : std::queue<std::function<void(void)>>, std::vector<std::thr
   using tasks_base_t = std::queue<std::function<void(void)>>;
   using workers_base_t = std::vector<std::thread>;
   using observer_base_t = std::thread;
-  
+
 public:
   explicit thread_pool()
-      : stop_(false), observer_base_t([this]() -> std::thread {
-          return std::thread([this]() -> auto {
-            while (true) {
-              std::unique_lock<std::mutex> lock(mtx_);
-              cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
+      : stop_(false), observer_base_t(std::thread([this]() -> auto {
+          while (true) {
+            std::unique_lock<std::mutex> lock(mtx_);
+            cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
 
-              if (stop_ && this->tasks_base_t::empty())
-                return;
+            if (stop_ && this->tasks_base_t::empty())
+              return;
 
-              this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
-              this->tasks_base_t::pop();
+            this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
+            this->tasks_base_t::pop();
 
-              static_cast<void>(std::async(std::launch::async, [this]() -> void {
-                this->workers_base_t::back().join();
+            static_cast<void>(std::async(std::launch::async, [this]() -> void {
+              this->workers_base_t::back().join();
 
-                {
-                  std::unique_lock<std::mutex> lock(mtx_);
-                  this->workers_base_t::pop_back();
-                }
-              }));
-            }
-          });
-        }) {}
+              {
+                std::unique_lock<std::mutex> lock(mtx_);
+                this->workers_base_t::pop_back();
+              }
+            }));
+          }
+        })) {}
 
   virtual ~thread_pool() {
     if (!stop_)
