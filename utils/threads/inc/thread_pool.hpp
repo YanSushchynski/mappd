@@ -50,8 +50,8 @@ public:
               } break;
 
               case event_t::PERFORMED: {
-                if (event_related_thread_.load()->joinable())
-                  event_related_thread_.load()->join();
+                if (event_related_thread_->joinable())
+                  event_related_thread_->join();
 
                 for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                   if (event_related_thread_ == it.base()) {
