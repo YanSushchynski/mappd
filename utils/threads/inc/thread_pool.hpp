@@ -35,19 +35,23 @@ public:
 			  /* Run left tasks */
               while (!this->tasks_base_t::empty()) {
 
-                this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
+                std::shared_ptr<std::thread> thr_ptr = std::shared_ptr<std::thread>(
+                    new std::thread([this, &thr_ptr, task = std::move(this->tasks_base_t::front())]() -> void {}),
+                    [](auto &data) -> void { data->join(); });
+
+                // this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
                 this->tasks_base_t::pop();
 
-                static_cast<void>(std::async([this]() -> void {
-                  if (this->workers_base_t::back().joinable()) {
-                    this->workers_base_t::back().join();
-                  }
+                // static_cast<void>(std::async(std::launch::deferred, [this]() -> void {
+                  // if (this->workers_base_t::back().joinable()) {
+                    // this->workers_base_t::back().join();
+                  // }
 
-                  {
-                    std::unique_lock<std::mutex> lock(mtx_);
-                    this->workers_base_t::pop_back();
-                  }
-                }));
+                  // {
+                    // std::unique_lock<std::mutex> lock(mtx_);
+                    // this->workers_base_t::pop_back();
+                  // }
+                // }));
               }
 
 			  /* Terminate if stopped */
