@@ -29,6 +29,9 @@ struct env_base_t {
     info_.set_env_ipv4_enabled(true);
     info_.set_env_ipv6_enabled(true);
 
+    info_.set_domain_udp_socket_path("./udp_socket.socket");
+	info_.set_domain_stream_socket_path("./stream_socket.socket");
+	
     info_.set_env_max_buffsize(1024);
     info_.set_env_broadcast_interval_ms(100u);
     info_.set_env_pid(getpid());
@@ -83,6 +86,8 @@ private:
     header.set_env_host_name(info.env_host_name());
     header.set_env_invite(
         reinterpret_cast<const char *>(const_cast<const uint8_t *>(sha256::sha256_hash_type{0u}.data())));
+
+	header.set_domain_stream_socket_path(info.domain_stream_socket_path());
     return std::move(header);
   }
 };
