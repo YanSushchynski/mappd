@@ -42,7 +42,6 @@ public:
   static constexpr bool is_domain = family == AF_UNIX;
   static constexpr bool is_ipv6 = is_network && !is_domain && family == AF_INET6;
   static constexpr int32_t addrlen = this_t::is_ipv6 ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN;
-  static constexpr uint32_t num_threads = 2u;
 
   struct iface_netinfo_t {
     std::array<char, this_t::addrlen> host_addr{0};
@@ -54,15 +53,14 @@ public:
 
   template <bool network = is_network, bool domain = is_domain>
   explicit base_socket(const std::string &iface, typename std::enable_if<network && !domain, bool>::type * = nullptr)
-      : if_(iface), iface_path_info_(get_iface_info_(iface)), tp_(thread_pool<num_threads>()){};
+      : if_(iface), iface_path_info_(get_iface_info_(iface)), tp_(thread_pool{}){};
 
   template <bool network = is_network, bool domain = is_domain>
   explicit base_socket(const std::string &path, typename std::enable_if<!network && domain, bool>::type * = nullptr)
-      : if_(path), tp_(thread_pool<num_threads>()){};
+      : if_(path), tp_(thread_pool{}){};
 
   template <bool network = is_network, bool domain = is_domain>
-  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr)
-      : tp_(thread_pool<num_threads>()){};
+  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr) : tp_(thread_pool{}){};
 
   template <bool network = is_network, typename RetType = iface_netinfo_t>
   const typename std::enable_if<network, RetType>::type &iface() const {
@@ -83,7 +81,7 @@ public:
   static constexpr int32_t sock_socktype() { return socktype; }
   static constexpr int32_t sock_protocol() { return protocol; }
 
-  thread_pool<num_threads> &tp() { return tp_; }
+  thread_pool &tp() { return tp_; }
   void stop_tp() { return tp_.stop(); }
   virtual ~base_socket() { stop_tp(); };
 
@@ -98,7 +96,7 @@ private:
   std::conditional_t<is_network, const struct iface_netinfo_t,
                      std::conditional_t<is_domain, const std::string, uint8_t>>
       iface_path_info_;
-  thread_pool<num_threads> tp_;
+  thread_pool tp_;
 
   template <typename RetType = iface_netinfo_t>
   const typename std::enable_if<is_network, RetType>::type get_iface_info_(const std::string &ifname) {

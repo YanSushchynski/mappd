@@ -11,34 +11,32 @@
 #include <thread>
 #include <vector>
 
-template <uint32_t num_threads = 1u>
-struct thread_pool : std::queue<std::function<void(void)>>, std::vector<std::thread> {
+struct thread_pool : std::queue<std::function<void(void)>>, std::vector<std::thread>, std::thread {
   using tasks_base_t = std::queue<std::function<void(void)>>;
   using workers_base_t = std::vector<std::thread>;
-
+  using observer_base_t = std::thread;
+  
 public:
-  explicit thread_pool() : stop_(false) {
-    for (uint32_t i = 0; i < num_threads; i++) {
-      this->workers_base_t::emplace_back([this]() -> auto {
-        while (true) {
-          std::function<void(void)> task;
+  explicit thread_pool()
+      : stop_(false), observer_base_t([this]() -> std::thread {
+          return std::thread([this]() -> auto {
+            while (true) {
+              std::unique_lock<std::mutex> lock(mtx_);
+              cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
 
-          {
-            std::unique_lock<std::mutex> lock(mtx_);
-            cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
+              if (stop_ && this->tasks_base_t::empty())
+                return;
 
-            if (stop_ && this->tasks_base_t::empty())
-              return;
+              this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
+              this->tasks_base_t::pop();
 
-            task = std::move(this->tasks_base_t::front());
-            this->pop();
-          }
-
-          task();
-        }
-      });
-    }
-  }
+              static_cast<void>(std::async(std::launch::async, [this]() -> void {
+                this->workers_base_t::back().join();
+                this->workers_base_t::pop_back();
+              }));
+            }
+          });
+        }) {}
 
   virtual ~thread_pool() {
     if (!stop_)
@@ -46,15 +44,10 @@ public:
   }
 
   void stop() {
-    {
-      std::unique_lock<std::mutex> lock(mtx_);
-      stop_ = true;
-    }
-
-    cv_.notify_all();
-    for (std::thread &worker : *static_cast<workers_base_t *>(this)) {
-      worker.join();
-    }
+    std::unique_lock<std::mutex> lock(mtx_);
+    stop_ = true;
+    cv_.notify_one();
+    this->observer_base_t::join();
   }
 
   template <typename Function, typename... Args>
