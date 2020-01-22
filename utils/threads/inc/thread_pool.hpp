@@ -36,7 +36,8 @@ public:
               while (!this->tasks_base_t::empty()) {
 
                 std::shared_ptr<std::thread> thr_ptr = std::shared_ptr<std::thread>(
-                    new std::thread([this, &thr_ptr, task = std::move(this->tasks_base_t::front())]() -> void {}),
+                    new std::thread(
+                        [this, &thr_ptr, task = std::move(this->tasks_base_t::front())]() -> void { task(); }),
                     [](auto &data) -> void { data->join(); });
 
                 // this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
