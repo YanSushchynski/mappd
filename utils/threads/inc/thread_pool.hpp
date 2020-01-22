@@ -32,9 +32,7 @@ public:
               return;
             } else if (notified_) {
 
-              std::unique_lock<std::mutex> lock(mtx_);
               switch (event_) {
-
               case event_t::ADDED: {
                 std::shared_ptr<std::thread> thr_ptr(nullptr);
                 this->workers_base_t::emplace_back(
