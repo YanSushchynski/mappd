@@ -131,7 +131,7 @@ private:
   mutable std::condition_variable cv_;
   mutable std::atomic<bool> stop_, notified_;
   mutable std::atomic<event_t> event_;
-  mutable std::atomic<std::thread *> event_related_thread_;
+  mutable std::thread *event_related_thread_;
 };
 
 #endif /* THREAD_POOL_HPP */
