@@ -25,16 +25,25 @@ public:
               cv_.wait(lock, [this]() -> bool { return stop_ || !this->tasks_base_t::empty(); });
             }
 
-            if (stop_ && this->tasks_base_t::empty())
+            if (stop_ && this->tasks_base_t::empty()) {
+
+			  /* Thread pool stopped, terminate observer thread */
               return;
+            } else if (!this->tasks_base_t::empty()){
 
-            this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
-            this->tasks_base_t::pop();
+              /* If task queue isn't empty */
+			  /* Run left tasks */
+              while (!this->tasks_base_t::empty()) {
 
-            static_cast<void>(std::async(std::launch::deferred, [this]() -> void {
-              this->workers_base_t::back().join();
-              this->workers_base_t::pop_back();
-            }));
+                this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
+                this->tasks_base_t::pop();
+
+                static_cast<void>(std::async(std::launch::deferred, [this]() -> void {
+                  this->workers_base_t::back().join();
+                  this->workers_base_t::pop_back();
+                }));
+              }
+            }
           }
         })) {}
 
