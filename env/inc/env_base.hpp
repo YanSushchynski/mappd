@@ -15,7 +15,7 @@ struct env_base_t {
     info_.set_env_mountpoint("./mountpoint");
     info_.set_env_components_path("./components");
 
-    info_.set_env_network_ifname("virbr0");
+    info_.set_env_network_ifname("enp1s0");
 
     info_.set_env_ipv4_multicast_group_addr("224.0.0.1");
     info_.set_env_ipv4_broadcast_port(4000);
