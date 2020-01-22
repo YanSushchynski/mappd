@@ -31,10 +31,10 @@ public:
             this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
             this->tasks_base_t::pop();
 
-            static_cast<void>(std::async(std::launch::async, [this]() -> void {
+            std::thread([this]() -> void {
               this->workers_base_t::back().join();
               this->workers_base_t::pop_back();
-            }));
+            }).detach();
           }
         })) {}
 
