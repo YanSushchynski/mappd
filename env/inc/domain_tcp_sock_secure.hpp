@@ -61,7 +61,7 @@ public:
       return rc;
     }
 
-    this->state() = base_t::state_t::CONNECTING;
+    this->state__() = base_t::state_t::CONNECTING;
 
     /* Do TLS connection */
     if ((rc = sl_.connect(this->fd__()))) {
@@ -71,7 +71,7 @@ public:
         });
       }
 
-      this->state() = base_t::state_t::DISCONNECTED;
+      this->state__() = base_t::state_t::DISCONNECTED;
       return -1;
     } else {
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
@@ -80,7 +80,7 @@ public:
         });
       }
 
-      this->state() = base_t::state_t::CONNECTED;
+      this->state__() = base_t::state_t::CONNECTED;
       return 0;
     }
   }
@@ -146,10 +146,8 @@ public:
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type connecting() const {
-    return this->state() == base_t::state_t::CONNECTING;
+    return this->state__() == base_t::state_t::CONNECTING;
   }
-
-  std::atomic<typename base_t::state_t> &state() const { return this->state(); }
 
   template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
@@ -264,15 +262,15 @@ private:
     /* Underlaying peer handling */
     auto [peer, peer_fd] = this->template handle_incoming_peer__<base_t::connect_behavior_t::HOOK_OFF>();
 
-    this->state() = base_t::state_t::CONNECTING;
+    this->state__() = base_t::state_t::CONNECTING;
     if (peer_fd <= 0) {
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
 
-        this->state() = base_t::state_t::DISCONNECTED;
+        this->state__() = base_t::state_t::DISCONNECTED;
         return -1;
       } else if constexpr (cb == base_t::connect_behavior_t::HOOK_OFF) {
 
-        this->state() = base_t::state_t::DISCONNECTED;
+        this->state__() = base_t::state_t::DISCONNECTED;
         return {sockaddr_un(), -1};
       }
     }
@@ -286,22 +284,22 @@ private:
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
         this->tp().push(
             [this, peer = peer]() -> void { this->on_disconnect()(peer, static_cast<const base_t *>(this)); });
-        this->state() = base_t::state_t::DISCONNECTED;
+        this->state__() = base_t::state_t::DISCONNECTED;
         return -1;
       } else if constexpr (cb == base_t::connect_behavior_t::HOOK_OFF) {
 
-        this->state() = base_t::state_t::DISCONNECTED;
+        this->state__() = base_t::state_t::DISCONNECTED;
         return {sockaddr_un(), -1};
       }
     }
 
     if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
       this->tp().push([this, peer = peer]() -> void { this->on_connect()(peer, static_cast<const base_t *>(this)); });
-      this->state() = base_t::state_t::CONNECTED;
+      this->state__() = base_t::state_t::CONNECTED;
       return peer_fd;
     } else if constexpr (cb == base_t::connect_behavior_t::HOOK_OFF) {
 
-      this->state() = base_t::state_t::CONNECTED;
+      this->state__() = base_t::state_t::CONNECTED;
       return {std::move(peer), peer_fd};
     }
   }
@@ -316,7 +314,7 @@ private:
                                            __func__, __FILE__, __LINE__));
     }
 
-    this->state() = base_t::state_t::LISTENING;
+    this->state__() = base_t::state_t::LISTENING;
     while (this->listen_enabled__()) {
 
       int32_t num_ready;
@@ -340,7 +338,7 @@ private:
       }
     }
 
-    this->state() = base_t::state_t::STOPPED;
+    this->state__() = base_t::state_t::STOPPED;
   }
 };
 

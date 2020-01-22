@@ -46,7 +46,6 @@ public:
   const auto &on_disconnect() const { return on_disconnect_; }
   const auto &on_receive() const { return on_receive_; }
   const auto &on_send() const { return on_send_; }
-  std::atomic<state_t> &state() const { return state_; }
 
   void stop_threads() const { return static_cast<const base_t *>(this)->stop_tp(); }
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
@@ -153,7 +152,8 @@ protected:
 
   std::atomic_bool &listen_enabled__() const { return listen_enabled_; }
   std::thread &listen_thread__() const { return listen_thread_; }
-
+  std::atomic<state_t> &state__() const { return state_; }
+  
   template <recv_behavior_t rb = recv_behavior_t::HOOK,
             typename RecvFunction = int32_t (*)(int32_t, void *, size_t, int32_t), tcp_sock_t sc = socket_class,
             typename RetType = std::conditional_t<
@@ -215,7 +215,7 @@ private:
   mutable std::recursive_mutex listen_thread_lock_;
 
   mutable std::atomic_bool listen_enabled_;
-  mutable property_t<state_t> state_;
+  mutable std::atomic<state_t> state_;
 
   /* Hooks interface */
   const hook_t<void(struct sockaddr_un, std::shared_ptr<void>, size_t, const this_t *)> on_receive_;
