@@ -16,41 +16,57 @@ struct thread_pool : std::queue<std::function<void(void)>>, std::vector<std::thr
   using workers_base_t = std::vector<std::thread>;
   using observer_base_t = std::thread;
 
+  enum struct event_t : uint32_t { UNDEFINED = 0u, ADDED, PERFORMED };
+
 public:
   explicit thread_pool()
-      : stop_(false), observer_base_t(std::thread([this]() -> auto {
+      : stop_(false), notified_(false), event_(event_t::UNDEFINED), event_related_thread_(nullptr),
+        observer_base_t(std::thread([this]() -> auto {
           while (true) {
             {
               std::unique_lock<std::mutex> lock(mtx_);
-              cv_.wait(lock, [this]() -> bool { return stop_ || notified_ || !this->tasks_base_t::empty(); });
+              cv_.wait(lock, [this]() -> bool { return stop_ || notified_; });
             }
 
-            if (stop_ && this->tasks_base_t::empty()) {
-
-              /* Thread pool stopped, terminate observer thread */
+            if (stop_) {
               return;
-            } else if (notified_ || !this->tasks_base_t::empty()) {
+            } else if (notified_) {
 
-              /* If task queue isn't empty */
-              /* Run left tasks */
-              while (!this->tasks_base_t::empty()) {
+              switch (event_) {
 
-                this->workers_base_t::emplace_back(std::move(this->tasks_base_t::front()));
+              case event_t::ADDED: {
+                std::shared_ptr<std::thread> thr_ptr(nullptr);
+                this->workers_base_t::emplace_back(
+                    [this, &thr_ptr, task = std::move(this->tasks_base_t::front())]() -> void {
+                      task();
+                      event_ = event_t::PERFORMED;
+                      event_related_thread_ = thr_ptr.get();
+                      notified_ = true;
+                      cv_.notify_one();
+                    });
+
+                std::shared_ptr<std::thread> p(&this->workers_base_t::back());
+                thr_ptr.swap(p);
                 this->tasks_base_t::pop();
+              } break;
 
-                static_cast<void>(std::async(std::launch::deferred, [this]() -> void {
-                  if (this->workers_base_t::back().joinable()) {
-                    this->workers_base_t::back().join();
-                  }
+              case event_t::PERFORMED: {
+                if (event_related_thread_.load()->joinable())
+                  event_related_thread_.load()->join();
 
-                  {
-                    std::unique_lock<std::mutex> lock(mtx_);
-                    this->workers_base_t::pop_back();
+                for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
+                  if (event_related_thread_ == it.base()) {
+                    this->workers_base_t::erase(it);
                   }
-                }));
+                }
+              } break;
+
+              case event_t::UNDEFINED:
+              default:
+                break;
               }
 
-			  notified_ = false;
+              notified_ = false;
             }
           }
         })) {}
@@ -83,7 +99,8 @@ public:
       this->tasks_base_t::emplace([task]() -> void { (*task)(); });
     }
 
-	notified_ = true;
+    notified_ = true;
+    event_ = event_t::ADDED;
     cv_.notify_one();
     return std::move(res);
   }
@@ -104,7 +121,8 @@ public:
       this->tasks_base_t::emplace([task]() -> void { (*task)(); });
     }
 
-	notified_ = true;
+    notified_ = true;
+    event_ = event_t::ADDED;
     cv_.notify_one();
     return std::move(res);
   }
@@ -113,6 +131,8 @@ private:
   mutable std::mutex mtx_;
   mutable std::condition_variable cv_;
   mutable std::atomic<bool> stop_, notified_;
+  mutable std::atomic<event_t> event_;
+  mutable std::atomic<std::thread *> event_related_thread_;
 };
 
 #endif /* THREAD_POOL_HPP */
