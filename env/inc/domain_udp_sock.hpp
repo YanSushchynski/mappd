@@ -325,7 +325,7 @@ private:
   }
 
   void open_() {
-    if ((sock_fd_ = ::socket(family, socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, protocol)) < 0) {
+    if ((sock_fd_ = ::socket(family, socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, 0u)) < 0) {
       clear_<socket_class>();
       throw std::runtime_error(fmt::format("Could not create socket, ({0}), {1}:{2}, (errno = {3})", __func__, __FILE__,
                                            __LINE__, ::strerror(errno)));
