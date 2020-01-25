@@ -74,7 +74,7 @@ public:
   const auto &on_receive() const { return on_receive_; }
   const auto &on_send() const { return on_send_; }
 
-  void stop_threads() const { return this->base_t::stop_tp(); }
+  void stop_threads() const { return this->base_t::stop_threads(); }
   template <udp_sock_t sc = socket_class, typename RetType = bool>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                               sc == udp_sock_t::SERVER_MULTICAST,
@@ -144,10 +144,12 @@ public:
         ::freeaddrinfo(dgram_addrinfo);
         void *data = std::calloc(size, sizeof(char));
         std::memcpy(data, msg, size);
-        this->tp().push([this, to, size, data]() -> void {
+        std::thread([this, to, size, data]() -> void {
+          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_send()(to, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                           this);
-        });
+          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        }).detach();
 
         return rc;
       } else if constexpr (sb == send_behavior_t::HOOK_OFF) {
@@ -217,10 +219,12 @@ public:
         ::freeaddrinfo(dgram_addrinfo);
         void *data = std::calloc(size, sizeof(char));
         std::memcpy(data, msg, size);
-        this->tp().push([this, to, data, size]() -> void {
+        std::thread([this, to, data, size]() -> void {
+          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_send()(to, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                           this);
-        });
+          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        }).detach();
       } else if constexpr (sb == send_behavior_t::HOOK_OFF) {
 
         sockaddr_inet_t to;
@@ -280,10 +284,12 @@ public:
         } else if (recvd) {
           *(reinterpret_cast<char *>(data) + recvd) = '\0';
           if constexpr (rb == recv_behavior_t::HOOK) {
-            this->tp().push([this, from, data, size = recvd]() -> void {
+            std::thread([this, from, data, size = recvd]() -> void {
+              std::unique_lock<std::mutex> lock(this->mtx());
               this->on_receive()(from, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                                  size, this);
-            });
+              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            }).detach();
           } else if constexpr (rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET) {
 
             ret.push_back(
@@ -291,9 +297,12 @@ public:
                                 std::move(from)));
 
             if constexpr (rb == recv_behavior_t::HOOK_RET) {
-              this->tp().push(
-                  [this, peer = std::get<2u>(ret.back()), data = std::get<1u>(ret.back()),
-                   size = std::get<0u>(ret.back())]() -> void { this->on_receive()(peer, data, size, this); });
+              std::thread([this, peer = std::get<2u>(ret.back()), data = std::get<1u>(ret.back()),
+                           size = std::get<0u>(ret.back())]() -> void {
+                std::unique_lock<std::mutex> lock(this->mtx());
+                this->on_receive()(peer, data, size, this);
+                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              }).detach();
             }
           }
 
@@ -321,12 +330,15 @@ public:
       listen_thread_ = std::thread([this]() -> void { listen_(); });
 
     } else {
-      this->tp().push(
+      std::thread(
           [this](uint64_t duration_ms, std::atomic_bool *trigger) -> void {
+            std::unique_lock<std::mutex> lock(this->mtx());
             std::this_thread::sleep_for(std::chrono::milliseconds(duration_ms));
             *trigger = false;
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
           },
-          duration_ms, &listen_enabled_);
+          duration_ms, &listen_enabled_)
+          .detach();
       listen_();
     }
   }

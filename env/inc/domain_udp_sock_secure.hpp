@@ -33,7 +33,7 @@ public:
 
   virtual ~domain_udp_socket_secure_impl() = default;
 
-  void stop_threads() const { return const_cast<const typename base_t::base_t *>(this)->stop_tp(); }
+  void stop_threads() const { return const_cast<const typename base_t::base_t *>(this)->stop_threads(); }
 
   template <udp_sock_secure_t sc = secure_socket_class, typename RetType = void>
   typename std::enable_if<sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES, RetType>::type setup() {
@@ -70,10 +70,12 @@ public:
 
       void *data = std::calloc(size, sizeof(char));
       std::memcpy(data, msg, size);
-      this->tp().push([this, peer = to, data, size]() -> void {
+      std::thread([this, peer = to, data, size]() -> void {
+        std::unique_lock<std::mutex> lock(this->mtx());
         this->on_send()(peer, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                         static_cast<const base_t *>(this));
-      });
+        std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+      }).detach();
 
       return {snd_size, to};
     }
@@ -91,9 +93,11 @@ public:
       auto [dec_data, plain_size] = sl_.decrypt(std::get<1u>(transaction).get(), std::get<0u>(transaction));
 
       if constexpr (rb == base_t::recv_behavior_t::HOOK) {
-        this->tp().push([this, peer = std::get<2u>(transaction), data = dec_data, size = plain_size]() -> void {
+        std::thread([this, peer = std::get<2u>(transaction), data = dec_data, size = plain_size]() -> void {
+          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_receive()(peer, data, size, static_cast<const base_t *>(this));
-        });
+          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        }).detach();
 
       } else if constexpr (rb == base_t::recv_behavior_t::RET || rb == base_t::recv_behavior_t::HOOK_RET) {
 
@@ -123,12 +127,15 @@ public:
       this->listen_thread__() = std::thread([this]() -> void { listen_(); });
 
     } else {
-      this->tp().push(
+      std::thread(
           [this](uint64_t duration_ms, std::atomic_bool *trigger) -> void {
+            std::unique_lock<std::mutex> lock(this->mtx());
             std::this_thread::sleep_for(std::chrono::milliseconds(duration_ms));
             *trigger = false;
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
           },
-          duration_ms, &this->listen_enabled__());
+          duration_ms, &this->listen_enabled__())
+          .detach();
 
       listen_();
     }

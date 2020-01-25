@@ -33,7 +33,6 @@
 #include "hook.hpp"
 #include "libcidr.hpp"
 #include "property.hpp"
-#include "thread_pool.hpp"
 
 template <uint32_t family, uint32_t socktype, uint32_t protocol> struct base_socket {
 public:
@@ -53,14 +52,14 @@ public:
 
   template <bool network = is_network, bool domain = is_domain>
   explicit base_socket(const std::string &iface, typename std::enable_if<network && !domain, bool>::type * = nullptr)
-      : if_(iface), iface_path_info_(get_iface_info_(iface)), tp_(thread_pool{}){};
+      : if_(iface), iface_path_info_(get_iface_info_(iface)){};
 
   template <bool network = is_network, bool domain = is_domain>
   explicit base_socket(const std::string &path, typename std::enable_if<!network && domain, bool>::type * = nullptr)
-      : if_(path), tp_(thread_pool{}){};
+      : if_(path){};
 
   template <bool network = is_network, bool domain = is_domain>
-  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr) : tp_(thread_pool{}){};
+  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr){};
 
   template <bool network = is_network, typename RetType = iface_netinfo_t>
   const typename std::enable_if<network, RetType>::type &iface() const {
@@ -81,9 +80,15 @@ public:
   static constexpr int32_t sock_socktype() { return socktype; }
   static constexpr int32_t sock_protocol() { return protocol; }
 
-  thread_pool &tp() { return tp_; }
-  void stop_tp() { return tp_.stop(); }
-  virtual ~base_socket() { stop_tp(); };
+  std::condition_variable &cv() { return cv_; }
+  std::mutex &mtx() { return mtx_; }
+  
+  void stop_threads() {
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait(lock, [this] { return threads_cnt_ == 0; });
+  }
+
+  virtual ~base_socket() { stop_threads(); };
 
 private:
   static constexpr uint32_t epoll_max_events_ = 32u;
@@ -96,8 +101,11 @@ private:
   std::conditional_t<is_network, const struct iface_netinfo_t,
                      std::conditional_t<is_domain, const std::string, uint8_t>>
       iface_path_info_;
-  thread_pool tp_;
 
+  std::condition_variable cv_;
+  std::atomic<uint64_t> threads_cnt_;
+  std::mutex mtx_;
+  
   template <typename RetType = iface_netinfo_t>
   const typename std::enable_if<is_network, RetType>::type get_iface_info_(const std::string &ifname) {
     using addr_inet_t = std::conditional_t<this_t::is_ipv6, in6_addr, in_addr>;
