@@ -11,17 +11,15 @@
 #include <thread>
 #include <vector>
 
-struct thread_pool : std::queue<std::function<void(void)>>, std::vector<std::thread>, std::thread {
-  using tasks_base_t = std::queue<std::function<void(void)>>;
-  using workers_base_t = std::vector<std::thread>;
-  using observer_base_t = std::thread;
+struct thread_pool : std::vector<std::pair<std::thread, uint32_t>>, std::thread {
 
-  enum struct event_t : uint32_t { UNDEFINED = 0u, ADDED, PERFORMED };
+  using workers_base_t = std::vector<std::pair<std::thread, uint32_t>>;
+  using observer_base_t = std::thread;
+  enum struct thread_flag_t : uint32_t { UNDEFINED = 0u, RUNNING, STOPPED };
 
 public:
   explicit thread_pool()
-      : stop_(false), notified_(false), event_(event_t::UNDEFINED), event_related_thread_(nullptr),
-        observer_base_t(std::thread([this]() -> auto {
+      : stop_(false), notified_(false), observer_base_t(std::thread([this]() -> auto {
           while (true) {
             {
               std::unique_lock<std::mutex> lock(mtx_);
@@ -29,40 +27,22 @@ public:
             }
 
             if (stop_) {
+
+              /* Wait all threads */
+              for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
+                it->first.join();
+                this->workers_base_t::erase(it);
+              }
+
+              /* Stop observer thread */
               return;
             } else if (notified_) {
 
-              switch (event_) {
-              case event_t::ADDED: {
-                std::shared_ptr<std::thread> thr_ptr(nullptr);
-                this->workers_base_t::emplace_back(
-                    [this, &thr_ptr, task = std::move(this->tasks_base_t::front())]() -> void {
-                      task();
-                      event_ = event_t::PERFORMED;
-                      event_related_thread_ = thr_ptr.get();
-                      notified_ = true;
-                      cv_.notify_one();
-                    });
-
-                std::shared_ptr<std::thread> p(&this->workers_base_t::back(), [](auto &thread) -> void {});
-                thr_ptr.swap(p);
-                this->tasks_base_t::pop();
-              } break;
-
-              case event_t::PERFORMED: {
-                if (event_related_thread_->joinable())
-                  event_related_thread_->join();
-
-                for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
-                  if (event_related_thread_ == it.base()) {
-                    this->workers_base_t::erase(it);
-                  }
+              for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
+                if (it->second == static_cast<uint32_t>(thread_flag_t::STOPPED)) {
+                  it->first.join();
+                  this->workers_base_t::erase(it);
                 }
-              } break;
-
-              case event_t::UNDEFINED:
-              default:
-                break;
               }
 
               notified_ = false;
@@ -79,6 +59,8 @@ public:
     std::unique_lock<std::mutex> lock(mtx_);
     stop_ = true;
     cv_.notify_one();
+
+    /* Wait observer thread */
     this->observer_base_t::join();
   }
 
@@ -95,12 +77,18 @@ public:
       if (stop_)
         throw std::runtime_error("enqueue on stopped thread pool");
 
-      this->tasks_base_t::emplace([task]() -> void { (*task)(); });
+      std::shared_ptr<uint32_t> flag_ptr(nullptr);
+      this->workers_base_t::push_back({std::thread([this, task, flag_ptr](void) -> void {
+                                         (*task)();
+                                         *flag_ptr = static_cast<uint32_t>(thread_flag_t::STOPPED);
+                                         notified_ = true;
+                                         cv_.notify_one();
+                                       }),
+
+                                       static_cast<uint32_t>(thread_flag_t::RUNNING)});
+      flag_ptr = std::shared_ptr<uint32_t>(&this->workers_base_t::back().second);
     }
 
-    notified_ = true;
-    event_ = event_t::ADDED;
-    cv_.notify_one();
     return std::move(res);
   }
 
@@ -117,12 +105,18 @@ public:
       if (stop_)
         throw std::runtime_error("enqueue on stopped thread pool");
 
-      this->tasks_base_t::emplace([task]() -> void { (*task)(); });
+      std::shared_ptr<uint32_t> flag_ptr(nullptr);
+      this->workers_base_t::push_back({std::thread([this, task, flag_ptr]() -> void {
+                                         (*task)();
+                                         *flag_ptr = static_cast<uint32_t>(thread_flag_t::STOPPED);
+                                         notified_ = true;
+                                         cv_.notify_one();
+                                       }),
+
+                                       static_cast<uint32_t>(thread_flag_t::RUNNING)});
+      flag_ptr = std::shared_ptr<uint32_t>(&this->workers_base_t::back().second);
     }
 
-    notified_ = true;
-    event_ = event_t::ADDED;
-    cv_.notify_one();
     return std::move(res);
   }
 
@@ -130,8 +124,6 @@ private:
   mutable std::mutex mtx_;
   mutable std::condition_variable cv_;
   mutable std::atomic<bool> stop_, notified_;
-  mutable std::atomic<event_t> event_;
-  mutable std::thread *event_related_thread_;
 };
 
 #endif /* THREAD_POOL_HPP */
