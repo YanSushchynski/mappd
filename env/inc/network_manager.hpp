@@ -82,6 +82,7 @@ public:
             if (std::find(known_envs_.begin(), known_envs_.end(), std::make_pair(peer_addr_hash, port)) ==
                 known_envs_.end()) {
 
+			  fmt::print("Adding new env to known ...\r\n");
               known_envs_.push_back(std::make_pair(peer_addr_hash, port));
               std::thread([this, peer_addr_hash, port]() -> void {
                 std::this_thread::sleep_for(std::chrono::seconds(known_env_lifetime_s));
@@ -90,6 +91,7 @@ public:
                   std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
                   if (auto it = std::find(known_envs_.begin(), known_envs_.end(), std::make_pair(peer_addr_hash, port));
                       it != known_envs_.end()) {
+					fmt::print("Known env lifetime expired ...\r\n");
                     known_envs_.erase(it);
                   }
                 }
