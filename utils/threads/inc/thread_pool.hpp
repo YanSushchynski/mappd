@@ -29,6 +29,7 @@ public:
             if (stop_) {
 
               /* Wait all threads */
+              std::unique_lock<std::mutex> lock(mtx_);
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 it->first.join();
                 this->workers_base_t::erase(it);
@@ -38,6 +39,7 @@ public:
               return;
             } else if (notified_) {
 
+              std::unique_lock<std::mutex> lock(mtx_);
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 if (it->second == static_cast<uint32_t>(thread_flag_t::STOPPED)) {
                   it->first.join();
