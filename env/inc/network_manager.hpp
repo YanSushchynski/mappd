@@ -102,6 +102,13 @@ public:
 
 			  fmt::print("I'm invited!\r\n");
               static_cast<void>(handle_probe_(peer_addr, peer_addr_hash, header));
+            } else {
+
+              if (invite_hash != host_hash_)
+                fmt::print("This invite isn't intended for me! Wrong hash\r\n");
+
+			  if(out_connection_established_(peer_addr_hash))
+				fmt::print("This invite isn't intended for me! Already connected\r\n");
             }
           }
         });
