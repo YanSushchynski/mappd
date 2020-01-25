@@ -21,24 +21,38 @@ public:
   explicit thread_pool()
       : stop_(false), notified_(false), observer_base_t(std::thread([this]() -> auto {
           while (true) {
-            std::unique_lock<std::mutex> lock(mtx_);
-            cv_.wait(lock, [this]() -> bool { return stop_ || notified_; });
+            {
+              std::unique_lock<std::mutex> lock(mtx_);
+              cv_.wait(lock, [this]() -> bool { return stop_ || notified_; });
+            }
 
             if (stop_) {
+
+              std::lock_guard<std::mutex> lock(workers_mtx_);
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 it->first.join();
-                // this->workers_base_t::erase(it);
               }
 
-			  stop_ = false;
+              for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
+                this->workers_base_t::erase(it);
+              }
+
+              stop_ = false;
               return;
             } else if (notified_) {
 
+			  std::lock_guard<std::mutex> lock(workers_mtx_);
+              std::vector<typename workers_base_t::iterator *> to_erase;
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 if (it->second == static_cast<uint32_t>(thread_flag_t::STOPPED)) {
                   it->first.join();
-                  // this->workers_base_t::erase(it);
+				  to_erase.push_back(&it);
                 }
+              }
+
+              for (auto it = to_erase.begin(); it != to_erase.end(); it++) {
+                typename workers_base_t::iterator *iter = *(it.base());
+                this->workers_base_t::erase(*iter);
               }
 
               notified_ = false;
@@ -123,7 +137,7 @@ public:
   }
 
 private:
-  mutable std::mutex mtx_;
+  mutable std::mutex mtx_, workers_mtx_;
   mutable std::condition_variable cv_;
   mutable std::atomic<bool> stop_, notified_;
 };
