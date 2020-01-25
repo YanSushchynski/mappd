@@ -99,6 +99,8 @@ public:
             }
 
             if (invite_hash == host_hash_ && !out_connection_established_(peer_addr_hash)) {
+
+			  fmt::print("I'm invited!\r\n");
               static_cast<void>(handle_probe_(peer_addr, peer_addr_hash, header));
             }
           }
@@ -204,6 +206,7 @@ private:
         for (const auto &hash_srv_pair : known_envs_) {
           if (!in_connection_established_(hash_srv_pair.first, hash_srv_pair.second)) {
 
+			fmt::print("Inviting new peer ...\r\n");
             header.set_env_invite(reinterpret_cast<const char *>(hash_srv_pair.first.data()));
             break;
           }
