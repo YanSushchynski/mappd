@@ -77,7 +77,7 @@ public:
       if (stop_)
         throw std::runtime_error("enqueue on stopped thread pool");
 
-      std::shared_ptr<std::promise<uint32_t *>> flag_sptr;
+      std::shared_ptr<std::promise<uint32_t *>> flag_sptr(new std::promise<uint32_t *>);
       this->workers_base_t::push_back({std::thread([this, task, flag_sptr](void) -> void {
                                          (*task)();
                                          std::future<uint32_t *> flag_pf = flag_sptr->get_future();
@@ -108,7 +108,7 @@ public:
       if (stop_)
         throw std::runtime_error("enqueue on stopped thread pool");
 
-      std::shared_ptr<std::promise<uint32_t *>> flag_sptr;
+      std::shared_ptr<std::promise<uint32_t *>> flag_sptr(new std::promise<uint32_t *>);
       this->workers_base_t::push_back({std::thread([this, task, flag_sptr]() -> void {
                                          (*task)();
                                          std::future<uint32_t *> flag_pf = flag_sptr->get_future();
