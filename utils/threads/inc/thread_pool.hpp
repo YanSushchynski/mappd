@@ -27,7 +27,7 @@ public:
             if (stop_) {
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 it->first.join();
-                this->workers_base_t::erase(it);
+                // this->workers_base_t::erase(it);
               }
 
 			  stop_ = false;
@@ -37,7 +37,7 @@ public:
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 if (it->second == static_cast<uint32_t>(thread_flag_t::STOPPED)) {
                   it->first.join();
-                  this->workers_base_t::erase(it);
+                  // this->workers_base_t::erase(it);
                 }
               }
 
