@@ -82,10 +82,12 @@ public:
 
   std::condition_variable &cv() { return cv_; }
   std::mutex &mtx() { return mtx_; }
-  
+
   void stop_threads() {
     std::unique_lock<std::mutex> lock(mtx_);
-    cv_.wait(lock, [this] { return threads_cnt_ == 0; });
+    if (threads_cnt_ != 0u) {
+      cv_.wait(lock, [this] { return threads_cnt_ == 0u; });
+    }
   }
 
   virtual ~base_socket() { stop_threads(); };
