@@ -88,17 +88,22 @@ public:
         throw std::runtime_error("enqueue on stopped thread pool");
 
       std::shared_ptr<std::promise<uint32_t *>> flag_sptr(new std::promise<uint32_t *>);
-      this->workers_base_t::push_back({std::thread([this, task, flag_sptr](void) -> void {
-                                         (*task)();
-                                         std::future<uint32_t *> flag_pf = flag_sptr->get_future();
-                                         flag_pf.wait();
-                                         uint32_t *flag_ptr = flag_pf.get();
-                                         *flag_ptr = static_cast<uint32_t>(thread_flag_t::STOPPED);
-                                         notified_ = true;
-                                         cv_.notify_one();
-                                       }),
 
-                                       static_cast<uint32_t>(thread_flag_t::RUNNING)});
+      {
+        std::lock_guard<std::mutex> lock(workers_mtx_);
+        this->workers_base_t::push_back({std::thread([this, task, flag_sptr](void) -> void {
+                                           (*task)();
+                                           std::future<uint32_t *> flag_pf = flag_sptr->get_future();
+                                           flag_pf.wait();
+                                           uint32_t *flag_ptr = flag_pf.get();
+                                           *flag_ptr = static_cast<uint32_t>(thread_flag_t::STOPPED);
+                                           notified_ = true;
+                                           cv_.notify_one();
+                                         }),
+
+                                         static_cast<uint32_t>(thread_flag_t::RUNNING)});
+      }
+
       flag_sptr->set_value(&this->workers_base_t::back().second);
     }
 
@@ -119,17 +124,22 @@ public:
         throw std::runtime_error("enqueue on stopped thread pool");
 
       std::shared_ptr<std::promise<uint32_t *>> flag_sptr(new std::promise<uint32_t *>);
-      this->workers_base_t::push_back({std::thread([this, task, flag_sptr]() -> void {
-                                         (*task)();
-                                         std::future<uint32_t *> flag_pf = flag_sptr->get_future();
-                                         flag_pf.wait();
-                                         uint32_t *flag_ptr = flag_pf.get();
-                                         *flag_ptr = static_cast<uint32_t>(thread_flag_t::STOPPED);
-                                         notified_ = true;
-                                         cv_.notify_one();
-                                       }),
 
-                                       static_cast<uint32_t>(thread_flag_t::RUNNING)});
+      {
+        std::lock_guard<std::mutex> lock(workers_mtx_);
+        this->workers_base_t::push_back({std::thread([this, task, flag_sptr]() -> void {
+                                           (*task)();
+                                           std::future<uint32_t *> flag_pf = flag_sptr->get_future();
+                                           flag_pf.wait();
+                                           uint32_t *flag_ptr = flag_pf.get();
+                                           *flag_ptr = static_cast<uint32_t>(thread_flag_t::STOPPED);
+                                           notified_ = true;
+                                           cv_.notify_one();
+                                         }),
+
+                                         static_cast<uint32_t>(thread_flag_t::RUNNING)});
+      }
+
       flag_sptr->set_value(&this->workers_base_t::back().second);
     }
 
