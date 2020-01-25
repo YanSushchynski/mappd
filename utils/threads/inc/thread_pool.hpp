@@ -21,25 +21,19 @@ public:
   explicit thread_pool()
       : stop_(false), notified_(false), observer_base_t(std::thread([this]() -> auto {
           while (true) {
-            {
-              std::unique_lock<std::mutex> lock(mtx_);
-              cv_.wait(lock, [this]() -> bool { return stop_ || notified_; });
-            }
+            std::unique_lock<std::mutex> lock(mtx_);
+            cv_.wait(lock, [this]() -> bool { return stop_ || notified_; });
 
             if (stop_) {
-
-              /* Wait all threads */
-              std::unique_lock<std::mutex> lock(mtx_);
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 it->first.join();
                 this->workers_base_t::erase(it);
               }
 
-              /* Stop observer thread */
+			  stop_ = false;
               return;
             } else if (notified_) {
 
-              std::unique_lock<std::mutex> lock(mtx_);
               for (auto it = this->workers_base_t::begin(); it != this->workers_base_t::end(); it++) {
                 if (it->second == static_cast<uint32_t>(thread_flag_t::STOPPED)) {
                   it->first.join();
