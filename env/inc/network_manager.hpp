@@ -98,14 +98,21 @@ public:
               }).detach();
             }
 
+            uint64_t crc = [](const sha256::sha256_hash_type &hash_array) -> uint64_t {
+              uint64_t res{0};
+              for (uint32_t i = 0; i < hash_array.size(); i++)
+                res += hash_array[i];
+              return res;
+            }(invite_hash);
+
             if (invite_hash == host_hash_ && !out_connection_established_(peer_addr_hash)) {
 
-			  fmt::print("I'm invited!\r\n");
+              fmt::print("I'm invited! (crc = {0})\r\n", crc);
               static_cast<void>(handle_probe_(peer_addr, peer_addr_hash, header));
             } else {
 
               if (invite_hash != host_hash_)
-                fmt::print("This invite isn't intended for me! Wrong hash\r\n");
+                fmt::print("This invite isn't intended for me! Wrong hash (crc = {0})\r\n", crc);
 
 			  if(out_connection_established_(peer_addr_hash))
 				fmt::print("This invite isn't intended for me! Already connected\r\n");
@@ -213,7 +220,13 @@ private:
         for (const auto &hash_srv_pair : known_envs_) {
           if (!in_connection_established_(hash_srv_pair.first, hash_srv_pair.second)) {
 
-			fmt::print("Inviting new peer ...\r\n");
+            uint64_t crc = [](const sha256::sha256_hash_type &hash_array) -> uint64_t {
+              uint64_t res{0};
+              for (uint32_t i = 0; i < hash_array.size(); i++)
+                res += hash_array[i];
+              return res;
+            }(hash_srv_pair.first);
+            fmt::print("Inviting new peer (crc = {0}) ...\r\n", crc);
             header.set_env_invite(reinterpret_cast<const char *>(hash_srv_pair.first.data()));
             break;
           }
