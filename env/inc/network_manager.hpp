@@ -76,23 +76,24 @@ public:
 
           /* Add this env to known (not connected in both sides) */
           if (peer_addr_hash != host_hash_) {
-            std::lock_guard<std::mutex> lock_envs(known_envs_lock_);
-            std::lock_guard<std::mutex> lock_peers(peers_lock_);
+            std::lock_guard<std::recursive_mutex> lock_envs(known_envs_lock_);
+            std::lock_guard<std::recursive_mutex> lock_peers(peers_lock_);
 
             if (std::find(known_envs_.begin(), known_envs_.end(), std::make_pair(peer_addr_hash, port)) ==
                 known_envs_.end()) {
 
-			  fmt::print("Adding new env to known ...\r\n");
+              fmt::print("Adding new env to known ...\r\n");
               known_envs_.push_back(std::make_pair(peer_addr_hash, port));
-			  
+
               std::thread([this, peer_addr_hash, port]() -> void {
                 std::this_thread::sleep_for(std::chrono::seconds(known_env_lifetime_s));
 
                 {
-                  std::lock_guard<std::mutex> lock(known_envs_lock_);
+                  std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
                   if (auto it = std::find(known_envs_.begin(), known_envs_.end(), std::make_pair(peer_addr_hash, port));
                       it != known_envs_.end()) {
-					fmt::print("Known env lifetime expired ...\r\n");
+
+                    fmt::print("Known env lifetime expired ...\r\n");
                     known_envs_.erase(it);
                   }
                 }
@@ -115,8 +116,8 @@ public:
               if (invite_hash != host_hash_)
                 fmt::print("This invite isn't intended for me! Wrong hash (crc = {0})\r\n", crc);
 
-			  if(out_connection_established_(peer_addr_hash))
-				fmt::print("This invite isn't intended for me! Already connected\r\n");
+              if (out_connection_established_(peer_addr_hash))
+                fmt::print("This invite isn't intended for me! Already connected\r\n");
             }
           }
         });
@@ -187,8 +188,8 @@ private:
                  std::shared_ptr<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>>>>
       peers_;
 
-  mutable std::mutex known_envs_lock_;
-  mutable std::mutex peers_lock_;
+  mutable std::recursive_mutex known_envs_lock_;
+  mutable std::recursive_mutex peers_lock_;
 
   sha256::sha256_hash_type host_hash_;
   const struct env_base_t *const p_env_;
@@ -215,7 +216,7 @@ private:
     for (uint32_t i = 0u; i < times; i++) {
       /* Decide who is next for inviting */
       {
-        std::lock_guard<std::mutex> lock(known_envs_lock_);
+        std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
         for (const auto &hash_srv_pair : known_envs_) {
           if (!in_connection_established_(hash_srv_pair.first, hash_srv_pair.second)) {
 
@@ -225,6 +226,7 @@ private:
                 res += hash_array[i];
               return res;
             }(hash_srv_pair.first);
+
             fmt::print("Inviting new peer (crc = {0}) ...\r\n", crc);
             header.set_env_invite(reinterpret_cast<const char *>(hash_srv_pair.first.data()));
             break;
@@ -269,7 +271,7 @@ private:
         unit->on_disconnect().add("OnDisconnectHook",
                                   [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
                                       struct sockaddr_in peer, auto *unit) -> void {
-                                    std::lock_guard<std::mutex> lock(peers_lock_);
+                                    std::lock_guard<std::recursive_mutex> lock(peers_lock_);
                                     uint16_t peer_srv = ::htons(peer.sin_port);
                                     char peer_addr[INET_ADDRSTRLEN] = {0};
                                     ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
@@ -279,7 +281,7 @@ private:
 
         if (!(rc = unit->connect(peer_addr, header.env_ipv4_stream_port()))) {
 
-          std::lock_guard<std::mutex> lock_peers(peers_lock_);
+          std::lock_guard<std::recursive_mutex> lock_peers(peers_lock_);
           peers_.insert(std::make_pair(peer_hash, std::make_tuple(header, std::string(peer_addr), std::move(unit))));
         } else {
 
