@@ -145,10 +145,12 @@ public:
         void *data = std::calloc(size, sizeof(char));
         std::memcpy(data, msg, size);
         std::thread([this, to, size, data]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_send()(to, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                           this);
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
 
         return rc;
@@ -220,10 +222,12 @@ public:
         void *data = std::calloc(size, sizeof(char));
         std::memcpy(data, msg, size);
         std::thread([this, to, data, size]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_send()(to, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                           this);
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
       } else if constexpr (sb == send_behavior_t::HOOK_OFF) {
 
@@ -285,10 +289,12 @@ public:
           *(reinterpret_cast<char *>(data) + recvd) = '\0';
           if constexpr (rb == recv_behavior_t::HOOK) {
             std::thread([this, from, data, size = recvd]() -> void {
-              std::unique_lock<std::mutex> lock(this->mtx());
               this->on_receive()(from, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                                  size, this);
-              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              {
+                std::unique_lock<std::mutex> lock(this->mtx());
+                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              }
             }).detach();
           } else if constexpr (rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET) {
 
@@ -299,9 +305,11 @@ public:
             if constexpr (rb == recv_behavior_t::HOOK_RET) {
               std::thread([this, peer = std::get<2u>(ret.back()), data = std::get<1u>(ret.back()),
                            size = std::get<0u>(ret.back())]() -> void {
-                std::unique_lock<std::mutex> lock(this->mtx());
                 this->on_receive()(peer, data, size, this);
-                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                {
+                  std::unique_lock<std::mutex> lock(this->mtx());
+                  std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                }
               }).detach();
             }
           }
@@ -332,10 +340,12 @@ public:
     } else {
       std::thread(
           [this](uint64_t duration_ms, std::atomic_bool *trigger) -> void {
-            std::unique_lock<std::mutex> lock(this->mtx());
             std::this_thread::sleep_for(std::chrono::milliseconds(duration_ms));
             *trigger = false;
-            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            {
+              std::unique_lock<std::mutex> lock(this->mtx());
+              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            }
           },
           duration_ms, &listen_enabled_)
           .detach();
