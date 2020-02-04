@@ -98,13 +98,6 @@ public:
               }).detach();
             }
 
-            uint64_t crc = [](const sha256::sha256_hash_type &hash_array) -> uint64_t {
-              uint64_t res{0};
-              for (uint32_t i = 0; i < hash_array.size(); i++)
-                res += hash_array[i];
-              return res;
-            }(invite_hash);
-
             if (invite_hash == host_hash_ && !out_connection_established_(peer_addr_hash)) {
 
               static_cast<void>(handle_probe_(peer_addr, peer_addr_hash, header));
@@ -209,13 +202,6 @@ private:
         std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
         for (const auto &hash_srv_pair : known_envs_) {
           if (!in_connection_established_(hash_srv_pair.first, hash_srv_pair.second)) {
-
-            uint64_t crc = [](const sha256::sha256_hash_type &hash_array) -> uint64_t {
-              uint64_t res{0};
-              for (uint32_t i = 0; i < hash_array.size(); i++)
-                res += hash_array[i];
-              return res;
-            }(hash_srv_pair.first);
 
             header.set_env_invite(reinterpret_cast<const char *>(hash_srv_pair.first.data()));
             break;

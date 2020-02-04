@@ -52,14 +52,14 @@ public:
 
   template <bool network = is_network, bool domain = is_domain>
   explicit base_socket(const std::string &iface, typename std::enable_if<network && !domain, bool>::type * = nullptr)
-      : if_(iface), iface_path_info_(get_iface_info_(iface)){};
+      : if_(iface), threads_cnt_(0u), iface_path_info_(get_iface_info_(iface)){};
 
   template <bool network = is_network, bool domain = is_domain>
   explicit base_socket(const std::string &path, typename std::enable_if<!network && domain, bool>::type * = nullptr)
-      : if_(path){};
+      : if_(path), threads_cnt_(0u){};
 
   template <bool network = is_network, bool domain = is_domain>
-  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr){};
+  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr) : threads_cnt_(0u){};
 
   template <bool network = is_network, typename RetType = iface_netinfo_t>
   const typename std::enable_if<network, RetType>::type &iface() const {
