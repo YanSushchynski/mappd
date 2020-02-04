@@ -82,7 +82,6 @@ public:
             if (std::find(known_envs_.begin(), known_envs_.end(), std::make_pair(peer_addr_hash, port)) ==
                 known_envs_.end()) {
 
-              fmt::print("Adding new env to known ...\r\n");
               known_envs_.push_back(std::make_pair(peer_addr_hash, port));
 
               std::thread([this, peer_addr_hash, port]() -> void {
@@ -93,7 +92,6 @@ public:
                   if (auto it = std::find(known_envs_.begin(), known_envs_.end(), std::make_pair(peer_addr_hash, port));
                       it != known_envs_.end()) {
 
-                    fmt::print("Known env lifetime expired ...\r\n");
                     known_envs_.erase(it);
                   }
                 }
@@ -109,15 +107,7 @@ public:
 
             if (invite_hash == host_hash_ && !out_connection_established_(peer_addr_hash)) {
 
-              fmt::print("I'm invited! (crc = {0})\r\n", crc);
               static_cast<void>(handle_probe_(peer_addr, peer_addr_hash, header));
-            } else {
-
-              if (invite_hash != host_hash_)
-                fmt::print("This invite isn't intended for me! Wrong hash (crc = {0})\r\n", crc);
-
-              if (out_connection_established_(peer_addr_hash))
-                fmt::print("This invite isn't intended for me! Already connected\r\n");
             }
           }
         });
@@ -227,7 +217,6 @@ private:
               return res;
             }(hash_srv_pair.first);
 
-            fmt::print("Inviting new peer (crc = {0}) ...\r\n", crc);
             header.set_env_invite(reinterpret_cast<const char *>(hash_srv_pair.first.data()));
             break;
           }
