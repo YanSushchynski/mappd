@@ -61,7 +61,7 @@ public:
     ipv4_dgram_srv.on_receive().add(
         "OnReceiveProbe", [this](struct sockaddr_in peer, std::shared_ptr<void> data, size_t size, auto *unit) -> void {
           env_config_header_t header;
-          char peer_addr[INET_ADDRSTRLEN] = {0x0};
+          char peer_addr[INET_ADDRSTRLEN];
           uint16_t peer_srv = ::htons(peer.sin_port);
           ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
           header.ParseFromArray(data.get(), size);
@@ -71,7 +71,7 @@ public:
 
           uint16_t port = header.env_ipv4_stream_port();
           sha256::sha256_hash_type peer_addr_hash =
-              sha256::compute(reinterpret_cast<const uint8_t *>(peer_addr), sizeof(peer_addr) - 1u) ^
+              sha256::compute(reinterpret_cast<const uint8_t *>(peer_addr), sizeof(peer_addr)) ^
               sha256::compute(reinterpret_cast<const uint8_t *>(&port), sizeof(port));
 
           /* Add this env to known (not connected in both sides) */
@@ -98,6 +98,13 @@ public:
               }).detach();
             }
 
+            uint64_t crc = [](const sha256::sha256_hash_type &hash_array) -> uint64_t {
+              uint64_t res{0};
+              for (uint32_t i = 0; i < hash_array.size(); i++)
+                res += hash_array[i];
+              return res;
+            }(invite_hash);
+
             if (invite_hash == host_hash_ && !out_connection_established_(peer_addr_hash)) {
 
               static_cast<void>(handle_probe_(peer_addr, peer_addr_hash, header));
@@ -107,14 +114,14 @@ public:
 
     ipv4_stream_srv.on_connect().add("OnConnectHook", [this](struct sockaddr_in peer, auto *unit) -> void {
       uint16_t peer_srv = ::htons(peer.sin_port);
-      char peer_addr[INET_ADDRSTRLEN] = {0x0};
+      char peer_addr[INET_ADDRSTRLEN];
       ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
       fmt::print("Server: peer {0}:{1} connected!\r\n", peer_addr, peer_srv);
     });
 
     ipv4_stream_srv.on_disconnect().add("OnDisonnectHook", [this](struct sockaddr_in peer, auto *unit) -> void {
       uint16_t peer_srv = ::htons(peer.sin_port);
-      char peer_addr[INET_ADDRSTRLEN] = {0x0};
+      char peer_addr[INET_ADDRSTRLEN];
       ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
       fmt::print("Server: peer {0}:{1} disconnected!\r\n", peer_addr, peer_srv);
     });
@@ -122,7 +129,7 @@ public:
     ipv4_stream_srv.on_receive().add(
         "OnReceiveHook", [this](struct sockaddr_in peer, std::shared_ptr<void> data, size_t size, auto *unit) -> void {
           uint16_t peer_srv = ::htons(peer.sin_port);
-          char peer_addr[INET_ADDRSTRLEN] = {0x0};
+          char peer_addr[INET_ADDRSTRLEN];
           ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
           fmt::print("Server: received message \"{0}\" from peer {1}:{2}\r\n",
                      std::string(reinterpret_cast<char *>(data.get()), size), peer_addr, peer_srv);
@@ -202,6 +209,13 @@ private:
         std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
         for (const auto &hash_srv_pair : known_envs_) {
           if (!in_connection_established_(hash_srv_pair.first, hash_srv_pair.second)) {
+
+            uint64_t crc = [](const sha256::sha256_hash_type &hash_array) -> uint64_t {
+              uint64_t res{0};
+              for (uint32_t i = 0; i < hash_array.size(); i++)
+                res += hash_array[i];
+              return res;
+            }(hash_srv_pair.first);
 
             header.set_env_invite(reinterpret_cast<const char *>(hash_srv_pair.first.data()));
             break;
