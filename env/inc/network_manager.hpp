@@ -42,7 +42,7 @@ public:
     OpenSSL_add_all_algorithms();
     ERR_load_BIO_strings();
 
-    uint16_t port = this->env_()->info().env_ipv4_stream_port();
+    const uint16_t port = this->env_()->info().env_ipv4_stream_port();
     host_hash_ = sha256::compute(reinterpret_cast<const uint8_t *>(ipv4_stream_srv.iface().host_addr.data()),
                                  ipv4_stream_srv.iface().host_addr.size()) ^
                  sha256::compute(reinterpret_cast<const uint8_t *>(&port), sizeof(port));
@@ -203,7 +203,7 @@ private:
         for (const auto &hash_srv_pair : known_envs_) {
           if (!in_connection_established_(hash_srv_pair.first, hash_srv_pair.second)) {
 
-            header.set_env_invite(reinterpret_cast<const char *>(hash_srv_pair.first.data()));
+            header.set_env_invite(static_cast<const void *>(hash_srv_pair.first.data()), hash_srv_pair.first.size());
             break;
           }
         }
@@ -238,7 +238,7 @@ private:
                                [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
                                    struct sockaddr_in peer, auto *unit) -> void {
                                  uint16_t peer_srv = ::htons(peer.sin_port);
-                                 char peer_addr[INET_ADDRSTRLEN] = {0};
+                                 char peer_addr[INET_ADDRSTRLEN];
                                  ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
                                  fmt::print("Client: connected to {0}:{1}\r\n", peer_addr, peer_srv);
                                });
@@ -248,7 +248,7 @@ private:
                                       struct sockaddr_in peer, auto *unit) -> void {
                                     std::lock_guard<std::recursive_mutex> lock(peers_lock_);
                                     uint16_t peer_srv = ::htons(peer.sin_port);
-                                    char peer_addr[INET_ADDRSTRLEN] = {0};
+                                    char peer_addr[INET_ADDRSTRLEN];
                                     ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
                                     fmt::print("Client: disconnected from {0}:{1}\r\n", peer_addr, peer_srv);
                                     peers_.erase(hash);
@@ -265,6 +265,7 @@ private:
           rc = -1;
         }
       } else {
+
         rc = 1;
       }
     } else {
