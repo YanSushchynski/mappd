@@ -83,6 +83,9 @@ public:
   std::condition_variable &cv() { return cv_; }
   std::mutex &mtx() { return mtx_; }
 
+  void thr_num_inc() { threads_cnt_++; }
+  void thr_num_dec() { threads_cnt_--; }
+  
   void stop_threads() {
     if (threads_cnt_) {
       std::unique_lock<std::mutex> lock(mtx_);

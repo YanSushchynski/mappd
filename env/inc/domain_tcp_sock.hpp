@@ -271,9 +271,11 @@ private:
           auto it = connected_.find(peer_fd);
           if (it != connected_.end()) {
             std::thread([this, peer_path = *peer_path]() -> void {
-              std::unique_lock<std::mutex> lock(this->mtx());
               this->on_disconnect()(peer_path, this);
-              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              {
+                std::unique_lock<std::mutex> lock(this->mtx());
+                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              }
             }).detach();
             static_cast<void>(disconnect_peer_(peer_fd));
           }
@@ -300,10 +302,12 @@ private:
         void *data = std::malloc(size * sizeof(char));
         std::memcpy(data, msg, size);
         std::thread([this, peer_path = *peer_path, data, size]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_send()(peer_path, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                           size, this);
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
       }
     }
@@ -338,9 +342,11 @@ private:
 
             connected_info_lock_.lock();
             std::thread([this, connected = connected_]() -> void {
-              std::unique_lock<std::mutex> lock(this->mtx());
               this->on_disconnect()(connected, this);
-              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              {
+                std::unique_lock<std::mutex> lock(this->mtx());
+                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              }
             }).detach();
             std::memset(&connected_, 0x0, sizeof(connected_));
             state_ = state_t::DISCONNECTED;
@@ -367,10 +373,12 @@ private:
         std::memcpy(data, msg, size);
         connected_info_lock_.lock();
         std::thread([this, connected = connected_, data, size]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_send()(connected, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                           size, this);
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
         connected_info_lock_.unlock();
       }
@@ -424,9 +432,11 @@ private:
               if (state_ == state_t::CONNECTED) {
                 connected_info_lock_.lock();
                 std::thread([this, connected = connected_]() -> void {
-                  std::unique_lock<std::mutex> lock(this->mtx());
                   this->on_disconnect()(connected, this);
-                  std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                  {
+                    std::unique_lock<std::mutex> lock(this->mtx());
+                    std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                  }
                 }).detach();
                 std::memset(&connected_, 0x0, sizeof(connected_));
                 state_ = state_t::DISCONNECTED;
@@ -458,11 +468,13 @@ private:
 
             connected_info_lock_.lock();
             std::thread([this, connected = connected_, data, size = recvd]() -> void {
-              std::unique_lock<std::mutex> lock(this->mtx());
               this->on_receive()(connected,
                                  std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                                  this);
-              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              {
+                std::unique_lock<std::mutex> lock(this->mtx());
+                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              }
             }).detach();
 
             connected_info_lock_.unlock();
@@ -474,11 +486,13 @@ private:
             if constexpr (rb == recv_behavior_t::HOOK_RET) {
               connected_info_lock_.lock();
               std::thread([this, connected = connected_, size = recvd, data]() -> void {
-                std::unique_lock<std::mutex> lock(this->mtx());
                 this->on_receive()(connected,
                                    std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                                    this);
-                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                {
+                  std::unique_lock<std::mutex> lock(this->mtx());
+                  std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                }
               }).detach();
 
               connected_info_lock_.unlock();
@@ -565,9 +579,11 @@ private:
 
         if (epoll_error) {
           std::thread([this, server]() -> void {
-            std::unique_lock<std::mutex> lock(this->mtx());
             this->on_disconnect()(server, this);
-            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            {
+              std::unique_lock<std::mutex> lock(this->mtx());
+              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            }
           }).detach();
           disconnect();
           state_ = state_t::DISCONNECTED;
@@ -579,9 +595,11 @@ private:
 
           if constexpr (cb == connect_behavior_t::HOOK_ON) {
             std::thread([this, server]() -> void {
-              std::unique_lock<std::mutex> lock(this->mtx());
               this->on_connect()(server, this);
-              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              {
+                std::unique_lock<std::mutex> lock(this->mtx());
+                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+              }
             }).detach();
           }
 
@@ -686,9 +704,11 @@ private:
           for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
             if (fd == it->first) {
               std::thread([this, connected = it->second]() -> void {
-                std::unique_lock<std::mutex> lock(this->mtx());
                 this->on_disconnect()(connected, this);
-                std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                {
+                  std::unique_lock<std::mutex> lock(this->mtx());
+                  std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+                }
               }).detach();
               static_cast<void>(disconnect_peer_(fd));
               connected_info_lock_.unlock();
@@ -730,9 +750,11 @@ private:
       for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
         if (fd == it->first) {
           std::thread([this, connected = it->second]() -> void {
-            std::unique_lock<std::mutex> lock(this->mtx());
             this->on_disconnect()(connected, this);
-            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            {
+              std::unique_lock<std::mutex> lock(this->mtx());
+              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            }
           }).detach();
           static_cast<void>(disconnect_peer_(fd));
           connected_info_lock_.unlock();
@@ -768,10 +790,12 @@ private:
 
       if constexpr (rb == recv_behavior_t::HOOK) {
         std::thread([this, peer, data, size = recvd]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_receive()(peer, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }), size,
                              this);
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
         return recvd;
       } else if constexpr (rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET) {
@@ -780,10 +804,12 @@ private:
           void *data_copy = std::malloc(recvd);
           std::memcpy(data_copy, data, recvd);
           std::thread([this, peer, data_copy, size = recvd]() -> void {
-            std::unique_lock<std::mutex> lock(this->mtx());
             this->on_receive()(
                 peer, std::shared_ptr<void>(data_copy, [](const auto &data) -> void { std::free(data); }), size, this);
-            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            {
+              std::unique_lock<std::mutex> lock(this->mtx());
+              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            }
           }).detach();
         }
 
@@ -843,9 +869,11 @@ private:
 
     if constexpr (cb == connect_behavior_t::HOOK_ON) {
       std::thread([this, peer_addr]() -> void {
-        std::unique_lock<std::mutex> lock(this->mtx());
         this->on_connect()(peer_addr, this);
-        std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        {
+          std::unique_lock<std::mutex> lock(this->mtx());
+          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        }
       }).detach();
       return peer_fd;
     } else if constexpr (cb == connect_behavior_t::HOOK_OFF) {
@@ -882,9 +910,11 @@ private:
     connected_info_lock_.lock();
     for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
       std::thread([this, connected = it->second]() -> void {
-        std::unique_lock<std::mutex> lock(this->mtx());
         this->on_disconnect()(connected, this);
-        std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        {
+          std::unique_lock<std::mutex> lock(this->mtx());
+          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        }
       }).detach();
       if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, it->first, nullptr) < 0u)
         throw std::runtime_error(
@@ -907,9 +937,11 @@ private:
     connected_info_lock_.lock();
     if (state_ == state_t::CONNECTED) {
       std::thread([this, connected = connected_]() -> void {
-        std::unique_lock<std::mutex> lock(this->mtx());
         this->on_disconnect()(connected, this);
-        std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        {
+          std::unique_lock<std::mutex> lock(this->mtx());
+          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        }
       }).detach();
       std::memset(&connected_, 0x0, sizeof(connected_));
     }

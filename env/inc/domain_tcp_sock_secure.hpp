@@ -67,9 +67,11 @@ public:
     if ((rc = sl_.connect(this->fd__()))) {
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
         std::thread([this, peer = this->connected__()]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_disconnect()(peer, static_cast<const base_t *>(this));
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
       }
 
@@ -78,9 +80,11 @@ public:
     } else {
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
         std::thread([this, peer = this->connected__()]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_connect()(peer, static_cast<const base_t *>(this));
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
       }
 
@@ -184,14 +188,17 @@ public:
       this->listen_thread__() = std::thread([this]() -> void { listen_(); });
 
     } else {
-	  std::thread(
+      std::thread(
           [this](uint64_t duration_ms, std::atomic_bool *trigger) -> void {
-            std::unique_lock<std::mutex> lock(this->mtx());
             std::this_thread::sleep_for(std::chrono::milliseconds(duration_ms));
             *trigger = false;
-            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            {
+              std::unique_lock<std::mutex> lock(this->mtx());
+              std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+            }
           },
-          duration_ms, &this->listen_enabled__()).detach();
+          duration_ms, &this->listen_enabled__())
+          .detach();
       listen_();
     }
   }
@@ -286,9 +293,11 @@ private:
 
       if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
         std::thread([this, peer = peer]() -> void {
-          std::unique_lock<std::mutex> lock(this->mtx());
           this->on_disconnect()(peer, static_cast<const base_t *>(this));
-          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          {
+            std::unique_lock<std::mutex> lock(this->mtx());
+            std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+          }
         }).detach();
         this->state__() = base_t::state_t::DISCONNECTED;
         return -1;
@@ -301,9 +310,11 @@ private:
 
     if constexpr (cb == base_t::connect_behavior_t::HOOK_ON) {
       std::thread([this, peer = peer]() -> void {
-        std::unique_lock<std::mutex> lock(this->mtx());
         this->on_connect()(peer, static_cast<const base_t *>(this));
-        std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        {
+          std::unique_lock<std::mutex> lock(this->mtx());
+          std::notify_all_at_thread_exit(this->cv(), std::move(lock));
+        }
       }).detach();
       this->state__() = base_t::state_t::CONNECTED;
       return peer_fd;
