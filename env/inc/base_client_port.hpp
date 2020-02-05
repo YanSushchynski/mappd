@@ -12,7 +12,7 @@ public:
   using function_t = ReturnType(Args...);
   using base_t = base_port_t<ReturnType(Args...)>;
   using this_t = base_client_port_t<runtime_type, function_t>;
-  
+
 private:
   friend struct env_base_t;
 
@@ -21,7 +21,7 @@ private:
 
   using response_t_ = response<return_t>;
   using request_t_ = request<Args...>;
-  
+
   using response_buffer_t_ = std::vector<response_t_>;
   using request_buffer_t_ = std::vector<request_t_>;
 

@@ -98,10 +98,10 @@ public:
 
     domain_stream_srv.on_receive().add(
         "OnReceiveHook", [this](struct sockaddr_un peer, std::shared_ptr<void> data, size_t size, auto *unit) -> void {
-          std::printf((boost::format("Server: received message \"%1%\" from peer %2%:%3%\r\n") %
-                       std::string(reinterpret_cast<char *>(data.get()), size) % peer.sun_path)
-                          .str()
-                          .c_str());
+          std::printf("%s", (boost::format("Server: received message \"%1%\" from peer %2%:%3%\r\n") %
+                             std::string(reinterpret_cast<char *>(data.get()), size) % peer.sun_path)
+                                .str()
+                                .c_str());
         });
 
     domain_stream_srv.start();
@@ -220,7 +220,7 @@ private:
             [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](struct sockaddr_un peer,
                                                                                    auto *unit) -> void {
               std::lock_guard<std::recursive_mutex> lock(peers_lock_);
-              std::printf((boost::format("Client: disconnected from %1%\r\n") % peer.sun_path).str().c_str());
+              std::printf("%s", (boost::format("Client: disconnected from %1%\r\n") % peer.sun_path).str().c_str());
               peers_.erase(hash);
             });
 
