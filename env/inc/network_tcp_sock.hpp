@@ -359,8 +359,9 @@ private:
 
           connected_info_lock_.unlock();
         } else {
-          throw std::runtime_error(
-              fmt::format("Sendto error (errno = {0}), ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+          throw std::runtime_error((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                    __func__ % __FILE__ % __LINE__)
+                                       .str());
         }
       } else {
         FD_ZERO(&write_fd_set);
@@ -430,8 +431,9 @@ private:
             connected_info_lock_.unlock();
           }
         } else {
-          throw std::runtime_error(
-              fmt::format("Sendto error (errno = {0}), ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+          throw std::runtime_error((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                    __func__ % __FILE__ % __LINE__)
+                                       .str());
         }
       } else {
         FD_ZERO(&write_fd_set);
@@ -485,16 +487,18 @@ private:
     std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>> ret;
 
     if ((num_ready = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::receive_timeout())) < 0)
-      throw std::runtime_error(
-          fmt::format("Epoll wait error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
 
     for (uint32_t i = 0u; i < num_ready; i++) {
       if ((events_[i].data.fd == sock_fd_) && ((events_[i].events & EPOLLIN) == EPOLLIN)) {
         int32_t rc, bytes_pending, recvd;
 
         if ((rc = ::ioctl(sock_fd_, FIONREAD, &bytes_pending)) < 0) {
-          throw std::runtime_error(
-              fmt::format("IOctl error (errno = {0}), ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+          throw std::runtime_error((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                    __func__ % __FILE__ % __LINE__)
+                                       .str());
         }
 
         void *data = std::malloc(bytes_pending);
@@ -528,8 +532,9 @@ private:
                 return std::move(ret);
               }
             } else {
-              throw std::runtime_error(fmt::format("Receiveing error (errno = {0}), ({1}), {2}:{3}", strerror(errno),
-                                                   __func__, __FILE__, __LINE__));
+              throw std::runtime_error((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") %
+                                        strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                           .str());
             }
           } else {
             FD_ZERO(&read_fd_set);
@@ -611,8 +616,10 @@ private:
     }
 
     if ((rc = ::getaddrinfo(addr_str, std::to_string(port).c_str(), &hints, &addr_info)) != 0 || addr_info == nullptr) {
-      throw std::runtime_error(fmt::format("Invalid address or port: \"{0}\",\"{1}\" (errno : {2}), ({3}), {4}:{5}\"",
-                                           addr, std::to_string(port), gai_strerror(rc), __func__, __FILE__, __LINE__));
+      throw std::runtime_error(
+          (boost::format("Invalid address or port: \"%1%\",\"%2%\" (errno : %3%), (%4%), %5%:%6%\"") % addr %
+           std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
+              .str());
     }
 
     if constexpr (base_t::is_ipv6)
@@ -623,34 +630,41 @@ private:
     struct timeval send_timeout = {base_t::send_timeout(), 0u};
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &trueflag, sizeof(trueflag))) < 0) {
-      throw std::runtime_error(
-          fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEPORT, &trueflag, sizeof(trueflag))) < 0) {
-      throw std::runtime_error(
-          fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     trueflag = IP_PMTUDISC_DO;
     if ((rc = ::setsockopt(sock_fd_, protocol, IP_MTU_DISCOVER, &trueflag, sizeof(trueflag))) < 0) {
-      throw std::runtime_error(
-          fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(recv_timeout))) < 0) {
-      throw std::runtime_error(
-          fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_SNDTIMEO, &send_timeout, sizeof(send_timeout))) < 0) {
-      throw std::runtime_error(
-          fmt::format("Setsockopt error (errno = {0}),({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     if constexpr (socket_class == tcp_sock_t::CLIENT_UNICAST) {
+
       ret = connect_<cb>(addr_info);
     } else if constexpr (socket_class == tcp_sock_t::SERVER_UNICAST) {
+
       ret = bind_(addr_info);
     }
 
@@ -663,8 +677,9 @@ private:
     int32_t rc;
     if ((rc = ::bind(sock_fd_, addr_info->ai_addr, addr_info->ai_addrlen)) != 0) {
       clear_();
-      throw std::runtime_error(fmt::format("Could not bind TCP socket (errno = {0}), ({1}), {2}:{3}", strerror(rc),
-                                           __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Could not bind TCP socket (errno = %1%), (%2%), %3%:%4%") %
+                                strerror(rc) % __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     return rc;
@@ -683,15 +698,17 @@ private:
         }
       }).detach();
       if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, it->first, nullptr) < 0u)
-        throw std::runtime_error(
-            fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+        throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                  __func__ % __FILE__ % __LINE__)
+                                     .str());
       ::close(it->first);
     }
 
     connected_.clear();
     if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr) < 0u)
-      throw std::runtime_error(
-          fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
 
     ::close(sock_fd_);
     state_ = state_t::STOPPED;
@@ -748,8 +765,9 @@ private:
     }
 
     if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr) < 0u)
-      throw std::runtime_error(
-          fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
 
     on_disconnect_internal_hook_(sock_fd_);
     ::close(sock_fd_);
@@ -775,7 +793,8 @@ private:
   void open_() {
     if ((sock_fd_ = ::socket(family, socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, protocol)) < 0) {
       clear_();
-      throw std::runtime_error(fmt::format("Could not create socket, ({0}), {1}:{2}", __func__, __FILE__, __LINE__));
+      throw std::runtime_error(
+          (boost::format("Could not create socket, (%1%), %2%:%3%") % __func__ % __FILE__ % __LINE__).str());
     }
 
     struct epoll_event event;
@@ -784,8 +803,9 @@ private:
     event.data.fd = sock_fd_;
 
     if (::epoll_ctl(epfd_, EPOLL_CTL_ADD, sock_fd_, &event) < 0u)
-      throw std::runtime_error(
-          fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
   }
 
   template <recv_behavior_t rb = recv_behavior_t::HOOK,
@@ -801,8 +821,9 @@ private:
     struct timeval read_timeout = {base_t::receive_timeout() / 1000, 0u};
 
     if ((rc = ::ioctl(fd, FIONREAD, &bytes_pending)) < 0) {
-      throw std::runtime_error(
-          fmt::format("IOctl error (errno = {0}), ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     void *data = std::malloc(bytes_pending);
@@ -846,8 +867,9 @@ private:
             return {recvd, std::shared_ptr<void>(), sockaddr_inet_t()};
           }
         } else {
-          throw std::runtime_error(fmt::format("Receiveing error (errno = {0}), ({1}), {2}:{3}", strerror(errno),
-                                               __func__, __FILE__, __LINE__));
+          throw std::runtime_error((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                    __func__ % __FILE__ % __LINE__)
+                                       .str());
         }
       } else {
         FD_ZERO(&read_fd_set);
@@ -898,8 +920,9 @@ private:
 
       if ((rc = ::getpeername(fd, reinterpret_cast<struct sockaddr *>(&peer), &peerlen)) < 0) {
         std::free(data);
-        throw std::runtime_error(fmt::format("Get peer name failed (errno = {0}), ({1}), {2}:{3}", strerror(errno),
-                                             __func__, __FILE__, __LINE__));
+        throw std::runtime_error((boost::format("Get peer name failed (errno = %1%), (%2%), %3%:%4%") %
+                                  strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                     .str());
       }
 
       if constexpr (rb == recv_behavior_t::HOOK) {
@@ -943,21 +966,24 @@ private:
     event.data.fd = sock_fd_;
 
     if (::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event) < 0u)
-      throw std::runtime_error(
-          fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
 
     int32_t rc;
     if ((rc = ::connect(sock_fd_, addr_info->ai_addr, sizeof(sockaddr_inet_t))) < 0) {
       if (errno != EINPROGRESS) {
-        throw std::runtime_error(fmt::format("Connection error (errno = {0}), ({1}), {2}:{3}", strerror(errno),
-                                             __func__, __FILE__, __LINE__));
+        throw std::runtime_error((boost::format("Connection error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                  __func__ % __FILE__ % __LINE__)
+                                     .str());
       }
     }
 
     int32_t num_ready;
     if ((num_ready = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::connect_timeout())) < 0) {
-      throw std::runtime_error(
-          fmt::format("Epoll wait error (errno = {0}), ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Epoll wait error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     for (int32_t i = 0; i < num_ready; i++) {
@@ -966,8 +992,9 @@ private:
         socklen_t epoll_errlen = sizeof(epoll_error);
         if ((rc = ::getsockopt(sock_fd_, SOL_SOCKET, SO_ERROR, reinterpret_cast<void *>(&epoll_error), &epoll_errlen)) <
             0) {
-          throw std::runtime_error(fmt::format("getsockopt() error (errno = {0}) ({1}), {2}:{3}", strerror(errno),
-                                               __func__, __FILE__, __LINE__));
+          throw std::runtime_error((boost::format("getsockopt() error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                    __func__ % __FILE__ % __LINE__)
+                                       .str());
         }
 
         sockaddr_inet_t server;
@@ -978,8 +1005,9 @@ private:
         event.data.fd = sock_fd_;
 
         if (::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event) < 0u)
-          throw std::runtime_error(fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno),
-                                               __func__, __FILE__, __LINE__));
+          throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                    __func__ % __FILE__ % __LINE__)
+                                       .str());
 
         if (epoll_error) {
           std::thread([this, server]() -> void {
@@ -1019,22 +1047,28 @@ private:
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type set_non_blocking_(int32_t fd) const {
     int32_t flags;
     if ((flags = ::fcntl(fd, F_GETFL, 0)) < 0)
-      throw std::runtime_error(fmt::format("Set non-blocking error (errno = {0}), ({1}), {2}:{3}\r\n", strerror(errno),
-                                           __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
+                                strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                   .str());
+
     if (::fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
-      throw std::runtime_error(fmt::format("Set non-blocking error (errno = {0}), ({1}), {2}:{3}\r\n", strerror(errno),
-                                           __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
+                                strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                   .str());
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = void>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type set_blocking_(int32_t fd) const {
     int32_t flags;
     if ((flags = ::fcntl(fd, F_GETFL, 0)) < 0)
-      throw std::runtime_error(fmt::format("Set non-blocking error (errno = {0}), ({1}), {2}:{3}\r\n", strerror(errno),
-                                           __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
+                                strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                   .str());
+
     if (::fcntl(fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
-      throw std::runtime_error(fmt::format("Set non-blocking error (errno = {0}), ({1}), {2}:{3}\r\n", strerror(errno),
-                                           __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
+                                strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                   .str());
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
@@ -1045,9 +1079,11 @@ private:
     void *dst_addr, *dst_port;
 
     if constexpr (base_t::is_ipv6) {
+
       dst_addr = &net_addr.sin6_addr;
       net_addr.sin6_port = ::ntohs(port);
     } else {
+
       dst_addr = &net_addr.sin_addr;
       net_addr.sin_port = ::ntohs(port);
     }
@@ -1121,8 +1157,9 @@ private:
   accept:
     if ((peer_fd = ::accept(sock_fd_, reinterpret_cast<struct sockaddr *>(&peer_addr), &peer_addr_size)) < 0) {
       if (errno != EAGAIN) {
-        throw std::runtime_error(
-            fmt::format("Accept error (errno = {0}), ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+        throw std::runtime_error((boost::format("Accept error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                                  __func__ % __FILE__ % __LINE__)
+                                     .str());
       } else {
         FD_ZERO(&accept_fd_set);
         FD_SET(sock_fd_, &accept_fd_set);
@@ -1154,8 +1191,9 @@ private:
     peer_ev.events = EPOLLIN | EPOLLET;
 
     if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_ADD, peer_fd, &peer_ev)) < 0u)
-      throw std::runtime_error(
-          fmt::format("Epoll ctl error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
 
     connected_info_lock_.lock();
     connected_.insert(std::make_pair(peer_fd, peer_addr));
@@ -1181,8 +1219,9 @@ private:
     listen_enabled_ = true;
     int32_t rc;
     if ((rc = ::listen(sock_fd_, SOMAXCONN)) < 0) {
-      throw std::runtime_error(fmt::format("Start listening error: (errno = {0}), ({1}), {2}:{3}\"", strerror(errno),
-                                           __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Start listening error: (errno = %1%), (%2%), %3%:%4%\"") %
+                                strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     state_ = state_t::LISTENING;
@@ -1190,8 +1229,9 @@ private:
 
       int32_t num_ready;
       if ((num_ready = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::accept_timeout())) < 0u) {
-        throw std::runtime_error(fmt::format("Epoll wait error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__,
-                                             __FILE__, __LINE__));
+        throw std::runtime_error((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                  __func__ % __FILE__ % __LINE__)
+                                     .str());
       }
 
       for (int32_t i = 0; i < num_ready; i++) {

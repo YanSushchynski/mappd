@@ -12,7 +12,6 @@ set( TYPE_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/type/inc" CACHE INTERNAL 
 set( COMPONENT_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/component/inc" CACHE INTERNAL "CMake include directory for components" )
 set( JIT_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/jit/inc" CACHE INTERNAL "CMake include directory for JIT compilation" )
 set( DL_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/dl/inc" CACHE INTERNAL "CMake include directory for dynamic shared objects loading" )
-set( FMT_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/fmt/include" CACHE INTERNAL "CMake include directory for string formatting" )
 set( FNV1A_HASH_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/hash/fnv1a/inc" CACHE INTERNAL "CMake include directory for compile time fnv1a hashing" )
 set( SHA256_HASH_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/hash/sha256" CACHE INTERNAL "CMake include directory for compile time sha256 hashing" )
 set( STRING_UTILS_INCLUDE_DIR "${PROJECT_ROOT_DIR}/utils/string/inc" CACHE INTERNAL "CMake include directory for compile time strings" )
@@ -32,7 +31,6 @@ file( GLOB ENV_SRC "${PROJECT_ROOT_DIR}/env/src/*.cpp" CACHE INTERNAL "CMake sou
 file( GLOB ENV_UTIL_SRC "${PROJECT_ROOT_DIR}/utils/env/src/*.cpp" CACHE INTERNAL "CMake source files for utility templates" )
 file( GLOB JIT_UTIL_SRC "${PROJECT_ROOT_DIR}/utils/jit/src/*.cpp" CACHE INTERNAL "CMake source files for JIT" )
 file( GLOB DL_UTIL_SRC "${PROJECT_ROOT_DIR}/utils/dl/src/*.cpp" CACHE INTERNAL "CMake source files for DL" )
-file( GLOB FMT_UTIL_SRC "${PROJECT_ROOT_DIR}/utils/fmt/src/*.cc" CACHE INTERNAL "CMake source files FMT" )
 file( GLOB SHA256_HASH_UTIL_SRC "${PROJECT_ROOT_DIR}/utils/hash/sha256/sha256.cpp" CACHE INTERNAL "CMake source files for sha256 hashing" )
 file( GLOB CIDR_UTIL_SRC "${PROJECT_ROOT_DIR}/utils/libcidr/src/*.cpp" CACHE INTERNAL "CMake source files LibCIDR" )
 file( GLOB TEST_MAIN_SRC "${PROJECT_ROOT_DIR}/tests/src/main.cpp" CACHE INTERNAL "Test main.cpp")
@@ -81,7 +79,6 @@ include_directories(
   ${FNV1A_HASH_UTILS_INCLUDE_DIR}
   ${SHA256_HASH_UTILS_INCLUDE_DIR}
   ${STRING_UTILS_INCLUDE_DIR}
-  ${FMT_UTILS_INCLUDE_DIR}
   ${NET_UTILS_INCLUDE_DIR}
   ${PROTO_TRAITS_INC_DIR}
   ${CIDR_UTILS_INCLUDE_DIR}
@@ -99,7 +96,6 @@ add_executable( ${CMAKE_PROJECT_NAME}.elf
   ${ENV_SRC}
   ${ENV_UTIL_SRC}
   #${JIT_UTIL_SRC}
-  ${FMT_UTIL_SRC}
   ${TEST_MAIN_SRC})
 
 add_test(${CMAKE_PROJECT_NAME}.elf ${CMAKE_PROJECT_NAME}.elf)

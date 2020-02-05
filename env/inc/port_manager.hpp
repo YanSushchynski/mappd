@@ -63,8 +63,9 @@ template <typename... Compositions> struct port_manager_t : public port_manager_
 
       return (result) ? result
                       : throw std::runtime_error(
-                            fmt::format("Port \"{2}\" in composition \"{0}\", component \"{1}\" not found",
-                                        composition_name, component_name, port_name));
+                            (boost::format("Port \"%3%\" in composition \"%1%\", component \"%2%\" not found\r\n") %
+                             composition_name % component_name % port_name)
+                                .str());
     }(compositions_);
   }
 
@@ -101,8 +102,9 @@ template <typename... Compositions> struct port_manager_t : public port_manager_
       }
 
       return (result) ? result
-                      : throw std::runtime_error(
-                            fmt::format("Port \"{1}\" in composition \"{0}\" not found", composition_name, port_name));
+                      : throw std::runtime_error((boost::format("Port \"%2%\" in composition \"%1%\" not found\r\n") %
+                                                  composition_name % port_name)
+                                                     .str());
     }(compositions_);
   }
 

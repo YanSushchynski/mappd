@@ -331,8 +331,9 @@ private:
     this->listen_enabled__() = true;
     int32_t rc;
     if ((rc = ::listen(this->fd__(), SOMAXCONN)) < 0) {
-      throw std::runtime_error(fmt::format("Start listening error: (errno = {0}), ({1}), {2}:{3}\"", strerror(errno),
-                                           __func__, __FILE__, __LINE__));
+      throw std::runtime_error((boost::format("Start listening error: (errno = %1%), (%2%), %3%:%4%\"") %
+                                strerror(errno) % __func__ % __FILE__ % __LINE__)
+                                   .str());
     }
 
     this->state__() = base_t::state_t::LISTENING;
@@ -341,8 +342,9 @@ private:
       int32_t num_ready;
       if ((num_ready = ::epoll_wait(this->epfd__(), this->events__(), base_t::epoll_max_events(),
                                     base_t::accept_timeout())) < 0u) {
-        throw std::runtime_error(fmt::format("Epoll wait error (errno = {0}) ({1}), {2}:{3}", strerror(errno), __func__,
-                                             __FILE__, __LINE__));
+        throw std::runtime_error((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
+                                  __func__ % __FILE__ % __LINE__)
+                                     .str());
       }
 
       for (int32_t i = 0; i < num_ready; i++) {

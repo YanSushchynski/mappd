@@ -1,19 +1,18 @@
 #ifndef CODEGEN_HPP
 #define CODEGEN_HPP
 
+#include <boost/format.hpp>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-#include <fmt/format.h>
 #include <libconfig.h++>
 
 #include "env_utils.hpp"
-#include "hash.hpp"
+#include "fnv1a.hpp"
 #include "tuple.hpp"
 #include "type_traits_ex.hpp"
 
 struct codegen_t {
-
   template <uint64_t sum> struct _ {
     static_assert(sum == sum64("") || sum == sum64("d") || sum == sum64("p") || sum == sum64("s") ||
                       sum == sum64("dp") || sum == sum64("pd") || sum == sum64("ds") || sum == sum64("sd") ||
@@ -265,7 +264,7 @@ struct codegen_t {
   template <template <typename...> class Params, typename... _Params, template <typename...> class Args,
             typename... _Args>
   static std::string template_def_func_style_(const std::string &type, const Params<_Params...> &params,
-                                   const std::string &varname, const Args<_Args...> &args) {
+                                              const std::string &varname, const Args<_Args...> &args) {
     return type + wrap_by_("<,>", params) + " " + varname + wrap_by_("(,)", args) + ";";
   }
 

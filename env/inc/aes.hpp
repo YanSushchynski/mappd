@@ -8,7 +8,7 @@
 #include <openssl/evp.h>
 #include <openssl/evperr.h>
 
-#include "fmt/format.h"
+#include <boost/format.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -100,8 +100,9 @@ private:
   }
 
   void raise_crypto_error_(uint64_t crypto_errno) const {
-    throw std::runtime_error(fmt::format("Crypto error : {1}:{2}, ({3}:{4})\r\n", crypto_errno,
-                                         ossl_err_as_string_(crypto_errno).c_str(), __FILE__, __LINE__));
+    throw std::runtime_error((boost::format("Crypto error : %1%:%2%, (%3:%4%)\r\n") % crypto_errno %
+                              ossl_err_as_string_(crypto_errno).c_str() % __FILE__ % __LINE__)
+                                 .str());
   }
 };
 

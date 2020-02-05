@@ -7,6 +7,7 @@
 #include <cstring>
 #include <time.h>
 
+#include <boost/format.hpp>
 #include <future>
 #include <map>
 #include <memory>
@@ -29,7 +30,6 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#include "fmt/format.h"
 #include "hook.hpp"
 #include "libcidr.hpp"
 #include "property.hpp"
@@ -40,7 +40,7 @@ public:
   static constexpr bool is_network = family == AF_INET || family == AF_INET6;
   static constexpr bool is_domain = family == AF_UNIX;
   static constexpr bool is_ipv6 = is_network && !is_domain && family == AF_INET6;
-  static constexpr int32_t addrlen = this_t::is_ipv6 ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN;
+  static constexpr int32_t addrlen = is_ipv6 ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN;
 
   struct iface_netinfo_t {
     std::array<char, this_t::addrlen> host_addr{0};
@@ -85,7 +85,7 @@ public:
 
   void thr_num_inc() { threads_cnt_++; }
   void thr_num_dec() { threads_cnt_--; }
-  
+
   void stop_threads() {
     if (threads_cnt_) {
       std::unique_lock<std::mutex> lock(mtx_);
@@ -110,12 +110,12 @@ private:
   std::condition_variable cv_;
   std::atomic<uint64_t> threads_cnt_;
   std::mutex mtx_;
-  
+
   template <typename RetType = iface_netinfo_t>
   const typename std::enable_if<is_network, RetType>::type get_iface_info_(const std::string &ifname) {
-    using addr_inet_t = std::conditional_t<this_t::is_ipv6, in6_addr, in_addr>;
+    using addr_inet_t = std::conditional_t<is_ipv6, struct in6_addr, struct in_addr>;
     using sockaddr_inet_t = std::conditional_t<is_ipv6, struct sockaddr_in6, struct sockaddr_in>;
-    using num_addr_t = std::conditional_t<this_t::is_ipv6, __uint128_t, uint32_t>;
+    using num_addr_t = std::conditional_t<is_ipv6, __uint128_t, uint32_t>;
     struct ifaddrs *interfaces = nullptr;
 
     if (!::getifaddrs(&interfaces)) {
@@ -130,26 +130,33 @@ private:
               addr_inet_t *p_netmaskstr;
               uint32_t scopeid;
 
-              if constexpr (this_t::is_ipv6) {
+              if constexpr (is_ipv6) {
+
                 p_addrstr = &reinterpret_cast<sockaddr_inet_t *>(temp_addr->ifa_addr)->sin6_addr;
                 p_netmaskstr = &reinterpret_cast<sockaddr_inet_t *>(temp_addr->ifa_netmask)->sin6_addr;
                 scopeid = reinterpret_cast<sockaddr_inet_t *>(temp_addr->ifa_addr)->sin6_scope_id;
 
-              } else if constexpr (!this_t::is_ipv6) {
+              } else {
+
                 p_addrstr = &reinterpret_cast<sockaddr_inet_t *>(temp_addr->ifa_addr)->sin_addr;
                 p_netmaskstr = &reinterpret_cast<sockaddr_inet_t *>(temp_addr->ifa_netmask)->sin_addr;
               }
 
-              if (::inet_ntop(family, p_addrstr, info.host_addr.data(), this_t::addrlen) != info.host_addr.data())
-                throw std::runtime_error(
-                    fmt::format("Error during converting host address, ({0}), {1}:{2}", __func__, __FILE__, __LINE__));
+              if (::inet_ntop(family, p_addrstr, info.host_addr.data(), this_t::addrlen) != info.host_addr.data()) {
+                throw std::runtime_error((boost::format("Error during converting host address, (%1%), %2%:%3%") %
+                                          __func__ % __FILE__ % __LINE__)
+                                             .str());
+              }
 
-              if (::inet_ntop(family, p_netmaskstr, info.netmask.data(), this_t::addrlen) != info.netmask.data())
+              if (::inet_ntop(family, p_netmaskstr, info.netmask.data(), this_t::addrlen) != info.netmask.data()) {
                 throw std::runtime_error(
-                    fmt::format("Error during converting netmask, ({0}), {1}:{2}", __func__, __FILE__, __LINE__));
+                    (boost::format("Error during converting netmask, (%1%), %2%:%3%") % __func__ % __FILE__ % __LINE__)
+                        .str());
+              }
 
               num_addr_t num_addr;
               ::inet_pton(family, info.netmask.data(), &num_addr);
+
               while (num_addr > 0u) {
                 num_addr = num_addr >> 1u;
                 info.pflen++;
@@ -169,17 +176,20 @@ private:
               return std::move(info);
             }
           }
-        } else
-          goto next;
+        }
 
-      next:
         temp_addr = temp_addr->ifa_next;
       }
 
       throw std::runtime_error(
-          fmt::format("Interface with name {0} not found, ({1}), {2}:{3}", ifname, __func__, __FILE__, __LINE__));
-    } else
-      throw std::runtime_error("getifaddrs() Fuck!");
+          (boost::format("Interface with name %1% not found, (%2%), %3%:%4%") % ifname % __func__ % __FILE__ % __LINE__)
+              .str());
+    } else {
+
+      throw std::runtime_error((boost::format("getifaddrs() failed errno = %1%, (%2%), %3%:%4%\r\n") % strerror(errno) %
+                                __func__ % __FILE__ % __LINE__)
+                                   .str());
+    }
   }
 };
 

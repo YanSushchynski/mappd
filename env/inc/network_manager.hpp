@@ -109,14 +109,14 @@ public:
       uint16_t peer_srv = ::htons(peer.sin_port);
       char peer_addr[INET_ADDRSTRLEN];
       ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-      fmt::print("Server: peer {0}:{1} connected!\r\n", peer_addr, peer_srv);
+      std::printf("%s", (boost::format("Server: peer %1%:%2% connected!\r\n") % peer_addr % peer_srv).str().c_str());
     });
 
     ipv4_stream_srv.on_disconnect().add("OnDisonnectHook", [this](struct sockaddr_in peer, auto *unit) -> void {
       uint16_t peer_srv = ::htons(peer.sin_port);
       char peer_addr[INET_ADDRSTRLEN];
       ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-      fmt::print("Server: peer {0}:{1} disconnected!\r\n", peer_addr, peer_srv);
+      std::printf("%s", (boost::format("Server: peer %1%:%2% disconnected!\r\n") % peer_addr % peer_srv).str().c_str());
     });
 
     ipv4_stream_srv.on_receive().add(
@@ -124,8 +124,10 @@ public:
           uint16_t peer_srv = ::htons(peer.sin_port);
           char peer_addr[INET_ADDRSTRLEN];
           ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-          fmt::print("Server: received message \"{0}\" from peer {1}:{2}\r\n",
-                     std::string(reinterpret_cast<char *>(data.get()), size), peer_addr, peer_srv);
+          std::printf("%s", (boost::format("Server: received message \"%1%\" from peer %2%:%3%\r\n") %
+                             std::string(reinterpret_cast<char *>(data.get()), size) % peer_addr % peer_srv)
+                                .str()
+                                .c_str());
         });
 
     ipv4_stream_srv.start();
@@ -234,25 +236,30 @@ private:
                     this->env_()->info().env_ca_priv_key_file(), this->env_()->info().env_cert_info(),
                     this->env_()->info().env_cert_exp_time())));
 
-        unit->on_connect().add("OnConnectHook",
-                               [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
-                                   struct sockaddr_in peer, auto *unit) -> void {
-                                 uint16_t peer_srv = ::htons(peer.sin_port);
-                                 char peer_addr[INET_ADDRSTRLEN];
-                                 ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-                                 fmt::print("Client: connected to {0}:{1}\r\n", peer_addr, peer_srv);
-                               });
+        unit->on_connect().add(
+            "OnConnectHook",
+            [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](struct sockaddr_in peer,
+                                                                                   auto *unit) -> void {
+              uint16_t peer_srv = ::htons(peer.sin_port);
+              char peer_addr[INET_ADDRSTRLEN];
+              ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
+              std::printf("%s",
+                          (boost::format("Client: connected to %1%:%2%\r\n") % peer_addr % peer_srv).str().c_str());
+            });
 
-        unit->on_disconnect().add("OnDisconnectHook",
-                                  [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
-                                      struct sockaddr_in peer, auto *unit) -> void {
-                                    std::lock_guard<std::recursive_mutex> lock(peers_lock_);
-                                    uint16_t peer_srv = ::htons(peer.sin_port);
-                                    char peer_addr[INET_ADDRSTRLEN];
-                                    ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-                                    fmt::print("Client: disconnected from {0}:{1}\r\n", peer_addr, peer_srv);
-                                    peers_.erase(hash);
-                                  });
+        unit->on_disconnect().add(
+            "OnDisconnectHook",
+            [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](struct sockaddr_in peer,
+                                                                                   auto *unit) -> void {
+              std::lock_guard<std::recursive_mutex> lock(peers_lock_);
+              uint16_t peer_srv = ::htons(peer.sin_port);
+              char peer_addr[INET_ADDRSTRLEN];
+              ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
+              std::printf(
+                  (boost::format("Client: disconnected from %1%:%2%\r\n") % peer_addr % peer_srv).str().c_str());
+
+              peers_.erase(hash);
+            });
 
         if (!(rc = unit->connect(peer_addr, header.env_ipv4_stream_port()))) {
 

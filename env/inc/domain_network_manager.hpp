@@ -88,18 +88,20 @@ public:
 
     domain_stream_srv.on_connect().add("OnConnectHook", [this](struct sockaddr_un peer, auto *unit) -> void {
       std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
-      fmt::print("Server: peer {0} connected!\r\n", peer.sun_path);
+      std::printf("%s", (boost::format("Server: peer %1% connected!\r\n") % peer.sun_path).str().c_str());
     });
 
     domain_stream_srv.on_disconnect().add("OnDisonnectHook", [this](struct sockaddr_un peer, auto *unit) -> void {
       std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
-      fmt::print("Server: peer {0}:{1} disconnected!\r\n", peer.sun_path);
+      std::printf("%s", (boost::format("Server: peer %1%:%2% disconnected!\r\n") % peer.sun_path).str().c_str());
     });
 
     domain_stream_srv.on_receive().add(
         "OnReceiveHook", [this](struct sockaddr_un peer, std::shared_ptr<void> data, size_t size, auto *unit) -> void {
-          fmt::print("Server: received message \"{0}\" from peer {1}:{2}\r\n",
-                     std::string(reinterpret_cast<char *>(data.get()), size), peer.sun_path);
+          std::printf((boost::format("Server: received message \"%1%\" from peer %2%:%3%\r\n") %
+                       std::string(reinterpret_cast<char *>(data.get()), size) % peer.sun_path)
+                          .str()
+                          .c_str());
         });
 
     domain_stream_srv.start();
@@ -206,19 +208,21 @@ private:
                     this->env_()->info().env_ca_cert_file(), this->env_()->info().env_ca_priv_key_file(),
                     this->env_()->info().env_cert_info(), this->env_()->info().env_cert_exp_time())));
 
-        unit->on_connect().add("OnConnectHook",
-                               [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
-                                   struct sockaddr_un peer, auto *unit) -> void {
-                                 fmt::print("Client: connected to {0}\r\n", peer.sun_path);
-                               });
+        unit->on_connect().add(
+            "OnConnectHook",
+            [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](struct sockaddr_un peer,
+                                                                                   auto *unit) -> void {
+              std::printf("%s", (boost::format("Client: connected to %1%\r\n") % peer.sun_path).str().c_str());
+            });
 
-        unit->on_disconnect().add("OnDisconnectHook",
-                                  [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](
-                                      struct sockaddr_un peer, auto *unit) -> void {
-                                    std::lock_guard<std::recursive_mutex> lock(peers_lock_);
-                                    fmt::print("Client: disconnected from {0}\r\n", peer.sun_path);
-                                    peers_.erase(hash);
-                                  });
+        unit->on_disconnect().add(
+            "OnDisconnectHook",
+            [this, hash = std::remove_reference_t<decltype(peer_hash)>(peer_hash)](struct sockaddr_un peer,
+                                                                                   auto *unit) -> void {
+              std::lock_guard<std::recursive_mutex> lock(peers_lock_);
+              std::printf((boost::format("Client: disconnected from %1%\r\n") % peer.sun_path).str().c_str());
+              peers_.erase(hash);
+            });
 
         if (!(rc = unit->connect(peer_path))) {
 

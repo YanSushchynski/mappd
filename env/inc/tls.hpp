@@ -39,7 +39,8 @@
 #include <openssl/x509v3.h>
 #include <openssl/x509v3err.h>
 
-#include "fmt/format.h"
+#include <boost/format.hpp>
+
 #include "tcp_sock_secure_type.hpp"
 #include "udp_sock_secure_type.hpp"
 
@@ -76,7 +77,8 @@ private:
       std::string data_copy = bytes;
 
       if (!(split_list = std::strtok(const_cast<char *>(data_copy.data()), delimeters))) {
-        throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+        throw std::runtime_error(
+            (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
       }
 
       do {
@@ -85,64 +87,70 @@ private:
 
           char *pch = std::strtok(split_list, "=");
           if (!pch)
-            throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+            throw std::runtime_error(
+                (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
           ret[0u] = (pch = std::strtok(nullptr, "="))
                         ? pch
                         : throw std::runtime_error(
-                              fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+                              (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
         } else if (!std::strncmp(split_list, (std::string(state_token()) + "=").c_str(),
                                  std::strlen(state_token()) + 1u)) {
 
           char *pch = std::strtok(split_list, "=");
           if (!pch)
-            throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+            throw std::runtime_error(
+                (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
           ret[1u] = (pch = std::strtok(nullptr, "="))
                         ? pch
                         : throw std::runtime_error(
-                              fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+                              (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
         } else if (!std::strncmp(split_list, (std::string(locality_name_token()) + "=").c_str(),
                                  std::strlen(locality_name_token()) + 1u)) {
-		  
+
           char *pch = std::strtok(split_list, "=");
           if (!pch)
-            throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+            throw std::runtime_error(
+                (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
           ret[2u] = (pch = std::strtok(nullptr, "="))
                         ? pch
                         : throw std::runtime_error(
-                              fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+                              (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
         } else if (!std::strncmp(split_list, (std::string(organization_name_token()) + "=").c_str(),
                                  std::strlen(organization_name_token()) + 1u)) {
 
           char *pch = std::strtok(split_list, "=");
           if (!pch)
-            throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+            throw std::runtime_error(
+                (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
           ret[3u] = (pch = std::strtok(nullptr, "="))
                         ? pch
                         : throw std::runtime_error(
-                              fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+                              (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
         } else if (!std::strncmp(split_list, (std::string(organizational_unit_name_token()) + "=").c_str(),
                                  std::strlen(organizational_unit_name_token()) + 1u)) {
 
           char *pch = std::strtok(split_list, "=");
           if (!pch)
-            throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+            throw std::runtime_error(
+                (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
           ret[4u] = (pch = std::strtok(nullptr, "="))
                         ? pch
                         : throw std::runtime_error(
-                              fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+                              (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
         } else if (!std::strncmp(split_list, (std::string(common_name_token()) + "=").c_str(),
                                  std::strlen(common_name_token()) + 1u)) {
-		  
+
           char *pch = std::strtok(split_list, "=");
           if (!pch)
             goto error;
           ret[5u] = (pch = std::strtok(nullptr, "="))
                         ? pch
                         : throw std::runtime_error(
-                              fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+                              (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
         } else
         error:
-          throw std::runtime_error(fmt::format("Invalid certificate subject ({0}:{1})\r\n", __FILE__, __LINE__));
+          throw std::runtime_error(
+              (boost::format("Invalid certificate subject (%1%:%2%)\r\n") % __FILE__ % __LINE__).str());
       } while ((split_list = std::strtok(nullptr, delimeters)));
 
       return std::move(ret);
@@ -193,7 +201,7 @@ private:
     int32_t crypto_err = ERR_get_error();
     ERR_clear_error();
     throw std::runtime_error(
-        fmt::format("{0} (errno = {1})\r\n", ERR_error_string(crypto_err, nullptr), strerror(errno)));
+        (boost::format("%1% (errno = %2%)\r\n") % ERR_error_string(crypto_err, nullptr) % strerror(errno)).str());
   }
 
   static void raise_ssl_error_(SSL *ssl_handle, int32_t rc) {
@@ -203,17 +211,20 @@ private:
     ERR_clear_error();
 
     if (error_reason && state) {
-      fmt::print("Error: {0}, state: {1}\r\n", error_reason, state);
+      std::printf("%s", (boost::format("Error: %1%, state: %2%\r\n") % error_reason % state).str().c_str());
     }
 
     throw std::runtime_error(
-        fmt::format("{0}, (errno = {1})\r\n", ERR_error_string(ssl_err, nullptr), strerror(errno)));
+        (boost::format("%1%, (errno = %2%)\r\n") % ERR_error_string(ssl_err, nullptr) % strerror(errno)).str());
   }
 
   static void print_error_() {
     int32_t crypto_err = ERR_get_error();
     ERR_clear_error();
-    fmt::format("Error: {0} (errno = {1})\r\n", ERR_error_string(crypto_err, nullptr), strerror(errno));
+    std::printf(
+        "%s", (boost::format("Error: %1% (errno = %2%)\r\n") % ERR_error_string(crypto_err, nullptr) % strerror(errno))
+                  .str()
+                  .c_str());
   }
 
   static void print_ssl_error_(SSL *ssl_handle, int32_t rc) {
@@ -224,14 +235,14 @@ private:
     ERR_clear_error();
 
     if (error_reason) {
-      fmt::print("SSL error reason: {0}\r\n", error_reason);
+      std::printf("%s", (boost::format("SSL error reason: %1%\r\n") % error_reason).str().c_str());
     }
 
     if (state) {
-      fmt::print("SSL state: {0}\r\n", state);
+      std::printf("%s", (boost::format("SSL state: %1%\r\n") % state).str().c_str());
     }
 
-    fmt::print("Errno: {0}\r\n", strerror(errno));
+    std::printf("%s", (boost::format("Errno: %1%\r\n") % strerror(errno)).str().c_str());
   }
 
   std::shared_ptr<SSL_CTX> create_tls_context_() {
@@ -444,7 +455,6 @@ private:
         /* Interrupt if accept handled unsuccessfully */
         if (rc) {
 
-          fmt::print("TLS server: client haven't registered because errors is SSL_accept()\r\n");
           SSL_clear(ssl_handle);
           SSL_free(ssl_handle);
           return rc;
@@ -454,7 +464,6 @@ private:
         if (!(peer_cert = SSL_get_peer_certificate(ssl_handle))) {
 
           /* Get vertificate error, clear memory, return */
-          fmt::print("TLS server: client haven't registered because not able to get certificate\r\n");
           rc = -1;
           set_blocking_(fd);
           SSL_shutdown(ssl_handle);
@@ -485,7 +494,6 @@ private:
           } else {
 
             /* Check failed, clear memory */
-            fmt::print("Server: certificate error\r\n");
             set_blocking_(fd);
             SSL_shutdown(ssl_handle);
             set_non_blocking_(fd);
@@ -499,13 +507,11 @@ private:
         return rc;
       } else {
 
-        fmt::print("TLS server: client haven't registered because handle exists\r\n");
         tls_handle_lock_.unlock();
         return 1;
       }
     } else {
 
-      fmt::print("TLS server: client haven't registered because context exists\r\n");
       tls_context_lock_.unlock();
       return 1;
     }
@@ -615,7 +621,6 @@ private:
     /* Clear memory and return if connection failed */
     if (rc) {
 
-      fmt::print("TLS client: client haven't connected because errors is SSL_connect()\r\n");
       SSL_clear(ssl_handle);
       SSL_free(ssl_handle);
       return rc;
@@ -625,7 +630,6 @@ private:
     if (!(peer_cert = SSL_get_peer_certificate(ssl_handle))) {
 
       /* Error getting peer credentials */
-      fmt::print("TLS client: client haven't connected because not able to get peer certificate\r\n");
       rc = -1;
       set_blocking_(fd);
       SSL_shutdown(ssl_handle);
@@ -656,7 +660,6 @@ private:
       } else {
 
         /* Signature verifying error, clear memory */
-        fmt::print("Client: invalid certificate\r\n");
         set_blocking_(fd);
         SSL_shutdown(ssl_handle);
         set_non_blocking_(fd);

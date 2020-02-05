@@ -9,7 +9,7 @@
 -I/home/user/Software/mappd/utils/component/inc
 -I/home/user/Software/mappd/utils/jit/inc
 -I/home/user/Software/mappd/utils/dl/inc
--I/home/user/Software/mappd/utils/fmt/include
+-I
 -I/home/user/Software/mappd/utils/hash/fnv1a/inc
 -I/home/user/Software/mappd/utils/hash/sha256
 -I/home/user/Software/mappd/utils/string/inc

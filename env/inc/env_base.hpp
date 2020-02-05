@@ -2,7 +2,7 @@
 #define ENV_BASE_HPP
 
 #include "env_utils.hpp"
-#include "fmt/format.h"
+#include <boost/format.hpp>
 
 #include <libconfig.h++>
 #include <mutex>
@@ -30,15 +30,15 @@ struct env_base_t {
     info_.set_env_ipv6_enabled(true);
 
     info_.set_domain_udp_socket_path("./udp_socket.socket");
-	info_.set_domain_stream_socket_path("./stream_socket.socket");
-	
+    info_.set_domain_stream_socket_path("./stream_socket.socket");
+
     info_.set_env_max_buffsize(1024);
     info_.set_env_broadcast_interval_ms(100u);
     info_.set_env_pid(getpid());
 
     const char *ca_files_path = std::getenv("CA_FILES");
     if (!ca_files_path)
-      throw std::runtime_error(fmt::format("Env initialization error, set CA_FILES env var first"));
+      throw std::runtime_error(boost::format("Env initialization error, set CA_FILES env var first").str());
     std::string ca_files_path_str = ca_files_path;
 
     if (!ca_files_path_str.empty() && ca_files_path[ca_files_path_str.length() - 1u] == '/')
@@ -46,11 +46,11 @@ struct env_base_t {
 
     !ca_files_path_str.empty()
         ? info_.set_env_ca_cert_file(ca_files_path_str + "ca_cert.crt")
-        : throw std::runtime_error(fmt::format("Env initialization error, set CA_FILE env var first"));
+        : throw std::runtime_error(boost::format("Env initialization error, set CA_FILE env var first").str());
 
     !ca_files_path_str.empty()
         ? info_.set_env_ca_priv_key_file(ca_files_path_str + "ca_key.key")
-        : throw std::runtime_error(fmt::format("Env initialization error, set CA_KEY env var first"));
+        : throw std::runtime_error(boost::format("Env initialization error, set CA_KEY env var first").str());
 
     info_.set_env_cert_exp_time(60u);
     info_.set_env_cert_info("C=XX; ST=XXX; L=XXX; O=Mappd_Testing; OU=Developers; CN=mappd.localhost");
@@ -87,7 +87,7 @@ private:
     header.set_env_invite(
         reinterpret_cast<const char *>(const_cast<const uint8_t *>(sha256::sha256_hash_type{0u}.data())));
 
-	header.set_domain_stream_socket_path(info.domain_stream_socket_path());
+    header.set_domain_stream_socket_path(info.domain_stream_socket_path());
     return std::move(header);
   }
 };
