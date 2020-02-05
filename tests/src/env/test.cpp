@@ -222,27 +222,5 @@ env_static_t env(
 
 TEST(EnvTesting, SimpleTestCase) {
   auto &env_local = env;
-  std::printf("Size : %lu\r\n", sizeof(env_local));
-  const port_node_t &p = env_local.port_manager().find_port("Composition0", "Component0", "Port0");
-  p.print_info();
-
-  const port_node_t &p1 = env_local.port_manager().find_port("Composition0", "Server1");
-  p1.print_info();
-
-  component_static_t c(
-      "Component0",
-      port_list_static_t<recp_t<int>, ssenp_t<int>, assenp_t<int>, recp_t<int>, ssenp_t<int>, assenp_t<int>,
-                         sclip_t<int(int, int)>, sclip_t<int(int, int)>, sclip_t<int(int, int)>, sclip_t<int(int, int)>,
-                         sclip_t<int(int, int)>, sclip_t<int(int, int)>>(
-          "Port0", "Port1", "Port2", "Port3", "Port4", "Port5", "Port6", "Port7", "Port8", "Port9", "Port10", "Port11"),
-      runtime_list_static_t({{"foo0", "sig0", foo0}, {"foo1", "sig1", foo1}, {"foo2", "sig2", foo2}}));
-
-  recp_t<int> receiver_port("Receiver");
-  ssenp_t<int> sender_port("Sender");
-
-  c(0u, nullptr, "sig0");
-  c(0u, nullptr, "sig1");
-  c(0u, nullptr, "sig2");
-
   env_local.network_manager().run();
 }

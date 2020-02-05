@@ -17,5 +17,5 @@
 -I${CIDR_UTILS_INCLUDE_DIR}
 -I${THREAD_POOL_UTILS_INCLUDE_DIR}
 
--std=gnu++17
+-std=gnu++2a
 -fconstexpr-steps=2000000000

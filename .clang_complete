@@ -17,5 +17,5 @@
 -I/home/user/Software/mappd/utils/libcidr/inc
 -I/home/user/Software/mappd/utils/threads/inc
 
--std=gnu++17
+-std=gnu++2a
 -fconstexpr-steps=2000000000
