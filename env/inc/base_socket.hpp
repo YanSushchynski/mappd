@@ -84,9 +84,9 @@ public:
   std::mutex &mtx() { return mtx_; }
 
   void stop_threads() {
-    std::unique_lock<std::mutex> lock(mtx_);
-    if (threads_cnt_ != 0u) {
-      cv_.wait(lock, [this] { return threads_cnt_ == 0u; });
+    if (threads_cnt_) {
+      std::unique_lock<std::mutex> lock(mtx_);
+      cv_.wait(lock, [this]() -> bool { return threads_cnt_ == 0u; });
     }
   }
 
