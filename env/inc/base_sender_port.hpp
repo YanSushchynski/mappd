@@ -10,7 +10,7 @@ struct base_sender_port_t<runtime_type, DataType> : base_port_t<DataType> {
 public:
   using data_t = DataType;
   using this_t = base_sender_port_t<runtime_type, data_t>;
-  using base_t = base_port_t<data_t>;
+  using base_s = base_port_t<data_t>;
 
 private:
   friend struct env_base_s;

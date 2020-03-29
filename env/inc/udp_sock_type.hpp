@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-enum struct udp_sock_t : uint32_t {
+enum struct udp_sock_type_e : uint32_t {
   CLIENT_UNICAST = 1u,
   SERVER_UNICAST,
   CLIENT_MULTICAST,

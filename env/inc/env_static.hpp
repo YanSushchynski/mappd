@@ -30,7 +30,7 @@ private:
   friend struct env_static_sglt_gen_s<nt>;
   friend this_s &env_static_sglt_gen_s<nt>::env_static_inst(const std::string &,
                                                             const cmps_list_static_s<Composition, Compositions...> &);
-
+  
 public:
   explicit env_static_s(const this_s &) = delete;
   explicit env_static_s(this_s &&) = delete;
@@ -44,7 +44,7 @@ public:
   virtual int32_t run(int32_t argc, char *argv[]) const override { return 0; };
 
 private:
-  /* Disabling of warning related to uninitialized reference (not critical in this case because it will be initialized
+  /* Disabling of warning related to uninitialized reference (not critical in this scope because it will be initialized
    * later or earlier (order isn't specified) */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuninitialized"

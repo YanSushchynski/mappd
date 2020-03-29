@@ -34,34 +34,34 @@
 #include "libcidr.hpp"
 #include "property.hpp"
 
-template <uint32_t family, uint32_t socktype, uint32_t protocol> struct base_socket {
+template <uint32_t family, uint32_t socktype, uint32_t protocol, bool multithread> struct base_sock_s {
 public:
-  using this_t = base_socket<family, socktype, protocol>;
+  using this_s = base_sock_s<family, socktype, protocol, multithread>;
   static constexpr bool is_network = family == AF_INET || family == AF_INET6;
   static constexpr bool is_domain = family == AF_UNIX;
   static constexpr bool is_ipv6 = is_network && !is_domain && family == AF_INET6;
   static constexpr int32_t addrlen = is_ipv6 ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN;
 
-  struct iface_netinfo_t {
-    std::array<char, this_t::addrlen> host_addr{0};
-    std::array<char, this_t::addrlen> netmask{0};
-    std::array<char, this_t::addrlen> broadcast{0};
+  struct iface_netinfo_s {
+    std::array<char, this_s::addrlen> host_addr{0};
+    std::array<char, this_s::addrlen> netmask{0};
+    std::array<char, this_s::addrlen> broadcast{0};
     uint32_t pflen = 0;
     uint32_t scopeid;
   };
 
   template <bool network = is_network, bool domain = is_domain>
-  explicit base_socket(const std::string &iface, typename std::enable_if<network && !domain, bool>::type * = nullptr)
+  explicit base_sock_s(const std::string &iface, typename std::enable_if<network && !domain, bool>::type * = nullptr)
       : if_(iface), threads_cnt_(0u), iface_path_info_(get_iface_info_(iface)){};
 
   template <bool network = is_network, bool domain = is_domain>
-  explicit base_socket(const std::string &path, typename std::enable_if<!network && domain, bool>::type * = nullptr)
+  explicit base_sock_s(const std::string &path, typename std::enable_if<!network && domain, bool>::type * = nullptr)
       : if_(path), threads_cnt_(0u){};
 
   template <bool network = is_network, bool domain = is_domain>
-  explicit base_socket(typename std::enable_if<!network && domain, bool>::type * = nullptr) : threads_cnt_(0u){};
+  explicit base_sock_s(typename std::enable_if<!network && domain, bool>::type * = nullptr) : threads_cnt_(0u){};
 
-  template <bool network = is_network, typename RetType = iface_netinfo_t>
+  template <bool network = is_network, typename RetType = iface_netinfo_s>
   const typename std::enable_if<network, RetType>::type &iface() const {
     return iface_path_info_;
   }
@@ -93,7 +93,7 @@ public:
     }
   }
 
-  virtual ~base_socket() { stop_threads(); };
+  virtual ~base_sock_s() { stop_threads(); };
 
 private:
   static constexpr uint32_t epoll_max_events_ = 32u;
@@ -103,7 +103,7 @@ private:
   static constexpr uint32_t accept_timeout_ms_ = 1000u;
 
   const std::string if_;
-  std::conditional_t<is_network, const struct iface_netinfo_t,
+  std::conditional_t<is_network, const struct iface_netinfo_s,
                      std::conditional_t<is_domain, const std::string, uint8_t>>
       iface_path_info_;
 
@@ -111,7 +111,7 @@ private:
   std::atomic<uint64_t> threads_cnt_;
   std::mutex mtx_;
 
-  template <typename RetType = iface_netinfo_t>
+  template <typename RetType = iface_netinfo_s>
   const typename std::enable_if<is_network, RetType>::type get_iface_info_(const std::string &ifname) {
     using addr_inet_t = std::conditional_t<is_ipv6, struct in6_addr, struct in_addr>;
     using sockaddr_inet_t = std::conditional_t<is_ipv6, struct sockaddr_in6, struct sockaddr_in>;
@@ -120,7 +120,7 @@ private:
 
     if (!::getifaddrs(&interfaces)) {
       struct ifaddrs *temp_addr = interfaces;
-      struct iface_netinfo_t info;
+      struct iface_netinfo_s info;
 
       while (temp_addr) {
         if (temp_addr->ifa_addr) {
@@ -142,13 +142,13 @@ private:
                 p_netmaskstr = &reinterpret_cast<sockaddr_inet_t *>(temp_addr->ifa_netmask)->sin_addr;
               }
 
-              if (::inet_ntop(family, p_addrstr, info.host_addr.data(), this_t::addrlen) != info.host_addr.data()) {
+              if (::inet_ntop(family, p_addrstr, info.host_addr.data(), this_s::addrlen) != info.host_addr.data()) {
                 throw std::runtime_error((boost::format("Error during converting host address, (%1%), %2%:%3%") %
                                           __func__ % __FILE__ % __LINE__)
                                              .str());
               }
 
-              if (::inet_ntop(family, p_netmaskstr, info.netmask.data(), this_t::addrlen) != info.netmask.data()) {
+              if (::inet_ntop(family, p_netmaskstr, info.netmask.data(), this_s::addrlen) != info.netmask.data()) {
                 throw std::runtime_error(
                     (boost::format("Error during converting netmask, (%1%), %2%:%3%") % __func__ % __FILE__ % __LINE__)
                         .str());

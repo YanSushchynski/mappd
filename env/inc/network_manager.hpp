@@ -13,10 +13,10 @@
 template <env_networking_type_e, typename...> struct nm_s {};
 template <env_networking_type_e nt> struct nm_sglt_gen_s {
   static struct nm_s<nt> &nm_inst(
-      const char (&dgram_aes_key)
-          [(network_udp_socket_secure_ipv4<udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES>::dgram_aes_key_size_bits /
-            8u) +
-           1u],
+      const char (&dgram_aes_key)[(network_udp_socket_secure_ipv4_s<udp_sock_secure_type_e::SERVER_MULTICAST_SECURE_AES,
+                                                                    true>::dgram_aes_key_size_bits /
+                                   8u) +
+                                  1u],
       const struct env_base_s *const p_env) {
     static struct nm_s<nt> *inst_ = nullptr;
     if (!inst_) {
@@ -27,8 +27,7 @@ template <env_networking_type_e nt> struct nm_sglt_gen_s {
   }
 };
 
-template <env_networking_type_e nt>
-struct nm_s<nt> {
+template <env_networking_type_e nt> struct nm_s<nt> {
 private:
   using this_s = nm_s;
   static constexpr uint32_t known_env_lifetime_s = 5u;
@@ -37,7 +36,6 @@ private:
   friend this_s &nm_sglt_gen_s<nt>::nm_inst(const char (&)[33], const struct env_base_s *const);
 
 public:
-
   explicit nm_s(const this_s &) = delete;
   explicit nm_s(this_s &&) = delete;
   this_s &operator=(const this_s &) = delete;
@@ -138,7 +136,7 @@ public:
     ipv4_stream_srv.stop();
     ipv4_stream_srv.reset();
 
-    std::vector<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS> *> peers;
+    std::vector<network_tcp_socket_secure_ipv4_s<tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, true> *> peers;
 
     peers_lock_.lock();
     for (auto &peer : peers_) {
@@ -154,21 +152,21 @@ public:
 
 private:
   explicit nm_s(
-      const char (&dgram_aes_key)
-          [(network_udp_socket_secure_ipv4<udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES>::dgram_aes_key_size_bits /
-            8u) +
-           1u],
+      const char (&dgram_aes_key)[(network_udp_socket_secure_ipv4_s<udp_sock_secure_type_e::SERVER_MULTICAST_SECURE_AES,
+                                                                    true>::dgram_aes_key_size_bits /
+                                   8u) +
+                                  1u],
       const struct env_base_s *const p_env)
       : p_env_(p_env),
 
-        ipv4_dgram_srv(network_udp_socket_secure_ipv4<udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES>(
+        ipv4_dgram_srv(network_udp_socket_secure_ipv4_s<udp_sock_secure_type_e::SERVER_MULTICAST_SECURE_AES, true>(
             p_env->info().env_network_ifname(), dgram_aes_key)),
 
-        ipv4_dgram_cli(network_udp_socket_secure_ipv4<udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES>(
+        ipv4_dgram_cli(network_udp_socket_secure_ipv4_s<udp_sock_secure_type_e::CLIENT_MULTICAST_SECURE_AES, true>(
             p_env->info().env_network_ifname(), p_env->info().env_ipv4_multicast_group_addr(),
             p_env->info().env_ipv4_multicast_port(), dgram_aes_key)),
 
-        ipv4_stream_srv(network_tcp_socket_secure_ipv4<tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS>(
+        ipv4_stream_srv(network_tcp_socket_secure_ipv4_s<tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, true>(
             p_env->info().env_network_ifname(), p_env->info().env_ca_cert_file(), p_env->info().env_ca_priv_key_file(),
             p_env->info().env_cert_info(), p_env->info().env_cert_exp_time())) {
 
@@ -184,15 +182,14 @@ private:
                  sha256::compute(reinterpret_cast<const uint8_t *>(&port), sizeof(port));
   }
 
-  mutable network_udp_socket_secure_ipv4<udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES> ipv4_dgram_srv;
-  mutable network_udp_socket_secure_ipv4<udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES> ipv4_dgram_cli;
-  mutable network_tcp_socket_secure_ipv4<tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS> ipv4_stream_srv;
+  mutable network_udp_socket_secure_ipv4_s<udp_sock_secure_type_e::SERVER_MULTICAST_SECURE_AES, true> ipv4_dgram_srv;
+  mutable network_udp_socket_secure_ipv4_s<udp_sock_secure_type_e::CLIENT_MULTICAST_SECURE_AES, true> ipv4_dgram_cli;
+  mutable network_tcp_socket_secure_ipv4_s<tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, true> ipv4_stream_srv;
 
   mutable std::vector<std::pair<sha256::sha256_hash_type, uint16_t>> known_envs_;
-  mutable std::map<
-      sha256::sha256_hash_type,
-      std::tuple<struct env_cfg_header_s, std::string,
-                 std::shared_ptr<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>>>>
+  mutable std::map<sha256::sha256_hash_type, std::tuple<struct env_cfg_header_s, std::string,
+                                                        std::shared_ptr<network_tcp_socket_secure_ipv4_s<
+                                                            tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, true>>>>
       peers_;
 
   mutable std::recursive_mutex known_envs_lock_;
@@ -250,9 +247,9 @@ private:
 
       typename decltype(peers_)::iterator it;
       if ((it = peers_.find(peer_hash)) == peers_.end()) {
-        std::shared_ptr<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>> unit(
-            std::shared_ptr<network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>>(
-                new network_tcp_socket_secure_ipv4<tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS>(
+        std::shared_ptr<network_tcp_socket_secure_ipv4_s<tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, true>> unit(
+            std::shared_ptr<network_tcp_socket_secure_ipv4_s<tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, true>>(
+                new network_tcp_socket_secure_ipv4_s<tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, true>(
                     this->env_()->info().env_network_ifname(), this->env_()->info().env_ca_cert_file(),
                     this->env_()->info().env_ca_priv_key_file(), this->env_()->info().env_cert_info(),
                     this->env_()->info().env_cert_exp_time())));

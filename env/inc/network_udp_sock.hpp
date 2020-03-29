@@ -9,65 +9,65 @@
 #include <future>
 #include <thread>
 
-template <uint32_t family, udp_sock_t socket_class>
-struct network_udp_socket_impl : public base_socket<family, SOCK_DGRAM, IPPROTO_UDP> {
+template <uint32_t family, udp_sock_type_e socket_class, bool multithread>
+struct network_udp_socket_impl_s : public base_sock_s<family, SOCK_DGRAM, IPPROTO_UDP, multithread> {
 public:
   static constexpr int32_t socktype = SOCK_DGRAM;
   static constexpr int32_t protocol = IPPROTO_UDP;
   static constexpr int32_t epollevents = EPOLLIN | EPOLLET;
 
-  enum struct state_t : int32_t { RUNNING, STOPPED };
-  enum struct recv_behavior_t : uint32_t { HOOK, RET, HOOK_RET };
-  enum struct send_behavior_t : uint32_t { HOOK_ON, HOOK_OFF };
+  enum struct state_e : int32_t { RUNNING, STOPPED };
+  enum struct recv_behavior_e : uint32_t { HOOK, RET, HOOK_RET };
+  enum struct send_behavior_e : uint32_t { HOOK_ON, HOOK_OFF };
 
-  using this_t = network_udp_socket_impl<family, socket_class>;
-  using base_t = base_socket<family, socktype, protocol>;
+  using this_s = network_udp_socket_impl_s<family, socket_class, multithread>;
+  using base_s = base_sock_s<family, socktype, protocol, multithread>;
 
-  static constexpr bool is_ipv6 = base_t::is_ipv6;
+  static constexpr bool is_ipv6 = base_s::is_ipv6;
 
   using sockaddr_inet_t = std::conditional_t<is_ipv6, struct sockaddr_in6, struct sockaddr_in>;
   using inet_addr_t = std::conditional_t<is_ipv6, struct in6_addr, struct in_addr>;
 
-  template <udp_sock_t sc = socket_class>
-  explicit network_udp_socket_impl(
-      const std::string &iface,
-      typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
-                                  sc == udp_sock_t::SERVER_MULTICAST,
-                              udp_sock_t>::type * = nullptr)
-      : base_t(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)), state_(state_t::STOPPED),
+  template <udp_sock_type_e sc = socket_class>
+  explicit network_udp_socket_impl_s(
+      const std::string &iface, typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST ||
+                                                            (!is_ipv6 && sc == udp_sock_type_e::SERVER_BROADCAST) ||
+                                                            sc == udp_sock_type_e::SERVER_MULTICAST,
+                                                        udp_sock_type_e>::type * = nullptr)
+      : base_s(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)), state_(state_e::STOPPED),
         events_(reinterpret_cast<struct epoll_event *>(
             std::malloc(this->epoll_max_events() * sizeof(struct epoll_event)))) {}
 
-  template <udp_sock_t sc = socket_class>
-  explicit network_udp_socket_impl(
-      const std::string &iface,
-      typename std::enable_if<sc == udp_sock_t::CLIENT_UNICAST || (!is_ipv6 && sc == udp_sock_t::CLIENT_BROADCAST),
-                              udp_sock_t>::type * = nullptr)
-      : base_t(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)),
+  template <udp_sock_type_e sc = socket_class>
+  explicit network_udp_socket_impl_s(const std::string &iface,
+                                     typename std::enable_if<sc == udp_sock_type_e::CLIENT_UNICAST ||
+                                                                 (!is_ipv6 && sc == udp_sock_type_e::CLIENT_BROADCAST),
+                                                             udp_sock_type_e>::type * = nullptr)
+      : base_s(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)),
         events_(reinterpret_cast<struct epoll_event *>(
             std::malloc(this->epoll_max_events() * sizeof(struct epoll_event)))) {
     setup_();
   }
 
-  template <udp_sock_t sc = socket_class>
-  explicit network_udp_socket_impl(
+  template <udp_sock_type_e sc = socket_class>
+  explicit network_udp_socket_impl_s(
       const std::string &iface, const std::string &mcast_gr_addr, uint16_t srv,
-      typename std::enable_if<sc == udp_sock_t::CLIENT_MULTICAST, udp_sock_t>::type * = nullptr)
-      : base_t(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)),
+      typename std::enable_if<sc == udp_sock_type_e::CLIENT_MULTICAST, udp_sock_type_e>::type * = nullptr)
+      : base_s(iface), epfd_(::epoll_create1(EPOLL_CLOEXEC)),
         events_(reinterpret_cast<struct epoll_event *>(
             std::malloc(this->epoll_max_events() * sizeof(struct epoll_event)))) {
     setup_(mcast_gr_addr, srv);
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == udp_sock_t::SERVER_MULTICAST, RetType>::type setup(const std::string &mcast_gr_addr,
-                                                                                   uint16_t port) noexcept {
+  template <udp_sock_type_e sc = socket_class, typename RetType = void>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_MULTICAST, RetType>::type
+  setup(const std::string &mcast_gr_addr, uint16_t port) noexcept {
     setup_(mcast_gr_addr, port);
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST),
-                          RetType>::type
+  template <udp_sock_type_e sc = socket_class, typename RetType = void>
+  typename std::enable_if<
+      sc == udp_sock_type_e::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_type_e::SERVER_BROADCAST), RetType>::type
   setup(uint16_t port) noexcept {
     setup_(port);
   }
@@ -75,25 +75,26 @@ public:
   const auto &on_receive() const noexcept { return on_receive_; }
   const auto &on_send() const noexcept { return on_send_; }
 
-  void stop_threads() const noexcept { return this->base_t::stop_threads(); }
-  template <udp_sock_t sc = socket_class, typename RetType = bool>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
-                              sc == udp_sock_t::SERVER_MULTICAST,
+  void stop_threads() const noexcept { return this->base_s::stop_threads(); }
+  template <udp_sock_type_e sc = socket_class, typename RetType = bool>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST ||
+                              (!is_ipv6 && sc == udp_sock_type_e::SERVER_BROADCAST) ||
+                              sc == udp_sock_type_e::SERVER_MULTICAST,
                           RetType>::type
   running() const noexcept {
-    return state_ == state_t::RUNNING;
+    return state_ == state_e::RUNNING;
   }
 
-  template <send_behavior_t sb = send_behavior_t::HOOK_ON, udp_sock_t sc = socket_class,
+  template <send_behavior_e sb = send_behavior_e::HOOK_ON, udp_sock_type_e sc = socket_class,
             typename RetType = std::conditional_t<
-                sb == send_behavior_t::HOOK_ON, int32_t,
-                std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<int32_t, sockaddr_inet_t>, void>>>
-  typename std::enable_if<!is_ipv6 && (sc == udp_sock_t::CLIENT_BROADCAST || sc == udp_sock_t::SERVER_BROADCAST),
-                          RetType>::type
+                sb == send_behavior_e::HOOK_ON, int32_t,
+                std::conditional_t<sb == send_behavior_e::HOOK_OFF, std::pair<int32_t, sockaddr_inet_t>, void>>>
+  typename std::enable_if<
+      !is_ipv6 && (sc == udp_sock_type_e::CLIENT_BROADCAST || sc == udp_sock_type_e::SERVER_BROADCAST), RetType>::type
   send(uint16_t port, const void *const msg, size_t size) const noexcept {
     struct addrinfo *dgram_addrinfo, hints;
     fd_set write_fd_set;
-    struct timeval write_timeout = {base_t::send_timeout() / 1000, 0u};
+    struct timeval write_timeout = {base_s::send_timeout() / 1000, 0u};
 
     std::memset(&hints, 0x0, sizeof(hints));
     hints.ai_family = family;
@@ -164,7 +165,7 @@ public:
       else
         return {rc, sockaddr_inet_t()};
     } else {
-      if constexpr (sb == send_behavior_t::HOOK_ON) {
+      if constexpr (sb == send_behavior_e::HOOK_ON) {
 
         sockaddr_inet_t to;
         std::memcpy(&to, reinterpret_cast<sockaddr_inet_t *>(dgram_addrinfo->ai_addr), dgram_addrinfo->ai_addrlen);
@@ -181,7 +182,7 @@ public:
         }).detach();
 
         return rc;
-      } else if constexpr (sb == send_behavior_t::HOOK_OFF) {
+      } else if constexpr (sb == send_behavior_e::HOOK_OFF) {
 
         sockaddr_inet_t to;
         std::memcpy(&to, reinterpret_cast<sockaddr_inet_t *>(dgram_addrinfo->ai_addr), dgram_addrinfo->ai_addrlen);
@@ -191,18 +192,18 @@ public:
     }
   }
 
-  template <send_behavior_t sb = send_behavior_t::HOOK_ON, udp_sock_t sc = socket_class,
+  template <send_behavior_e sb = send_behavior_e::HOOK_ON, udp_sock_type_e sc = socket_class,
             typename RetType = std::conditional_t<
-                sb == send_behavior_t::HOOK_ON, int32_t,
-                std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<int32_t, sockaddr_inet_t>, void>>>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::CLIENT_UNICAST ||
-                              sc == udp_sock_t::SERVER_MULTICAST || sc == udp_sock_t::CLIENT_MULTICAST,
+                sb == send_behavior_e::HOOK_ON, int32_t,
+                std::conditional_t<sb == send_behavior_e::HOOK_OFF, std::pair<int32_t, sockaddr_inet_t>, void>>>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST || sc == udp_sock_type_e::CLIENT_UNICAST ||
+                              sc == udp_sock_type_e::SERVER_MULTICAST || sc == udp_sock_type_e::CLIENT_MULTICAST,
                           RetType>::type
   send(const std::string &addr, uint16_t port, const void *const msg, size_t size) const noexcept {
     int32_t rc;
     struct addrinfo *dgram_addrinfo, hints;
     fd_set write_fd_set;
-    struct timeval write_timeout = {base_t::send_timeout() / 1000, 0u};
+    struct timeval write_timeout = {base_s::send_timeout() / 1000, 0u};
 
     std::memset(&hints, 0x0, sizeof(hints));
     hints.ai_family = family;
@@ -266,7 +267,7 @@ public:
       else
         return {rc, sockaddr_inet_t()};
     } else {
-      if constexpr (sb == send_behavior_t::HOOK_ON) {
+      if constexpr (sb == send_behavior_e::HOOK_ON) {
 
         sockaddr_inet_t to;
         std::memcpy(&to, reinterpret_cast<sockaddr_inet_t *>(dgram_addrinfo->ai_addr), dgram_addrinfo->ai_addrlen);
@@ -281,7 +282,7 @@ public:
             std::notify_all_at_thread_exit(this->cv(), std::move(lock));
           }
         }).detach();
-      } else if constexpr (sb == send_behavior_t::HOOK_OFF) {
+      } else if constexpr (sb == send_behavior_e::HOOK_OFF) {
 
         sockaddr_inet_t to;
         std::memcpy(&to, reinterpret_cast<sockaddr_inet_t *>(dgram_addrinfo->ai_addr), dgram_addrinfo->ai_addrlen);
@@ -291,19 +292,19 @@ public:
     }
   }
 
-  template <recv_behavior_t rb = recv_behavior_t::HOOK,
+  template <recv_behavior_e rb = recv_behavior_e::HOOK,
             typename RetType = std::conditional_t<
-                rb == recv_behavior_t::HOOK, int32_t,
-                std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
+                rb == recv_behavior_e::HOOK, int32_t,
+                std::conditional_t<rb == recv_behavior_e::RET || rb == recv_behavior_e::HOOK_RET,
                                    std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>>, void>>>
   RetType recv() const noexcept {
     int32_t recvd_size = 0, num_ready, rc, recvd;
     fd_set read_fd_set;
-    struct timeval read_timeout = {base_t::receive_timeout() / 1000, 0u};
+    struct timeval read_timeout = {base_s::receive_timeout() / 1000, 0u};
     std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>> ret;
     void *data;
 
-    if ((rc = ::epoll_wait(epfd_, events_, this->epoll_max_events(), base_t::receive_timeout())) < 0) {
+    if ((rc = ::epoll_wait(epfd_, events_, this->epoll_max_events(), base_s::receive_timeout())) < 0) {
       DEBUG_LOG((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
                  __FILE__ % __LINE__)
                     .str());
@@ -362,7 +363,7 @@ public:
         } else if (rc) {
           recvd = rc;
           *(reinterpret_cast<char *>(data) + recvd) = '\0';
-          if constexpr (rb == recv_behavior_t::HOOK) {
+          if constexpr (rb == recv_behavior_e::HOOK) {
             std::thread([this, from, data, size = recvd]() -> void {
               this->on_receive()(from, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                                  size, this);
@@ -371,13 +372,13 @@ public:
                 std::notify_all_at_thread_exit(this->cv(), std::move(lock));
               }
             }).detach();
-          } else if constexpr (rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET) {
+          } else if constexpr (rb == recv_behavior_e::RET || rb == recv_behavior_e::HOOK_RET) {
 
             ret.push_back(
                 std::make_tuple(recvd, std::shared_ptr<void>(data, [](const auto &data) -> void { std::free(data); }),
                                 std::move(from)));
 
-            if constexpr (rb == recv_behavior_t::HOOK_RET) {
+            if constexpr (rb == recv_behavior_e::HOOK_RET) {
               std::thread([this, peer = std::get<2u>(ret.back()), data = std::get<1u>(ret.back()),
                            size = std::get<0u>(ret.back())]() -> void {
                 this->on_receive()(peer, data, size, this);
@@ -394,18 +395,18 @@ public:
       }
     }
 
-    if constexpr (rb == recv_behavior_t::HOOK) {
+    if constexpr (rb == recv_behavior_e::HOOK) {
 
       return recvd_size;
-    } else if constexpr (rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET) {
+    } else if constexpr (rb == recv_behavior_e::RET || rb == recv_behavior_e::HOOK_RET) {
 
       return std::move(ret);
     }
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::SERVER_MULTICAST ||
-                              sc == udp_sock_t::SERVER_BROADCAST,
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST || sc == udp_sock_type_e::SERVER_MULTICAST ||
+                              sc == udp_sock_type_e::SERVER_BROADCAST,
                           RetType>::type
   start(uint64_t duration_ms = 0) const noexcept {
     int32_t rc;
@@ -429,9 +430,9 @@ public:
     }
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::SERVER_MULTICAST ||
-                              (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST),
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST || sc == udp_sock_type_e::SERVER_MULTICAST ||
+                              (!is_ipv6 && sc == udp_sock_type_e::SERVER_BROADCAST),
                           RetType>::type
   stop() noexcept {
     int32_t rc;
@@ -460,7 +461,7 @@ public:
     clear_hooks_();
   }
 
-  virtual ~network_udp_socket_impl() noexcept {
+  virtual ~network_udp_socket_impl_s() noexcept {
     reset();
     clear_epoll_();
   }
@@ -468,7 +469,7 @@ public:
 protected:
   const int32_t &fd__() const noexcept { return sock_fd_; }
   std::atomic_bool &listen_enabled__() const noexcept { return listen_enabled_; }
-  std::atomic<state_t> &state__() const noexcept { return state_; }
+  std::atomic<state_e> &state__() const noexcept { return state_; }
   std::thread &listen_thread__() const noexcept { return listen_thread_; }
 
 private:
@@ -479,19 +480,19 @@ private:
 
   mutable std::atomic_bool listen_enabled_;
   mutable std::mutex mtx_;
-  mutable std::atomic<state_t> state_;
+  mutable std::atomic<state_e> state_;
 
-  const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_t *)> on_receive_;
-  const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_t *)> on_send_;
+  const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_s *)> on_receive_;
+  const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_s *)> on_send_;
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::CLIENT_UNICAST, RetType>::type
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST || sc == udp_sock_type_e::CLIENT_UNICAST, RetType>::type
   setup_(uint16_t port = 0u) noexcept {
     struct addrinfo *addr_info, hints;
     int32_t rc, trueflag = 1;
     const char *addr_str;
 
-    if constexpr (sc == udp_sock_t::SERVER_UNICAST) {
+    if constexpr (sc == udp_sock_type_e::SERVER_UNICAST) {
       std::memset(&hints, 0x0, sizeof(hints));
       hints.ai_family = family;
       hints.ai_socktype = socktype;
@@ -531,7 +532,7 @@ private:
       return rc;
     }
 
-    if constexpr (sc == udp_sock_t::SERVER_UNICAST) {
+    if constexpr (sc == udp_sock_type_e::SERVER_UNICAST) {
       bind_(addr_info);
       ::freeaddrinfo(addr_info);
     }
@@ -539,14 +540,14 @@ private:
     return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<!is_ipv6 && (sc == udp_sock_t::SERVER_BROADCAST || sc == udp_sock_t::CLIENT_BROADCAST),
-                          RetType>::type
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<
+      !is_ipv6 && (sc == udp_sock_type_e::SERVER_BROADCAST || sc == udp_sock_type_e::CLIENT_BROADCAST), RetType>::type
   setup_(uint16_t port = 0u) noexcept {
     struct addrinfo *addr_info, hints;
     int32_t rc, trueflag = 1;
 
-    if constexpr (sc == udp_sock_t::SERVER_BROADCAST) {
+    if constexpr (sc == udp_sock_type_e::SERVER_BROADCAST) {
       std::memset(&hints, 0x0, sizeof(hints));
       hints.ai_family = family;
       hints.ai_socktype = socktype;
@@ -593,7 +594,7 @@ private:
       return rc;
     }
 
-    if constexpr (sc == udp_sock_t::SERVER_BROADCAST) {
+    if constexpr (sc == udp_sock_type_e::SERVER_BROADCAST) {
 
       bind_(addr_info);
       ::freeaddrinfo(addr_info);
@@ -602,8 +603,9 @@ private:
     return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == udp_sock_t::SERVER_MULTICAST || sc == udp_sock_t::CLIENT_MULTICAST, RetType>::type
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_MULTICAST || sc == udp_sock_type_e::CLIENT_MULTICAST,
+                          RetType>::type
   setup_(const std::string &multicast_group_addr, uint16_t port) noexcept {
     using inet_mreq_t = std::conditional_t<is_ipv6, struct ipv6_mreq, struct ip_mreq>;
 
@@ -678,7 +680,7 @@ private:
       }
     }
 
-    if constexpr (sc == udp_sock_t::SERVER_MULTICAST) {
+    if constexpr (sc == udp_sock_type_e::SERVER_MULTICAST) {
       bind_(addr_info);
     }
 
@@ -686,9 +688,10 @@ private:
     return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
-                              sc == udp_sock_t::SERVER_MULTICAST,
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST ||
+                              (!is_ipv6 && sc == udp_sock_type_e::SERVER_BROADCAST) ||
+                              sc == udp_sock_type_e::SERVER_MULTICAST,
                           RetType>::type
   clear_() noexcept {
     int32_t rc;
@@ -709,9 +712,10 @@ private:
     return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == udp_sock_t::CLIENT_UNICAST || (!is_ipv6 && sc == udp_sock_t::CLIENT_BROADCAST) ||
-                              sc == udp_sock_t::CLIENT_MULTICAST,
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == udp_sock_type_e::CLIENT_UNICAST ||
+                              (!is_ipv6 && sc == udp_sock_type_e::CLIENT_BROADCAST) ||
+                              sc == udp_sock_type_e::CLIENT_MULTICAST,
                           RetType>::type
   clear_() noexcept {
     int32_t rc;
@@ -737,9 +741,10 @@ private:
     events_ = nullptr;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
-                              sc == udp_sock_t::SERVER_MULTICAST,
+  template <udp_sock_type_e sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST ||
+                              (!is_ipv6 && sc == udp_sock_type_e::SERVER_BROADCAST) ||
+                              sc == udp_sock_type_e::SERVER_MULTICAST,
                           RetType>::type
   bind_(const struct addrinfo *addr_info) noexcept {
     int32_t rc;
@@ -779,26 +784,29 @@ private:
     return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
-                              sc == udp_sock_t::SERVER_MULTICAST,
+  template <udp_sock_type_e sc = socket_class, typename RetType = void>
+  typename std::enable_if<sc == udp_sock_type_e::SERVER_UNICAST ||
+                              (!is_ipv6 && sc == udp_sock_type_e::SERVER_BROADCAST) ||
+                              sc == udp_sock_type_e::SERVER_MULTICAST,
                           RetType>::type
   listen_() const noexcept {
     listen_enabled_ = true;
-    state_ = state_t::RUNNING;
+    state_ = state_e::RUNNING;
 
     while (listen_enabled_)
       static_cast<void>(recv());
-    state_ = state_t::STOPPED;
+    state_ = state_e::STOPPED;
   }
 };
 
-template <udp_sock_t sc> struct network_udp_socket_ipv4 : network_udp_socket_impl<AF_INET, sc> {
-  using network_udp_socket_impl<AF_INET, sc>::network_udp_socket_impl;
+template <udp_sock_type_e sc, bool multithread>
+struct network_udp_socket_ipv4 : network_udp_socket_impl_s<AF_INET, sc, multithread> {
+  using network_udp_socket_impl_s<AF_INET, sc, multithread>::network_udp_socket_impl_s;
 };
 
-template <udp_sock_t sc> struct network_udp_socket_ipv6 : network_udp_socket_impl<AF_INET6, sc> {
-  using network_udp_socket_impl<AF_INET6, sc>::network_udp_socket_impl;
+template <udp_sock_type_e sc, bool multithread>
+struct network_udp_socket_ipv6 : network_udp_socket_impl_s<AF_INET6, sc, multithread> {
+  using network_udp_socket_impl_s<AF_INET6, sc, multithread>::network_udp_socket_impl_s;
 };
 
 #endif /* NETWORK_UDP_SOCK_HPP */

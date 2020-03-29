@@ -10,7 +10,7 @@ struct base_client_port_t<runtime_type, ReturnType(Args...)> : base_port_t<Retur
 public:
   using return_t = ReturnType;
   using function_t = ReturnType(Args...);
-  using base_t = base_port_t<ReturnType(Args...)>;
+  using base_s = base_port_t<ReturnType(Args...)>;
   using this_t = base_client_port_t<runtime_type, function_t>;
 
 private:
@@ -133,7 +133,7 @@ private:
 
         // friend_port_t * p_server = this->connected().at(
         // temp_data.data.server_id ); struct env_status_s< typename
-        // friend_port_t::base_t > push_request_status = p_server->push_request(
+        // friend_port_t::base_s > push_request_status = p_server->push_request(
         // std::forward< request_t_ >( temp_data.data ));
 
         // if( push_request_status.qualifiers.at( p_server->get_id() ) !=
@@ -144,7 +144,7 @@ private:
 
         // } else {
 
-        // struct env_status_s< typename friend_port_t::base_t > create_response_status
+        // struct env_status_s< typename friend_port_t::base_s > create_response_status
         // = p_server->create_response( temp_data.data.request_id, std::forward<
         // std::tuple< Args ... >>( temp_data.data.payload ));
 
@@ -157,7 +157,7 @@ private:
 
         // 	} else {
 
-        // 	  struct env_data_s< response_t_, typename friend_port_t::base_t >
+        // 	  struct env_data_s< response_t_, typename friend_port_t::base_s >
         // response_data = p_server->get_response();
 
         // 	  if( response_data.status.qualifiers.at( p_server->get_id() )
@@ -239,7 +239,7 @@ private:
   }
 
   explicit base_client_port_t(const std::string &name)
-      : base_t(name), response_queue_size_(this->BUFFER_SIZE), request_queue_size_(this->BUFFER_SIZE),
+      : base_s(name), response_queue_size_(this->BUFFER_SIZE), request_queue_size_(this->BUFFER_SIZE),
         transaction_count_(0u){};
 
   virtual ~base_client_port_t() override = default;

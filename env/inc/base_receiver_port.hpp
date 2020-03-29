@@ -9,8 +9,8 @@ template <typename DataType> struct base_receiver_port_t<DataType> : public base
 public:
   using data_t = DataType;
   using this_t = base_receiver_port_t<data_t>;
-  using base_t = base_port_t<data_t>;
-  using name_t = typename base_t::name_t;
+  using base_s = base_port_t<data_t>;
+  using name_t = typename base_s::name_t;
 
 private:
   friend struct env_base_s;
@@ -102,7 +102,7 @@ private:
   const functor_t<data_t &(data_t &), this_t> &reader() const { return reader_(); }
 
   explicit base_receiver_port_t(const std::string &name)
-      : base_t(name), queue_size_(this->BUFFER_SIZE),
+      : base_s(name), queue_size_(this->BUFFER_SIZE),
         reader_(functor_t([](data_t &lvr_data) -> data_t & { return lvr_data; })){};
 };
 

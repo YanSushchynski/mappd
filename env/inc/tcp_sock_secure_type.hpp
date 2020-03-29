@@ -2,7 +2,7 @@
 #define TCP_SOCK_SECURE_TYPE_HPP
 
 #include <cstdint>
-enum struct tcp_sock_secure_t : uint32_t {
+enum struct tcp_sock_secure_type_e : uint32_t {
   CLIENT_UNICAST_SECURE_TLS = 0u,
   SERVER_UNICAST_SECURE_TLS,
   CLIENT_UNICAST_SECURE_AES,

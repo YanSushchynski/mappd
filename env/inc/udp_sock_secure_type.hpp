@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-enum struct udp_sock_secure_t : uint32_t {
+enum struct udp_sock_secure_type_e : uint32_t {
   CLIENT_UNICAST_SECURE_AES = 1u,
   SERVER_UNICAST_SECURE_AES,
   CLIENT_MULTICAST_SECURE_AES,

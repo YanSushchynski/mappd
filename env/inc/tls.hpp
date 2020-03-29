@@ -44,16 +44,16 @@
 #include "tcp_sock_secure_type.hpp"
 #include "udp_sock_secure_type.hpp"
 
-template <tcp_sock_secure_t secure_socket_type, uint32_t bits> struct tls_sl_t {
+template <tcp_sock_secure_type_e secure_socket_type, uint32_t bits> struct tls_sl_t {
   using this_t = tls_sl_t<secure_socket_type, bits>;
 
 private:
   template <uint32_t N> struct x509_cert_info_impl_t_ : std::array<std::string, N> {
     using this_t = x509_cert_info_impl_t_<N>;
-    using base_t = std::array<std::string, N>;
+    using base_s = std::array<std::string, N>;
     static constexpr const char *parser_split_tokens = ",;.";
 
-    x509_cert_info_impl_t_(const std::string &bytes) : base_t(from_string_(bytes, parser_split_tokens)) {}
+    x509_cert_info_impl_t_(const std::string &bytes) : base_s(from_string_(bytes, parser_split_tokens)) {}
     virtual ~x509_cert_info_impl_t_() = default;
 
     const char *country_value() { return (*this)[0].c_str(); }; /* C */
@@ -169,25 +169,25 @@ public:
     init_(ca_cert_file, ca_key_file);
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   register_client(int32_t fd) {
     return register_client_(fd);
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   clear_peer_creds(int32_t fd) {
     return clear_peer_creds_(fd);
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type connect(int32_t fd) {
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type connect(int32_t fd) {
     return connect_(fd);
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type clear(int32_t fd) {
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type clear(int32_t fd) {
     return clear_(fd);
   }
 
@@ -249,10 +249,10 @@ private:
     const SSL_METHOD *method = nullptr;
     SSL_CTX *ctx = nullptr;
 
-    if constexpr (secure_socket_type == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS)
+    if constexpr (secure_socket_type == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS)
 
       method = TLS_server_method();
-    else if constexpr (secure_socket_type == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS)
+    else if constexpr (secure_socket_type == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS)
 
       method = TLS_client_method();
     if (!(ctx = SSL_CTX_new(method))) {
@@ -262,8 +262,8 @@ private:
     return std::shared_ptr<SSL_CTX>(ctx, [](const auto &data) -> void { SSL_CTX_free(data); });
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type
   init_tls_context_(SSL_CTX *ctx, X509 *cert, RSA *key) {
     EVP_PKEY *priv_key;
 
@@ -297,8 +297,8 @@ private:
     return 0;
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   init_tls_context_(int32_t fd, SSL_CTX *ctx, X509 *cert, RSA *key) {
     EVP_PKEY *priv_key;
 
@@ -366,8 +366,8 @@ private:
     return 0;
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   register_client_(int32_t fd) {
     SSL *ssl_handle;
     int32_t rc, handshake_status;
@@ -517,8 +517,8 @@ private:
     }
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   clear_peer_creds_(int32_t fd) {
     int32_t rc;
     /* Erase leftovers from peer by FD (if they are exist)*/
@@ -537,8 +537,8 @@ private:
     return 0;
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type connect_(int32_t fd) {
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type connect_(int32_t fd) {
     int32_t rc, err, handshake_status;
     SSL *ssl_handle;
     X509 *peer_cert;
@@ -673,8 +673,8 @@ private:
     return rc;
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type clear_(int32_t fd) {
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type clear_(int32_t fd) {
     if (tls_handle_) {
       set_blocking_(fd);
       SSL_shutdown(tls_handle_.get());
@@ -1006,8 +1006,8 @@ private:
     raise_error_();
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type
   recv_(int32_t fd, void *buffer, size_t nbytes) const {
     int32_t rc, recvd;
     fd_set read_fd_set;
@@ -1071,8 +1071,8 @@ private:
     }
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type
   send_(int32_t fd, const void *const msg, size_t msg_size) const {
     int32_t rc, sent;
     fd_set write_fd_set;
@@ -1135,8 +1135,8 @@ private:
     }
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   recv_(int32_t fd, void *buffer, size_t nbytes) const {
     int32_t rc, recvd;
     fd_set read_fd_set;
@@ -1200,8 +1200,8 @@ private:
     }
   }
 
-  template <tcp_sock_secure_t st = secure_socket_type, typename RetType = int32_t>
-  typename std::enable_if<st == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e st = secure_socket_type, typename RetType = int32_t>
+  typename std::enable_if<st == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   send_(int32_t fd, const void *const msg, size_t msg_size) const {
     int32_t rc, sent;
     fd_set write_fd_set;
@@ -1274,26 +1274,26 @@ private:
   mutable x509_cert_info_t cert_info_;
   const uint64_t exp_time_;
 
-  std::conditional_t<secure_socket_type == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<X509>,
-                     std::conditional_t<secure_socket_type == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
+  std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<X509>,
+                     std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS,
                                         std::map<int32_t, std::shared_ptr<X509>>, void *>>
       cert_;
   mutable std::mutex cert_lock_;
 
-  std::conditional_t<secure_socket_type == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<RSA>,
-                     std::conditional_t<secure_socket_type == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
+  std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<RSA>,
+                     std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS,
                                         std::map<int32_t, std::shared_ptr<RSA>>, void *>>
       rsa_priv_key_;
   mutable std::mutex rsa_priv_key_lock_;
 
-  std::conditional_t<secure_socket_type == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<SSL_CTX>,
-                     std::conditional_t<secure_socket_type == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
+  std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<SSL_CTX>,
+                     std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS,
                                         std::map<int32_t, std::shared_ptr<SSL_CTX>>, void *>>
       tls_context_;
   mutable std::mutex tls_context_lock_;
 
-  std::conditional_t<secure_socket_type == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<SSL>,
-                     std::conditional_t<secure_socket_type == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS,
+  std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, std::shared_ptr<SSL>,
+                     std::conditional_t<secure_socket_type == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS,
                                         std::map<int32_t, std::shared_ptr<SSL>>, void *>>
       tls_handle_;
   mutable std::mutex tls_handle_lock_;

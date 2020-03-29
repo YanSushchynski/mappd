@@ -11,9 +11,9 @@ public:
   static constexpr uint32_t size = sizeof...(Components);
   static_assert(are_components, "Only componets can be included to this list.");
   using this_t = cmp_list_static_s<Components...>;
-  using base_t = std::tuple<Components...>;
+  using base_s = std::tuple<Components...>;
 
-  explicit cmp_list_static_s(const Components &... components) : base_t{components...} {};
+  explicit cmp_list_static_s(const Components &... components) : base_s{components...} {};
 
   explicit cmp_list_static_s(const this_t &) = default;
   explicit cmp_list_static_s(this_t &&) = default;

@@ -9,26 +9,26 @@
 // static constexpr const char *ipv4_multicast_addr = "224.0.0.1";
 // static constexpr const char *ipv6_multicast_addr = "ff02:1::1";
 
-// udp_socket<AF_INET, udp_sock_t::CLIENT_UNICAST> ipv4_unicast_client(interface_name);
-// udp_socket<AF_INET, udp_sock_t::CLIENT_BROADCAST> ipv4_broadcast_client(interface_name);
-// udp_socket<AF_INET, udp_sock_t::CLIENT_MULTICAST> ipv4_multicast_client(interface_name, ipv4_multicast_addr,
+// udp_socket<AF_INET, udp_sock_type_e::CLIENT_UNICAST> ipv4_unicast_client(interface_name);
+// udp_socket<AF_INET, udp_sock_type_e::CLIENT_BROADCAST> ipv4_broadcast_client(interface_name);
+// udp_socket<AF_INET, udp_sock_type_e::CLIENT_MULTICAST> ipv4_multicast_client(interface_name, ipv4_multicast_addr,
 // listener_port);
 
-// udp_socket<AF_INET, udp_sock_t::SERVER_UNICAST> ipv4_unicast_server(interface_name);
-// udp_socket<AF_INET, udp_sock_t::SERVER_BROADCAST> ipv4_broadcast_server(interface_name);
-// udp_socket<AF_INET, udp_sock_t::SERVER_MULTICAST> ipv4_multicast_server(interface_name);
+// udp_socket<AF_INET, udp_sock_type_e::SERVER_UNICAST> ipv4_unicast_server(interface_name);
+// udp_socket<AF_INET, udp_sock_type_e::SERVER_BROADCAST> ipv4_broadcast_server(interface_name);
+// udp_socket<AF_INET, udp_sock_type_e::SERVER_MULTICAST> ipv4_multicast_server(interface_name);
 
-// udp_socket<AF_INET6, udp_sock_t::CLIENT_UNICAST> ipv6_unicast_client(interface_name);
-// udp_socket<AF_INET6, udp_sock_t::CLIENT_MULTICAST> ipv6_multicast_client(interface_name, ipv6_multicast_addr,
+// udp_socket<AF_INET6, udp_sock_type_e::CLIENT_UNICAST> ipv6_unicast_client(interface_name);
+// udp_socket<AF_INET6, udp_sock_type_e::CLIENT_MULTICAST> ipv6_multicast_client(interface_name, ipv6_multicast_addr,
 // listener_port);
 
-// udp_socket<AF_INET6, udp_sock_t::SERVER_UNICAST> ipv6_unicast_server(interface_name);
-// udp_socket<AF_INET6, udp_sock_t::SERVER_MULTICAST> ipv6_multicast_server(interface_name);
+// udp_socket<AF_INET6, udp_sock_type_e::SERVER_UNICAST> ipv6_unicast_server(interface_name);
+// udp_socket<AF_INET6, udp_sock_type_e::SERVER_MULTICAST> ipv6_multicast_server(interface_name);
 
 // auto ipv4_unicast_set_hooks = []() -> void {
 //   ipv4_unicast_server.on_receive().add("OnReceiveHook",
 //                                        [](struct sockaddr_in from, std::shared_ptr<void> data, size_t size,
-//                                           const decltype(ipv4_unicast_server)::base_t *socket) -> void {
+//                                           const decltype(ipv4_unicast_server)::base_s *socket) -> void {
 //                                          const char *payloadstr = static_cast<const char *>(data.get());
 //                                          uint16_t peer_port = ::htons(from.sin_port);
 //                                          char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -39,7 +39,7 @@
 
 //   ipv4_unicast_client.on_send().add("OnSendHook",
 //                                     [](struct sockaddr_in to, std::shared_ptr<void> data, size_t size,
-//                                        const decltype(ipv4_unicast_client)::base_t *socket) -> void {
+//                                        const decltype(ipv4_unicast_client)::base_s *socket) -> void {
 //                                       const char *payloadstr = static_cast<const char *>(data.get());
 //                                       uint16_t peer_port = ::htons(to.sin_port);
 //                                       char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -50,7 +50,7 @@
 
 //   ipv4_unicast_client.on_receive().add("OnReceiveHook",
 //                                        [](struct sockaddr_in from, std::shared_ptr<void> data, size_t size,
-//                                           const decltype(ipv4_unicast_server)::base_t *socket) -> void {
+//                                           const decltype(ipv4_unicast_server)::base_s *socket) -> void {
 //                                          const char *payloadstr = static_cast<const char *>(data.get());
 //                                          uint16_t peer_port = ::htons(from.sin_port);
 //                                          char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -61,7 +61,7 @@
 
 //   ipv4_unicast_server.on_send().add("OnSendHook",
 //                                     [](struct sockaddr_in to, std::shared_ptr<void> data, size_t size,
-//                                        const decltype(ipv4_unicast_client)::base_t *socket) -> void {
+//                                        const decltype(ipv4_unicast_client)::base_s *socket) -> void {
 //                                       const char *payloadstr = static_cast<const char *>(data.get());
 //                                       uint16_t peer_port = ::htons(to.sin_port);
 //                                       char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -74,7 +74,7 @@
 // auto ipv4_broadcast_set_hooks = []() -> void {
 //   ipv4_broadcast_server.on_receive().add("OnReceiveHook",
 //                                          [](struct sockaddr_in from, std::shared_ptr<void> data, size_t size,
-//                                             const decltype(ipv4_broadcast_server)::base_t *socket) -> void {
+//                                             const decltype(ipv4_broadcast_server)::base_s *socket) -> void {
 //                                            const char *payloadstr = static_cast<const char *>(data.get());
 //                                            uint16_t peer_port = ::htons(from.sin_port);
 //                                            char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -85,7 +85,7 @@
 
 //   ipv4_broadcast_client.on_send().add("OnSendHook",
 //                                       [](struct sockaddr_in to, std::shared_ptr<void> data, size_t size,
-//                                          const decltype(ipv4_broadcast_client)::base_t *socket) -> void {
+//                                          const decltype(ipv4_broadcast_client)::base_s *socket) -> void {
 //                                         const char *payloadstr = static_cast<const char *>(data.get());
 //                                         uint16_t peer_port = ::htons(to.sin_port);
 //                                         char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -96,7 +96,7 @@
 
 //   ipv4_broadcast_client.on_receive().add("OnReceiveHook",
 //                                          [](struct sockaddr_in from, std::shared_ptr<void> data, size_t size,
-//                                             const decltype(ipv4_broadcast_server)::base_t *socket) -> void {
+//                                             const decltype(ipv4_broadcast_server)::base_s *socket) -> void {
 //                                            const char *payloadstr = static_cast<const char *>(data.get());
 //                                            uint16_t peer_port = ::htons(from.sin_port);
 //                                            char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -107,7 +107,7 @@
 
 //   ipv4_broadcast_server.on_send().add("OnSendHook",
 //                                       [](struct sockaddr_in to, std::shared_ptr<void> data, size_t size,
-//                                          const decltype(ipv4_broadcast_client)::base_t *socket) -> void {
+//                                          const decltype(ipv4_broadcast_client)::base_s *socket) -> void {
 //                                         const char *payloadstr = static_cast<const char *>(data.get());
 //                                         uint16_t peer_port = ::htons(to.sin_port);
 //                                         char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -120,7 +120,7 @@
 // auto ipv4_multicast_set_hooks = []() -> void {
 //   ipv4_multicast_server.on_receive().add("OnReceiveHook",
 //                                          [](struct sockaddr_in from, std::shared_ptr<void> data, size_t size,
-//                                             const decltype(ipv4_multicast_server)::base_t *socket) -> void {
+//                                             const decltype(ipv4_multicast_server)::base_s *socket) -> void {
 //                                            const char *payloadstr = static_cast<const char *>(data.get());
 //                                            uint16_t peer_port = ::htons(from.sin_port);
 //                                            char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -131,7 +131,7 @@
 
 //   ipv4_multicast_client.on_send().add("OnSendHook",
 //                                       [](struct sockaddr_in to, std::shared_ptr<void> data, size_t size,
-//                                          const decltype(ipv4_multicast_client)::base_t *socket) -> void {
+//                                          const decltype(ipv4_multicast_client)::base_s *socket) -> void {
 //                                         const char *payloadstr = static_cast<const char *>(data.get());
 //                                         uint16_t peer_port = ::htons(to.sin_port);
 //                                         char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -142,7 +142,7 @@
 
 //   ipv4_multicast_client.on_receive().add("OnReceiveHook",
 //                                          [](struct sockaddr_in from, std::shared_ptr<void> data, size_t size,
-//                                             const decltype(ipv4_multicast_server)::base_t *socket) -> void {
+//                                             const decltype(ipv4_multicast_server)::base_s *socket) -> void {
 //                                            const char *payloadstr = static_cast<const char *>(data.get());
 //                                            uint16_t peer_port = ::htons(from.sin_port);
 //                                            char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -153,7 +153,7 @@
 
 //   ipv4_multicast_server.on_send().add("OnSendHook",
 //                                       [](struct sockaddr_in to, std::shared_ptr<void> data, size_t size,
-//                                          const decltype(ipv4_multicast_client)::base_t *socket) -> void {
+//                                          const decltype(ipv4_multicast_client)::base_s *socket) -> void {
 //                                         const char *payloadstr = static_cast<const char *>(data.get());
 //                                         uint16_t peer_port = ::htons(to.sin_port);
 //                                         char peer_addr[INET_ADDRSTRLEN] = {0};
@@ -166,7 +166,7 @@
 // auto ipv6_unicast_set_hooks = []() -> void {
 //   ipv6_unicast_server.on_receive().add("OnReceiveHook",
 //                                        [](struct sockaddr_in6 from, std::shared_ptr<void> data, size_t size,
-//                                           const decltype(ipv6_unicast_server)::base_t *socket) -> void {
+//                                           const decltype(ipv6_unicast_server)::base_s *socket) -> void {
 //                                          const char *payloadstr = static_cast<const char *>(data.get());
 //                                          uint16_t peer_port = ::htons(from.sin6_port);
 //                                          char peer_addr[INET6_ADDRSTRLEN] = {0};
@@ -177,7 +177,7 @@
 
 //   ipv6_unicast_client.on_send().add("OnSendHook",
 //                                     [](struct sockaddr_in6 to, std::shared_ptr<void> data, size_t size,
-//                                        const decltype(ipv6_unicast_client)::base_t *socket) -> void {
+//                                        const decltype(ipv6_unicast_client)::base_s *socket) -> void {
 //                                       const char *payloadstr = static_cast<const char *>(data.get());
 //                                       uint16_t peer_port = ::htons(to.sin6_port);
 //                                       char peer_addr[INET6_ADDRSTRLEN] = {0};
@@ -188,7 +188,7 @@
 
 //   ipv6_unicast_client.on_receive().add("OnReceiveHook",
 //                                        [](struct sockaddr_in6 from, std::shared_ptr<void> data, size_t size,
-//                                           const decltype(ipv6_unicast_server)::base_t *socket) -> void {
+//                                           const decltype(ipv6_unicast_server)::base_s *socket) -> void {
 //                                          const char *payloadstr = static_cast<const char *>(data.get());
 //                                          uint16_t peer_port = ::htons(from.sin6_port);
 //                                          char peer_addr[INET6_ADDRSTRLEN] = {0};
@@ -199,7 +199,7 @@
 
 //   ipv6_unicast_server.on_send().add("OnSendHook",
 //                                     [](struct sockaddr_in6 to, std::shared_ptr<void> data, size_t size,
-//                                        const decltype(ipv6_unicast_client)::base_t *socket) -> void {
+//                                        const decltype(ipv6_unicast_client)::base_s *socket) -> void {
 //                                       const char *payloadstr = static_cast<const char *>(data.get());
 //                                       uint16_t peer_port = ::htons(to.sin6_port);
 //                                       char peer_addr[INET6_ADDRSTRLEN] = {0};
@@ -212,7 +212,7 @@
 // auto ipv6_multicast_set_hooks = []() -> void {
 //   ipv6_multicast_server.on_receive().add("OnReceiveHook",
 //                                        [](struct sockaddr_in6 from, std::shared_ptr<void> data, size_t size,
-//                                           const decltype(ipv6_multicast_server)::base_t *socket) -> void {
+//                                           const decltype(ipv6_multicast_server)::base_s *socket) -> void {
 //                                          const char *payloadstr = static_cast<const char *>(data.get());
 //                                          uint16_t peer_port = ::htons(from.sin6_port);
 //                                          char peer_addr[INET6_ADDRSTRLEN] = {0};
@@ -223,7 +223,7 @@
 
 //   ipv6_multicast_client.on_send().add("OnSendHook",
 //                                     [](struct sockaddr_in6 to, std::shared_ptr<void> data, size_t size,
-//                                        const decltype(ipv6_multicast_client)::base_t *socket) -> void {
+//                                        const decltype(ipv6_multicast_client)::base_s *socket) -> void {
 //                                       const char *payloadstr = static_cast<const char *>(data.get());
 //                                       uint16_t peer_port = ::htons(to.sin6_port);
 //                                       char peer_addr[INET6_ADDRSTRLEN] = {0};
@@ -234,7 +234,7 @@
 
 //   ipv6_multicast_client.on_receive().add("OnReceiveHook",
 //                                        [](struct sockaddr_in6 from, std::shared_ptr<void> data, size_t size,
-//                                           const decltype(ipv6_multicast_server)::base_t *socket) -> void {
+//                                           const decltype(ipv6_multicast_server)::base_s *socket) -> void {
 //                                          const char *payloadstr = static_cast<const char *>(data.get());
 //                                          uint16_t peer_port = ::htons(from.sin6_port);
 //                                          char peer_addr[INET6_ADDRSTRLEN] = {0};
@@ -245,7 +245,7 @@
 
 //   ipv6_multicast_server.on_send().add("OnSendHook",
 //                                     [](struct sockaddr_in6 to, std::shared_ptr<void> data, size_t size,
-//                                        const decltype(ipv6_multicast_client)::base_t *socket) -> void {
+//                                        const decltype(ipv6_multicast_client)::base_s *socket) -> void {
 //                                       const char *payloadstr = static_cast<const char *>(data.get());
 //                                       uint16_t peer_port = ::htons(to.sin6_port);
 //                                       char peer_addr[INET6_ADDRSTRLEN] = {0};

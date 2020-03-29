@@ -7,8 +7,8 @@ TEST(TCPNetworking, IPv4) {
   // static constexpr uint16_t listener_port = 4000u;
   // static constexpr const char *interface_name = "wlp1s0";
 
-  // tcp_socket<AF_INET, tcp_sock_t::SERVER_UNICAST> ipv4_server(interface_name);
-  // tcp_socket<AF_INET, tcp_sock_t::CLIENT_UNICAST> ipv4_client(interface_name);
+  // tcp_socket<AF_INET, tcp_sock_type_e::SERVER_UNICAST> ipv4_server(interface_name);
+  // tcp_socket<AF_INET, tcp_sock_type_e::CLIENT_UNICAST> ipv4_client(interface_name);
 
   // ipv4_server.on_receive().add("OnReceiveHook",
   //                              [](struct sockaddr_in from, std::shared_ptr<void> data, size_t size,
@@ -96,8 +96,8 @@ TEST(TCPNetworking, IPv6) {
   // static constexpr uint16_t listener_port = 4000u;
   // static constexpr const char *interface_name = "wlp1s0";
 
-  // tcp_socket<AF_INET6, tcp_sock_t::SERVER_UNICAST> ipv4_server(interface_name);
-  // tcp_socket<AF_INET6, tcp_sock_t::CLIENT_UNICAST> ipv4_client(interface_name);
+  // tcp_socket<AF_INET6, tcp_sock_type_e::SERVER_UNICAST> ipv4_server(interface_name);
+  // tcp_socket<AF_INET6, tcp_sock_type_e::CLIENT_UNICAST> ipv4_client(interface_name);
 
   // ipv4_server.on_receive().add("OnReceiveHook",
   //                              [](struct sockaddr_in6 from, std::shared_ptr<void> data, size_t size,

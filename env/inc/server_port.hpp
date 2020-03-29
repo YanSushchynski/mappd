@@ -11,18 +11,18 @@ private:
 
 public:
   using function_t = RetType(Args...);
-  using base_t = base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), function_t>;
+  using base_s = base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), function_t>;
   using this_t = port_t<function_t, port_types_t::server_port_types_t::PORT_TYPE_SERVER_SYNC>;
 
-  explicit port_t(const std::string &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_s(name){};
   explicit port_t(
       const std::string &name,
       const std::initializer_list<const std::pair<const std::string &, const std::function<function_t> &>> calls_list)
-      : base_t(name, calls_list){};
+      : base_s(name, calls_list){};
 
   template <typename... Functions>
   explicit port_t(const std::string &name, const std::pair<const std::string &, const Functions &> &... functions)
-      : base_t(name, functions...){};
+      : base_s(name, functions...){};
 };
 
 template <typename RetType, typename... Args>
@@ -33,18 +33,18 @@ private:
 
 public:
   using function_t = RetType(Args...);
-  using base_t = base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), function_t>;
+  using base_s = base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), function_t>;
   using this_t = port_t<function_t, port_types_t::server_port_types_t::PORT_TYPE_SERVER_ASYNC>;
 
-  explicit port_t(const std::string &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_s(name){};
   explicit port_t(
       const std::string &name,
       const std::initializer_list<const std::pair<const std::string &, const std::function<function_t> &>> &calls_list)
-      : base_t(name, calls_list){};
+      : base_s(name, calls_list){};
 
   template <typename... Functions>
   explicit port_t(const std::string &name, const std::pair<const std::string &, const Functions &> &... functions)
-      : base_t(name, functions...){};
+      : base_s(name, functions...){};
 };
 
 template <typename Prototype>
@@ -55,12 +55,12 @@ private:
 
 public:
   using this_t = sync_server_port_t<Prototype>;
-  using base_t = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
+  using base_s = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                         port_types_t::server_port_types_t::PORT_TYPE_SERVER_SYNC>;
   using function_t = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                             port_types_t::server_port_types_t::PORT_TYPE_SERVER_SYNC>;
 
-  explicit sync_server_port_t(const std::string &name) : base_t(name) {
+  explicit sync_server_port_t(const std::string &name) : base_s(name) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -75,7 +75,7 @@ public:
           const std::pair<const std::string &,
                           const std::function<typename std::function_traits::function_traits<Prototype>::function_t> &>>
           &calls_list)
-      : base_t(name, calls_list) {
+      : base_s(name, calls_list) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -87,7 +87,7 @@ public:
   template <typename... Functions>
   explicit sync_server_port_t(const std::string &name,
                               const std::pair<const std::string &, const Functions &> &... functions)
-      : base_t(name, functions...) {
+      : base_s(name, functions...) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -105,12 +105,12 @@ private:
 
 public:
   using this_t = async_server_port_t<Prototype>;
-  using base_t = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
+  using base_s = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                         port_types_t::server_port_types_t::PORT_TYPE_SERVER_ASYNC>;
   using function_t = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                             port_types_t::server_port_types_t::PORT_TYPE_SERVER_ASYNC>;
 
-  explicit async_server_port_t(const std::string &name) : base_t(name) {
+  explicit async_server_port_t(const std::string &name) : base_s(name) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -125,7 +125,7 @@ public:
           const std::pair<const std::string &,
                           const std::function<typename std::function_traits::function_traits<Prototype>::function_t> &>>
           &calls_list)
-      : base_t(name, calls_list) {
+      : base_s(name, calls_list) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -137,7 +137,7 @@ public:
   template <typename... Functions>
   explicit async_server_port_t(const std::string &name,
                                const std::pair<const std::string &, const Functions &> &... functions)
-      : base_t(name, functions...) {
+      : base_s(name, functions...) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());

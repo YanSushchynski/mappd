@@ -10,7 +10,7 @@ struct runtime_list_static_s : std::array<std::tuple<sha256::sha256_hash_type, s
 public:
   static constexpr uint32_t size = N;
   using runtime_t = void (*)(int argc, char **argv, const struct env_base_s *env_);
-  using base_t = std::array<
+  using base_s = std::array<
       std::tuple<sha256::sha256_hash_type, sha256::sha256_hash_type, void (*)(int, char **, const struct env_base_s *)>,
       N>;
 
@@ -45,7 +45,7 @@ public:
   const std::tuple<sha256::sha256_hash_type, sha256::sha256_hash_type,
                    void (*)(int, char **, const struct env_base_s *)> &
   operator[](const uint32_t &iter) const {
-    return (*static_cast<const base_t *>(this))[iter];
+    return (*static_cast<const base_s *>(this))[iter];
   }
 
   runtime_t operator[](const std::string &name) {

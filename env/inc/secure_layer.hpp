@@ -10,73 +10,73 @@
 #include <future>
 #include <type_traits>
 
-static constexpr bool is_secure_tcp_server_type(tcp_sock_secure_t sc) {
-  return sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS || sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_AES;
+static constexpr bool is_secure_tcp_server_type(tcp_sock_secure_type_e sc) {
+  return sc == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS || sc == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES;
 }
 
-static constexpr bool is_secure_tcp_client_type(tcp_sock_secure_t sc) {
-  return sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS || sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_AES;
+static constexpr bool is_secure_tcp_client_type(tcp_sock_secure_type_e sc) {
+  return sc == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS || sc == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_AES;
 }
 
-static constexpr bool is_secure_tcp_aes_type(tcp_sock_secure_t sc) {
-  return sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_AES || sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_AES;
+static constexpr bool is_secure_tcp_aes_type(tcp_sock_secure_type_e sc) {
+  return sc == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_AES || sc == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES;
 }
 
-static constexpr bool is_secure_tcp_tls_x509_type(tcp_sock_secure_t sc) {
-  return sc == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS || sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS;
+static constexpr bool is_secure_tcp_tls_x509_type(tcp_sock_secure_type_e sc) {
+  return sc == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS || sc == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS;
 }
 
-static constexpr bool is_secure_udp_server_type(udp_sock_secure_t sc) {
-  return sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES || sc == udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES ||
-         sc == udp_sock_secure_t::SERVER_BROADCAST_SECURE_AES;
+static constexpr bool is_secure_udp_server_type(udp_sock_secure_type_e sc) {
+  return sc == udp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES || sc == udp_sock_secure_type_e::SERVER_MULTICAST_SECURE_AES ||
+         sc == udp_sock_secure_type_e::SERVER_BROADCAST_SECURE_AES;
 }
 
-static constexpr bool is_secure_udp_client_type(udp_sock_secure_t sc) {
-  return sc == udp_sock_secure_t::CLIENT_UNICAST_SECURE_AES || sc == udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES ||
-         sc == udp_sock_secure_t::CLIENT_BROADCAST_SECURE_AES;
+static constexpr bool is_secure_udp_client_type(udp_sock_secure_type_e sc) {
+  return sc == udp_sock_secure_type_e::CLIENT_UNICAST_SECURE_AES || sc == udp_sock_secure_type_e::CLIENT_MULTICAST_SECURE_AES ||
+         sc == udp_sock_secure_type_e::CLIENT_BROADCAST_SECURE_AES;
 }
 
-static constexpr bool is_secure_udp_unicast_type(udp_sock_secure_t sc) {
-  return sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES || sc == udp_sock_secure_t::CLIENT_UNICAST_SECURE_AES;
+static constexpr bool is_secure_udp_unicast_type(udp_sock_secure_type_e sc) {
+  return sc == udp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES || sc == udp_sock_secure_type_e::CLIENT_UNICAST_SECURE_AES;
 }
 
-static constexpr bool is_secure_udp_multicast_type(udp_sock_secure_t sc) {
-  return sc == udp_sock_secure_t::SERVER_MULTICAST_SECURE_AES || sc == udp_sock_secure_t::CLIENT_MULTICAST_SECURE_AES;
+static constexpr bool is_secure_udp_multicast_type(udp_sock_secure_type_e sc) {
+  return sc == udp_sock_secure_type_e::SERVER_MULTICAST_SECURE_AES || sc == udp_sock_secure_type_e::CLIENT_MULTICAST_SECURE_AES;
 }
 
-static constexpr bool is_secure_udp_broadcast_type(udp_sock_secure_t sc) {
-  return sc == udp_sock_secure_t::SERVER_BROADCAST_SECURE_AES || sc == udp_sock_secure_t::CLIENT_BROADCAST_SECURE_AES;
+static constexpr bool is_secure_udp_broadcast_type(udp_sock_secure_type_e sc) {
+  return sc == udp_sock_secure_type_e::SERVER_BROADCAST_SECURE_AES || sc == udp_sock_secure_type_e::CLIENT_BROADCAST_SECURE_AES;
 }
 
 template <uint32_t, typename socket_class, socket_class sc, typename Dummy = void> struct secure_layer_t {};
 template <uint32_t cipher_size_bits, typename socket_class, socket_class sc>
 struct secure_layer_t<
     cipher_size_bits, socket_class, sc,
-    typename std::enable_if<std::is_same_v<socket_class, tcp_sock_secure_t> && is_secure_tcp_tls_x509_type(sc)>::type> {
+    typename std::enable_if<std::is_same_v<socket_class, tcp_sock_secure_type_e> && is_secure_tcp_tls_x509_type(sc)>::type> {
   explicit secure_layer_t(const std::string &ca_cert_file, const std::string &ca_priv_key_file,
                           typename tls_sl_t<sc, cipher_size_bits>::x509_cert_info_t cert_info, uint64_t exp_time)
       : sl_(ca_cert_file, ca_priv_key_file, cert_info, exp_time) {}
   virtual ~secure_layer_t() = default;
 
-  template <tcp_sock_secure_t sock_type = sc, typename RetType = int32_t>
-  typename std::enable_if<sock_type == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e sock_type = sc, typename RetType = int32_t>
+  typename std::enable_if<sock_type == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type
   connect(int32_t fd) {
     return sl_.connect(fd);
   }
 
-  template <tcp_sock_secure_t sock_type = sc, typename RetType = int32_t>
-  typename std::enable_if<sock_type == tcp_sock_secure_t::CLIENT_UNICAST_SECURE_TLS, RetType>::type clear(int32_t fd) {
+  template <tcp_sock_secure_type_e sock_type = sc, typename RetType = int32_t>
+  typename std::enable_if<sock_type == tcp_sock_secure_type_e::CLIENT_UNICAST_SECURE_TLS, RetType>::type clear(int32_t fd) {
     return sl_.clear(fd);
   }
 
-  template <tcp_sock_secure_t sock_type = sc, typename RetType = int32_t>
-  typename std::enable_if<sock_type == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e sock_type = sc, typename RetType = int32_t>
+  typename std::enable_if<sock_type == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   register_client(int32_t fd) {
     return sl_.register_client(fd);
   }
 
-  template <tcp_sock_secure_t sock_type = sc, typename RetType = int32_t>
-  typename std::enable_if<sock_type == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type
+  template <tcp_sock_secure_type_e sock_type = sc, typename RetType = int32_t>
+  typename std::enable_if<sock_type == tcp_sock_secure_type_e::SERVER_UNICAST_SECURE_TLS, RetType>::type
   clear_peer_creds(int32_t fd) {
     return sl_.clear_peer_creds(fd);
   }
@@ -91,7 +91,7 @@ private:
 template <uint32_t cipher_size_bits, typename socket_class, socket_class sc>
 struct secure_layer_t<
     cipher_size_bits, socket_class, sc,
-    typename std::enable_if<std::is_same_v<socket_class, tcp_sock_secure_t> && is_secure_tcp_aes_type(sc)>::type> {
+    typename std::enable_if<std::is_same_v<socket_class, tcp_sock_secure_type_e> && is_secure_tcp_aes_type(sc)>::type> {
   explicit secure_layer_t(const char (&aes_key)[(cipher_size_bits / 8u) + 1u]) : sl_(aes_key) {}
   virtual ~secure_layer_t() = default;
 
@@ -109,7 +109,7 @@ private:
 
 template <uint32_t cipher_size_bits, typename socket_class, socket_class sc>
 struct secure_layer_t<cipher_size_bits, socket_class, sc,
-                      typename std::enable_if<std::is_same_v<socket_class, udp_sock_secure_t> &&
+                      typename std::enable_if<std::is_same_v<socket_class, udp_sock_secure_type_e> &&
                                               (is_secure_udp_client_type(sc) || is_secure_udp_server_type(sc))>::type> {
   explicit secure_layer_t(const char (&dgram_aes_key)[(cipher_size_bits / 8u) + 1u]) : sl_(dgram_aes_key) {}
   virtual ~secure_layer_t() = default;

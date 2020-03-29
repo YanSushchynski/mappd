@@ -10,10 +10,10 @@ private:
 public:
   static constexpr uint32_t size = sizeof...(Compositions);
   static_assert(is_compositions, "Only compositions can be included to this list.");
-  using base_t = std::tuple<Compositions...>;
+  using base_s = std::tuple<Compositions...>;
   using this_t = cmps_list_static_s<Compositions...>;
 
-  explicit cmps_list_static_s(const Compositions &... compositions) : base_t{compositions...} {};
+  explicit cmps_list_static_s(const Compositions &... compositions) : base_s{compositions...} {};
 
   explicit cmps_list_static_s(const this_t &) = default;
   explicit cmps_list_static_s(this_t &&) = default;

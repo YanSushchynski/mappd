@@ -8,7 +8,7 @@
 template <typename...> struct cmp_static_s : public cmp_base_s {};
 template <uint32_t runtime_list_size, typename... Ports>
 struct cmp_static_s<port_list_static_s<Ports...>, runtime_list_static_s<runtime_list_size>> : public cmp_base_s {
-  using base_t = cmp_base_s;
+  using base_s = cmp_base_s;
   using this_t = cmp_static_s<Ports...>;
   using name_t = std::string;
 
@@ -16,7 +16,7 @@ struct cmp_static_s<port_list_static_s<Ports...>, runtime_list_static_s<runtime_
 
   template <typename PortList, typename RuntimeList>
   explicit cmp_static_s(const std::string &name, const PortList &port_list, const RuntimeList &runtime_list)
-      : base_t(name), port_list_(port_list), runtime_list_(runtime_list) {
+      : base_s(name), port_list_(port_list), runtime_list_(runtime_list) {
     update_info();
   };
 
@@ -57,7 +57,7 @@ struct cmp_static_s<port_list_static_s<Ports...>, runtime_list_static_s<runtime_
   }
 
   void setenv(struct env_base_s *const p_env) const {
-    this->base_t::setenv(p_env);
+    this->base_s::setenv(p_env);
     for (unsigned int i = 0; i < port_list_size; i++)
       std::visit_at(
           i, [&p_env](const auto &port) -> void { port.setenv(p_env); }, port_list_);

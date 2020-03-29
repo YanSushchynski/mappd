@@ -13,11 +13,11 @@ private:
 
 public:
   using data_t = DataType;
-  using base_t = base_receiver_port_t<data_t>;
+  using base_s = base_receiver_port_t<data_t>;
   using this_t = port_t<data_t, port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER>;
-  using name_t = typename base_t::name_t;
+  using name_t = typename base_s::name_t;
   static constexpr uint32_t port_type = port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER;
-  explicit port_t(const std::string &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_s(name){};
 
   template <typename PortType> constexpr bool is_friend(uint32_t type) const {
     bool is_friend = false;
@@ -38,8 +38,8 @@ private:
 public:
   using data_t = DataType;
   using this_t = receiver_port_t<data_t>;
-  using base_t = port_t<data_t, port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER>;
-  using name_t = typename base_t::name_t;
+  using base_s = port_t<data_t, port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER>;
+  using name_t = typename base_s::name_t;
 
   struct env_status_s<this_t> read(data_t &data) {
     struct env_status_s<this_t> temp_status(this);
@@ -56,7 +56,7 @@ public:
   }
 
   explicit receiver_port_t(const std::string &name)
-      : base_t(name) {
+      : base_s(name) {
     std::string type = typestr<this_t>;
     sha256::sha256_hash_type type_hash = sha256::compute(reinterpret_cast<const uint8_t *>(type.data()), type.length());
     this->info().set_port_type_hash(type_hash.data(), type_hash.size());

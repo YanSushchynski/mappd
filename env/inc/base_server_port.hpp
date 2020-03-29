@@ -10,7 +10,7 @@ struct base_server_port_t<runtime_type, ReturnType(Args...)> : base_port_t<Retur
 
 public:
   using function_t = ReturnType(Args...);
-  using base_t = base_port_t<function_t>;
+  using base_s = base_port_t<function_t>;
   using this_t = base_server_port_t<runtime_type, function_t>;
 
 private:
@@ -253,14 +253,14 @@ private:
   }
 
   explicit base_server_port_t(const std::string &name)
-      : base_t(name), transaction_count_(0u), response_queue_size_(this->BUFFER_SIZE),
+      : base_s(name), transaction_count_(0u), response_queue_size_(this->BUFFER_SIZE),
         request_queue_size_(this->BUFFER_SIZE){};
 
   explicit base_server_port_t(
       const std::string &name,
       const std::initializer_list<const std::pair<const std::string &, const std::function<ReturnType(Args...)> &>>
           &calls_list)
-      : base_t(name), transaction_count_(0u), response_queue_size_(this->BUFFER_SIZE),
+      : base_s(name), transaction_count_(0u), response_queue_size_(this->BUFFER_SIZE),
         request_queue_size_(this->BUFFER_SIZE) {
     std::for_each(
         calls_list.begin(), calls_list.end(), [this](const auto &element) -> auto { return register_(element); });
@@ -269,7 +269,7 @@ private:
   template <typename... Functions>
   explicit base_server_port_t(const std::string &name,
                               const std::pair<const std::string &, const Functions &> &... functions)
-      : base_t(name), transaction_count_(0u), response_queue_size_(this->BUFFER_SIZE),
+      : base_s(name), transaction_count_(0u), response_queue_size_(this->BUFFER_SIZE),
         request_queue_size_(this->BUFFER_SIZE) {
     std::tuple<const std::pair<const std::string &, const std::function<typename std::function_traits::function_traits<
                                                         Functions>::function_t> &> &...>
