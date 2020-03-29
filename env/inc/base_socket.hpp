@@ -110,7 +110,7 @@ private:
   std::condition_variable cv_;
   std::atomic<uint64_t> threads_cnt_;
   std::mutex mtx_;
-  
+
   template <typename RetType = iface_netinfo_t>
   const typename std::enable_if<is_network, RetType>::type get_iface_info_(const std::string &ifname) {
     using addr_inet_t = std::conditional_t<is_ipv6, struct in6_addr, struct in_addr>;

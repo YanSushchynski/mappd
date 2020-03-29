@@ -2,6 +2,7 @@
 #define NETWORK_UDP_SOCK_HPP
 
 #include "base_socket.hpp"
+#include "debug.hpp"
 #include "udp_sock_type.hpp"
 
 #include <errno.h>
@@ -60,26 +61,26 @@ public:
 
   template <udp_sock_t sc = socket_class, typename RetType = void>
   typename std::enable_if<sc == udp_sock_t::SERVER_MULTICAST, RetType>::type setup(const std::string &mcast_gr_addr,
-                                                                                   uint16_t port) {
+                                                                                   uint16_t port) noexcept {
     setup_(mcast_gr_addr, port);
   }
 
   template <udp_sock_t sc = socket_class, typename RetType = void>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST),
                           RetType>::type
-  setup(uint16_t port) {
+  setup(uint16_t port) noexcept {
     setup_(port);
   }
 
-  const auto &on_receive() const { return on_receive_; }
-  const auto &on_send() const { return on_send_; }
+  const auto &on_receive() const noexcept { return on_receive_; }
+  const auto &on_send() const noexcept { return on_send_; }
 
-  void stop_threads() const { return this->base_t::stop_threads(); }
+  void stop_threads() const noexcept { return this->base_t::stop_threads(); }
   template <udp_sock_t sc = socket_class, typename RetType = bool>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                               sc == udp_sock_t::SERVER_MULTICAST,
                           RetType>::type
-  running() const {
+  running() const noexcept {
     return state_ == state_t::RUNNING;
   }
 
@@ -89,7 +90,7 @@ public:
                 std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<int32_t, sockaddr_inet_t>, void>>>
   typename std::enable_if<!is_ipv6 && (sc == udp_sock_t::CLIENT_BROADCAST || sc == udp_sock_t::SERVER_BROADCAST),
                           RetType>::type
-  send(uint16_t port, const void *const msg, size_t size) const {
+  send(uint16_t port, const void *const msg, size_t size) const noexcept {
     struct addrinfo *dgram_addrinfo, hints;
     fd_set write_fd_set;
     struct timeval write_timeout = {base_t::send_timeout() / 1000, 0u};
@@ -103,10 +104,15 @@ public:
     if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints, &dgram_addrinfo)) !=
             0 ||
         dgram_addrinfo == nullptr) {
-      throw std::runtime_error(
-          (boost::format("Invalid address or port: \"%1%\",\"%2% (errno = %3%), (%4%), %5%:%6%\"") %
-           this->iface().broadcast.data() % std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
-              .str());
+      DEBUG_LOG((boost::format("Invalid address or port: \"%1%\",\"%2% (errno = %3%), (%4%), %5%:%6%\"") %
+                 this->iface().broadcast.data() % std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ %
+                 __LINE__)
+                    .str())
+
+      if constexpr (std::is_same_v<RetType, int32_t>)
+        return rc;
+      else
+        return {rc, sockaddr_inet_t()};
     }
 
   sendto:
@@ -115,14 +121,22 @@ public:
         if (errno == ECONNREFUSED || errno == EHOSTUNREACH || errno == ENETUNREACH || errno == ECONNRESET ||
             errno == ECONNABORTED || errno == EPIPE) {
           ::freeaddrinfo(dgram_addrinfo);
-          throw std::runtime_error((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {rc, sockaddr_inet_t()};
         } else {
           ::freeaddrinfo(dgram_addrinfo);
-          throw std::runtime_error((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {rc, sockaddr_inet_t()};
         }
       } else {
         FD_ZERO(&write_fd_set);
@@ -130,17 +144,25 @@ public:
 
         if ((rc = ::select(sock_fd_ + 1, &write_fd_set, nullptr, nullptr, &write_timeout)) <= 0) {
           ::freeaddrinfo(dgram_addrinfo);
-          throw std::runtime_error((boost::format("Send timeout of select() error (errno = %1%), (%2%), %3%:%4%") %
-                                    strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Send timeout of select() error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                     __func__ % __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {rc, sockaddr_inet_t()};
         } else
           goto sendto;
       }
     } else if (!rc) {
       ::freeaddrinfo(dgram_addrinfo);
-      throw std::runtime_error((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      if constexpr (std::is_same_v<RetType, int32_t>)
+        return rc;
+      else
+        return {rc, sockaddr_inet_t()};
     } else {
       if constexpr (sb == send_behavior_t::HOOK_ON) {
 
@@ -176,7 +198,8 @@ public:
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::CLIENT_UNICAST ||
                               sc == udp_sock_t::SERVER_MULTICAST || sc == udp_sock_t::CLIENT_MULTICAST,
                           RetType>::type
-  send(const std::string &addr, uint16_t port, const void *const msg, size_t size) const {
+  send(const std::string &addr, uint16_t port, const void *const msg, size_t size) const noexcept {
+    int32_t rc;
     struct addrinfo *dgram_addrinfo, hints;
     fd_set write_fd_set;
     struct timeval write_timeout = {base_t::send_timeout() / 1000, 0u};
@@ -186,13 +209,15 @@ public:
     hints.ai_socktype = socktype;
     hints.ai_protocol = protocol;
 
-    int32_t rc;
     if ((rc = ::getaddrinfo(addr.c_str(), std::to_string(port).c_str(), &hints, &dgram_addrinfo)) != 0 ||
         dgram_addrinfo == nullptr) {
-      throw std::runtime_error(
-          (boost::format("Invalid address or port: \"%1%\",\"%2% (errno = %3%), (%4%), %5%:%6%\"") % addr %
-           std::to_string(port) % ::gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
-              .str());
+      DEBUG_LOG((boost::format("Invalid address or port: \"%1%\",\"%2% (errno = %3%), (%4%), %5%:%6%\"") % addr %
+                 std::to_string(port) % ::gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
+                    .str());
+      if constexpr (std::is_same_v<RetType, int32_t>)
+        return rc;
+      else
+        return {rc, sockaddr_inet_t()};
     }
 
   sendto:
@@ -200,13 +225,21 @@ public:
       if (errno != EAGAIN) {
         if (errno == ECONNREFUSED || errno == EHOSTUNREACH || errno == ENETUNREACH || errno == ECONNRESET ||
             errno == ECONNABORTED || errno == EPIPE) {
-          throw std::runtime_error((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {rc, sockaddr_inet_t()};
         } else {
-          throw std::runtime_error((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {rc, sockaddr_inet_t()};
         }
       } else {
         FD_ZERO(&write_fd_set);
@@ -214,16 +247,24 @@ public:
 
         if ((rc = ::select(sock_fd_ + 1, &write_fd_set, nullptr, nullptr, &write_timeout)) <= 0) {
           ::freeaddrinfo(dgram_addrinfo);
-          throw std::runtime_error((boost::format("Send timeout of select() error (errno = %1%), (%2%), %3%:%4%") %
-                                    strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Send timeout of select() error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
+                     __func__ % __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {rc, sockaddr_inet_t()};
         } else
           goto sendto;
       }
     } else if (!rc) {
-      throw std::runtime_error((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Network error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      if constexpr (std::is_same_v<RetType, int32_t>)
+        return rc;
+      else
+        return {rc, sockaddr_inet_t()};
     } else {
       if constexpr (sb == send_behavior_t::HOOK_ON) {
 
@@ -255,52 +296,71 @@ public:
                 rb == recv_behavior_t::HOOK, int32_t,
                 std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
                                    std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>>, void>>>
-  RetType recv() const {
-    int32_t num_ready;
-    int32_t recvd_size = 0;
+  RetType recv() const noexcept {
+    int32_t recvd_size = 0, num_ready, rc, recvd;
     fd_set read_fd_set;
     struct timeval read_timeout = {base_t::receive_timeout() / 1000, 0u};
     std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>> ret;
+    void *data;
 
-    if ((num_ready = ::epoll_wait(epfd_, events_, this->epoll_max_events(), base_t::receive_timeout())) < 0)
-      throw std::runtime_error((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_wait(epfd_, events_, this->epoll_max_events(), base_t::receive_timeout())) < 0) {
+      DEBUG_LOG((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      if constexpr (std::is_same_v<RetType, int32_t>)
+        return rc;
+      else
+        return {{rc, nullptr, sockaddr_inet_t()}};
+    }
 
+    num_ready = rc;
     for (uint32_t i = 0u; i < num_ready; i++) {
       if ((events_[i].data.fd == sock_fd_) && ((events_[i].events & EPOLLIN) == EPOLLIN)) {
         sockaddr_inet_t from;
         socklen_t fromlen = sizeof(from);
-        int32_t bytes_pending, rc;
+        int32_t bytes_pending;
 
         if ((rc = ::ioctl(sock_fd_, FIONREAD, &bytes_pending)) < 0) {
-          throw std::runtime_error((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {{rc, nullptr, sockaddr_inet_t()}};
         }
 
-        void *data = std::malloc(bytes_pending + 1u);
-        int32_t recvd;
+        data = std::malloc(bytes_pending + 1u);
       recv:
-        if ((recvd = ::recvfrom(sock_fd_, data, bytes_pending, 0u, reinterpret_cast<struct sockaddr *>(&from),
-                                &fromlen)) < 0) {
+        if ((rc = ::recvfrom(sock_fd_, data, bytes_pending, 0u, reinterpret_cast<struct sockaddr *>(&from), &fromlen)) <
+            0) {
           if (errno != EAGAIN) {
             std::free(data);
-            throw std::runtime_error((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") %
-                                      strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                         .str());
+            DEBUG_LOG((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                       __FILE__ % __LINE__)
+                          .str());
+            if constexpr (std::is_same_v<RetType, int32_t>)
+              return rc;
+            else
+              return {{rc, nullptr, sockaddr_inet_t()}};
           } else {
             FD_ZERO(&read_fd_set);
             FD_SET(sock_fd_, &read_fd_set);
 
             if ((rc = ::select(sock_fd_ + 1, &read_fd_set, nullptr, nullptr, &read_timeout)) <= 0) {
-              throw std::runtime_error((boost::format("Send timeout of select() error (errno = %1%), (%2%), %3%:%4%") %
-                                        strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                           .str());
+              DEBUG_LOG((boost::format("Send timeout of select() error (errno = %1%), (%2%), %3%:%4%") %
+                         strerror(errno) % __func__ % __FILE__ % __LINE__)
+                            .str());
+              if constexpr (std::is_same_v<RetType, int32_t>)
+                return rc;
+              else
+                return {{rc, nullptr, sockaddr_inet_t()}};
+
             } else
               goto recv;
           }
-        } else if (recvd) {
+        } else if (rc) {
+          recvd = rc;
           *(reinterpret_cast<char *>(data) + recvd) = '\0';
           if constexpr (rb == recv_behavior_t::HOOK) {
             std::thread([this, from, data, size = recvd]() -> void {
@@ -343,11 +403,12 @@ public:
     }
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::SERVER_MULTICAST ||
                               sc == udp_sock_t::SERVER_BROADCAST,
                           RetType>::type
-  start(uint64_t duration_ms = 0) const {
+  start(uint64_t duration_ms = 0) const noexcept {
+    int32_t rc;
     bool nonblock = duration_ms == 0;
     if (nonblock) {
       listen_thread_ = std::thread([this]() -> void { listen_(); });
@@ -368,31 +429,47 @@ public:
     }
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::SERVER_MULTICAST ||
                               (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST),
                           RetType>::type
-  stop() {
-    listen_enabled_ = false;
-    if (listen_thread_.joinable())
+  stop() noexcept {
+    int32_t rc;
+    if (listen_enabled_) {
+      listen_enabled_ = false;
+      rc = 0;
+    } else {
+      rc = -1;
+      goto exit;
+    }
+
+    if (listen_thread_.joinable()) {
       listen_thread_.join();
+      rc = 0;
+    } else {
+      rc = -1;
+      goto exit;
+    }
+
+  exit:
+    return rc;
   }
 
-  void reset() {
+  void reset() noexcept {
     clear_<socket_class>();
     clear_hooks_();
   }
 
-  virtual ~network_udp_socket_impl() {
+  virtual ~network_udp_socket_impl() noexcept {
     reset();
     clear_epoll_();
   }
 
 protected:
-  const int32_t &fd__() const { return sock_fd_; }
-  std::atomic_bool &listen_enabled__() const { return listen_enabled_; }
-  std::atomic<state_t> &state__() const { return state_; }
-  std::thread &listen_thread__() const { return listen_thread_; }
+  const int32_t &fd__() const noexcept { return sock_fd_; }
+  std::atomic_bool &listen_enabled__() const noexcept { return listen_enabled_; }
+  std::atomic<state_t> &state__() const noexcept { return state_; }
+  std::thread &listen_thread__() const noexcept { return listen_thread_; }
 
 private:
   int32_t sock_fd_;
@@ -407,9 +484,9 @@ private:
   const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_t *)> on_receive_;
   const hook_t<void(sockaddr_inet_t, std::shared_ptr<void>, size_t, const this_t *)> on_send_;
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || sc == udp_sock_t::CLIENT_UNICAST, RetType>::type
-  setup_(uint16_t port = 0u) {
+  setup_(uint16_t port = 0u) noexcept {
     struct addrinfo *addr_info, hints;
     int32_t rc, trueflag = 1;
     const char *addr_str;
@@ -423,40 +500,49 @@ private:
 
       if ((rc = ::getaddrinfo(addr_str, std::to_string(port).c_str(), &hints, &addr_info)) != 0 ||
           addr_info == nullptr) {
-        throw std::runtime_error(
-            (boost::format("Invalid address or port: \"%1%\",\"%2% (errno : %3%), (%4%), %5%:%6%\"") % addr_str %
-             std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
-                .str());
+        DEBUG_LOG((boost::format("Invalid address or port: \"%1%\",\"%2% (errno : %3%), (%4%), %5%:%6%\"") % addr_str %
+                   std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
+                      .str());
+        return rc;
       }
 
       if constexpr (is_ipv6)
         reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
     }
 
-    open_();
+    if ((rc = open_()) < 0) {
+      DEBUG_LOG((boost::format("Couldn't open socket (errno : %1%), (%2%), %3%:%4%\"") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &trueflag, sizeof trueflag)) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEPORT, &trueflag, sizeof trueflag)) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     if constexpr (sc == udp_sock_t::SERVER_UNICAST) {
       bind_(addr_info);
       ::freeaddrinfo(addr_info);
     }
+
+    return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<!is_ipv6 && (sc == udp_sock_t::SERVER_BROADCAST || sc == udp_sock_t::CLIENT_BROADCAST),
                           RetType>::type
-  setup_(uint16_t port = 0u) {
+  setup_(uint16_t port = 0u) noexcept {
     struct addrinfo *addr_info, hints;
     int32_t rc, trueflag = 1;
 
@@ -468,34 +554,43 @@ private:
 
       if ((rc = ::getaddrinfo(this->iface().broadcast.data(), std::to_string(port).c_str(), &hints, &addr_info)) != 0 ||
           addr_info == nullptr) {
-        throw std::runtime_error(
-            (boost::format("Invalid address or port: \"%1%\",\"%2% (errno : %3%), (%4%), %5%:%6%\"") %
-             this->iface().broadcast.data() % std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
-                .str());
+        DEBUG_LOG((boost::format("Invalid address or port: \"%1%\",\"%2% (errno : %3%), (%4%), %5%:%6%\"") %
+                   this->iface().broadcast.data() % std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ %
+                   __LINE__)
+                      .str());
+        return rc;
       }
 
       if constexpr (is_ipv6)
         reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
     }
 
-    open_();
+    if ((rc = open_()) < 0) {
+      DEBUG_LOG((boost::format("Couldn't open socket (errno : %1%), (%2%), %3%:%4%\"") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &trueflag, sizeof trueflag)) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEPORT, &trueflag, sizeof trueflag)) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_BROADCAST, &trueflag, sizeof(trueflag))) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     if constexpr (sc == udp_sock_t::SERVER_BROADCAST) {
@@ -503,11 +598,13 @@ private:
       bind_(addr_info);
       ::freeaddrinfo(addr_info);
     }
+
+    return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_t::SERVER_MULTICAST || sc == udp_sock_t::CLIENT_MULTICAST, RetType>::type
-  setup_(const std::string &multicast_group_addr, uint16_t port) {
+  setup_(const std::string &multicast_group_addr, uint16_t port) noexcept {
     using inet_mreq_t = std::conditional_t<is_ipv6, struct ipv6_mreq, struct ip_mreq>;
 
     struct addrinfo *addr_info, hints;
@@ -522,27 +619,34 @@ private:
 
     if ((rc = ::getaddrinfo(multicast_group_addr.c_str(), std::to_string(port).c_str(), &hints, &addr_info)) != 0 ||
         addr_info == nullptr) {
-      throw std::runtime_error(
-          (boost::format("Invalid address or port: \"%1%\",\"%2% (errno : %3%), (%4%), %5%:%6%\"") %
-           multicast_group_addr % std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
-              .str());
+      DEBUG_LOG((boost::format("Invalid address or port: \"%1%\",\"%2% (errno : %3%), (%4%), %5%:%6%\"") %
+                 multicast_group_addr % std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     if constexpr (is_ipv6)
       reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
 
-    open_();
+    if ((rc = open_()) < 0) {
+      DEBUG_LOG((boost::format("Couldn't open socket (errno : %1%), (%2%), %3%:%4%\"") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &trueflag, sizeof trueflag)) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str())
+      return rc;
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEPORT, &trueflag, sizeof trueflag)) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     if constexpr (is_ipv6) {
@@ -557,18 +661,20 @@ private:
     }
 
     if constexpr (is_ipv6) {
-      if (::setsockopt(sock_fd_, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, reinterpret_cast<char *>(&mcast_req),
-                       sizeof(mcast_req)) != 0)
-        throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                  __func__ % __FILE__ % __LINE__)
-                                     .str());
-
+      if ((rc = ::setsockopt(sock_fd_, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP, reinterpret_cast<char *>(&mcast_req),
+                             sizeof(mcast_req))) != 0) {
+        DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                   __FILE__ % __LINE__)
+                      .str());
+        return rc;
+      }
     } else {
-      if (::setsockopt(sock_fd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<char *>(&mcast_req),
-                       sizeof(mcast_req)) != 0) {
-        throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                  __func__ % __FILE__ % __LINE__)
-                                     .str());
+      if ((rc = ::setsockopt(sock_fd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<char *>(&mcast_req),
+                             sizeof(mcast_req))) != 0) {
+        DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                   __FILE__ % __LINE__)
+                      .str());
+        return rc;
       }
     }
 
@@ -577,83 +683,107 @@ private:
     }
 
     ::freeaddrinfo(addr_info);
+    return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                               sc == udp_sock_t::SERVER_MULTICAST,
                           RetType>::type
-  clear_() {
-    stop();
-    if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+  clear_() noexcept {
+    int32_t rc;
+    if ((rc = stop()) < 0) {
+      DEBUG_LOG((boost::format("Stop() socket error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+    }
+
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
 
     ::close(sock_fd_);
+    return rc;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_t::CLIENT_UNICAST || (!is_ipv6 && sc == udp_sock_t::CLIENT_BROADCAST) ||
                               sc == udp_sock_t::CLIENT_MULTICAST,
                           RetType>::type
-  clear_() {
-    if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+  clear_() noexcept {
+    int32_t rc;
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
 
     ::close(sock_fd_);
+    return rc;
   }
 
-  void clear_hooks_() {
+  void clear_hooks_() noexcept {
     this->on_receive().clear();
     this->on_send().clear();
   }
 
-  void clear_epoll_() {
+  void clear_epoll_() noexcept {
     ::close(epfd_);
     std::free(events_);
     events_ = nullptr;
   }
 
-  template <udp_sock_t sc = socket_class, typename RetType = void>
+  template <udp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                               sc == udp_sock_t::SERVER_MULTICAST,
                           RetType>::type
-  bind_(const struct addrinfo *addr_info) {
+  bind_(const struct addrinfo *addr_info) noexcept {
     int32_t rc;
     if ((rc = ::bind(sock_fd_, addr_info->ai_addr, addr_info->ai_addrlen)) != 0) {
       clear_<socket_class>();
-      throw std::runtime_error((boost::format("Could not bind UDP socket (errno = %1%), (%2%), %3%:%4%\"") %
-                                strerror(rc) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Could not bind UDP socket (errno = %1%), (%2%), %3%:%4%\"") % strerror(rc) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
+
+    return rc;
   }
 
-  void open_() {
-    if ((sock_fd_ = ::socket(family, socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, protocol)) < 0) {
+  int32_t open_() noexcept {
+    int32_t rc;
+    struct epoll_event event;
+
+    if ((rc = ::socket(family, socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, protocol)) < 0) {
       clear_<socket_class>();
-      throw std::runtime_error(
-          (boost::format("Could not create socket, (%1%), %2%:%3%") % __func__ % __FILE__ % __LINE__).str());
+      DEBUG_LOG((boost::format("Could not create socket, (%1%), %2%:%3%") % __func__ % __FILE__ % __LINE__).str());
+      return rc;
     }
 
-    struct epoll_event event;
+    sock_fd_ = rc;
     std::memset(&event, 0x0, sizeof(event));
     event.events = epollevents;
     event.data.fd = sock_fd_;
 
-    if (::epoll_ctl(epfd_, EPOLL_CTL_ADD, sock_fd_, &event) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_ADD, sock_fd_, &event)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
+
+    return rc;
   }
 
   template <udp_sock_t sc = socket_class, typename RetType = void>
   typename std::enable_if<sc == udp_sock_t::SERVER_UNICAST || (!is_ipv6 && sc == udp_sock_t::SERVER_BROADCAST) ||
                               sc == udp_sock_t::SERVER_MULTICAST,
                           RetType>::type
-  listen_() const {
+  listen_() const noexcept {
     listen_enabled_ = true;
     state_ = state_t::RUNNING;
 

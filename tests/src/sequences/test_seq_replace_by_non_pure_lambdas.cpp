@@ -25,15 +25,14 @@ TEST(Sequence, replace_by_non_pure_lambdas) {
     };
 
     uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
-
-    EXPECT_EQ(sequence_
+    auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
                                            const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
                         sequence_error_id = error_id;
                       })
-                  .qualifiers.at(sequence_.get_id()),
-              seq_errno_t::SEQ_CLEAR);
+                  .qualifiers.at(sequence_.get_id());
+    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
 
     {
       auto add_result = sequence_.add("Seq1", sequence_part_func1);
@@ -78,15 +77,15 @@ TEST(Sequence, replace_by_non_pure_lambdas) {
     sequence_t sequence_(base);
 
     uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
-
-    EXPECT_EQ(sequence_
+    auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
                                            const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
                         sequence_error_id = error_id;
                       })
-                  .qualifiers.at(sequence_.get_id()),
-              seq_errno_t::SEQ_CLEAR);
+                  .qualifiers.at(sequence_.get_id());
+
+    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
 
     {
       auto add_result = sequence_.add("Seq1", sequence_part_func1);
@@ -137,15 +136,15 @@ TEST(Sequence, replace_by_non_pure_lambdas) {
     sequence_t sequence_(base);
 
     uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
-
-    EXPECT_EQ(sequence_
+    auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
                                            const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
                         sequence_error_id = error_id;
                       })
-                  .qualifiers.at(sequence_.get_id()),
-              seq_errno_t::SEQ_CLEAR);
+                  .qualifiers.at(sequence_.get_id());
+
+    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
 
     {
       auto add_result = sequence_.add("Seq1", sequence_part_func1);

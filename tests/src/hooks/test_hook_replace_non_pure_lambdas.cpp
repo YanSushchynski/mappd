@@ -16,13 +16,15 @@ TEST(Hook, replace_non_pure_lambdas) {
     };
 
     uint32_t hook_error_id = hook_errno_t::HOOK_CLEAR;
+    auto op = hook_
+                  .set_error_handler(
+                      [&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
+                                       const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                        hook_error_id = error_id;
+                      })
+                  .qualifiers.at(hook_.get_id());
 
-    EXPECT_EQ(hook_
-                  .set_error_handler([&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                                      const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME)
-                                         -> void { hook_error_id = error_id; })
-                  .qualifiers.at(hook_.get_id()),
-              hook_errno_t::HOOK_CLEAR);
+	EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
 
     {
       auto add_result = hook_.add("SummaFirst", func1);

@@ -204,11 +204,27 @@ public:
     }
   }
 
-  template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = void>
+  template <tcp_sock_secure_t sc = secure_socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type stop() {
-    this->listen_enabled__() = false;
-    if (this->listen_thread__().joinable())
+    int32_t rc;
+    if (this->listen_enabled__()) {
+      this->listen_enabled__() = false;
+      rc = 0;
+    } else {
+      rc = -1;
+      goto exit;
+    }
+
+    if (this->listen_thread__().joinable()) {
       this->listen_thread__().join();
+      rc = 0;
+    } else {
+      rc = -1;
+      goto exit;
+    }
+
+  exit:
+    return rc;
   }
 
   void reset() { this->base_t::reset(); }
@@ -327,27 +343,28 @@ private:
   }
 
   template <typename base_t::connect_behavior_t cb = base_t::connect_behavior_t::HOOK_ON,
-            tcp_sock_secure_t sc = secure_socket_class, typename RetType = void>
+            tcp_sock_secure_t sc = secure_socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_secure_t::SERVER_UNICAST_SECURE_TLS, RetType>::type listen_() {
+    int32_t num_ready, rc;
     this->listen_enabled__() = true;
-    int32_t rc;
     if ((rc = ::listen(this->fd__(), SOMAXCONN)) < 0) {
-      throw std::runtime_error((boost::format("Start listening error: (errno = %1%), (%2%), %3%:%4%\"") %
-                                strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Start listening error: (errno = %1%), (%2%), %3%:%4%\"") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     this->state__() = base_t::state_t::LISTENING;
     while (this->listen_enabled__()) {
-
-      int32_t num_ready;
-      if ((num_ready = ::epoll_wait(this->epfd__(), this->events__(), base_t::epoll_max_events(),
-                                    base_t::accept_timeout())) < 0u) {
-        throw std::runtime_error((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                  __func__ % __FILE__ % __LINE__)
-                                     .str());
+      if ((rc = ::epoll_wait(this->epfd__(), this->events__(), base_t::epoll_max_events(), base_t::accept_timeout())) <
+          0u) {
+        DEBUG_LOG((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                   __FILE__ % __LINE__)
+                      .str());
+        return rc;
       }
 
+      num_ready = rc;
       for (int32_t i = 0; i < num_ready; i++) {
         if (((this->events__()[i].events & EPOLLIN) == EPOLLIN || (this->events__()[i].events & EPOLLET) == EPOLLET) &&
             (this->events__()[i].data.fd == this->fd__())) {
@@ -363,6 +380,7 @@ private:
     }
 
     this->state__() = base_t::state_t::STOPPED;
+    return 0;
   }
 };
 

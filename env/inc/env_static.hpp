@@ -27,10 +27,10 @@ public:
 
   virtual ~env_static_t() = default;
 
-  port_manager_base_t &port_manager() { return port_manager_; }
-  nm_t<> &network_manager() { return network_manager_; }
-  domain_nm_t<> &domain_network_manager() { return domain_network_manager_; }
-  composition_list_static_t<Compositions...> &compositions() { return compositions_; }
+  struct port_manager_base_t &port_manager() { return port_manager_; }
+  struct nm_t<> &network_manager() { return network_manager_; }
+  struct domain_nm_t<> &domain_network_manager() { return domain_network_manager_; }
+  struct composition_list_static_t<Compositions...> &compositions() { return compositions_; }
 
   virtual void configure(const libconfig::Setting &env_config) override{};
   virtual int32_t run(int32_t argc, char *argv[]) override { return 0; };

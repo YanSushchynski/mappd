@@ -2,6 +2,7 @@
 #define NETWORK_TCP_SOCK_HPP
 
 #include "base_socket.hpp"
+#include "debug.hpp"
 #include "tcp_sock_type.hpp"
 
 #include <errno.h>
@@ -49,59 +50,61 @@ public:
             std::malloc(base_t::epoll_max_events() * sizeof(struct epoll_event)))),
         on_disconnect_internal_hook_([](int32_t) {}), on_connect_internal_hook_([](int32_t) {}) {}
 
-  const auto &on_connect() const { return on_connect_; }
-  const auto &on_disconnect() const { return on_disconnect_; }
-  const auto &on_receive() const { return on_receive_; }
-  const auto &on_send() const { return on_send_; }
+  const auto &on_connect() const noexcept { return on_connect_; }
+  const auto &on_disconnect() const noexcept { return on_disconnect_; }
+  const auto &on_receive() const noexcept { return on_receive_; }
+  const auto &on_send() const noexcept { return on_send_; }
 
-  void stop_threads() { return this->base_t::stop_threads(); }
+  void stop_threads() noexcept { return this->base_t::stop_threads(); }
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
             typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type connect(const std::string &addr,
-                                                                                   uint16_t port) {
+                                                                                   uint16_t port) noexcept {
     return setup_<cb>(port, addr);
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type disconnect() {
+  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type disconnect() noexcept {
     clear_();
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type disconnect(const std::string &addr,
-                                                                                      uint16_t srv) {
+                                                                                      uint16_t srv) noexcept {
     return disconnect_peer_(addr, srv);
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type setup(uint16_t port) {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type setup(uint16_t port) noexcept {
     return setup_(port);
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = bool>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type listening() const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type listening() const noexcept {
     return state_ == state_t::LISTENING;
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = bool>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type connecting() const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type connecting() const noexcept {
     return state_ == state_t::CONNECTING;
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = bool>
-  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type connected() const {
+  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type connected() const noexcept {
     return state_ == state_t::CONNECTED;
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type is_peer_connected(const std::string &addr,
-                                                                                             uint16_t srv) const {
+                                                                                             uint16_t srv) const
+      noexcept {
     int32_t rc = get_connected_peer_(addr, srv, nullptr);
     return rc > 0;
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = bool>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type is_peer_connected(int32_t fd) const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type is_peer_connected(int32_t fd) const
+      noexcept {
     sockaddr_inet_t *addr;
     int32_t rc = get_connected_peer_(fd, &addr);
     return addr != nullptr;
@@ -109,7 +112,7 @@ public:
 
   template <tcp_sock_t sc = socket_class, typename RetType = bool>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  is_peer_connected(const sha256::sha256_hash_type &hash, uint16_t srv) const {
+  is_peer_connected(const sha256::sha256_hash_type &hash, uint16_t srv) const noexcept {
     for (const auto &peer : connected_) {
       const sockaddr_inet_t &peer_addr = peer.second;
       char addr[base_t::addrlen];
@@ -139,14 +142,16 @@ public:
     return false;
   }
 
-  int32_t peer_fd(const std::string &addr, uint16_t srv) const { return get_connected_peer_(addr, srv, nullptr); }
+  int32_t peer_fd(const std::string &addr, uint16_t srv) const noexcept {
+    return get_connected_peer_(addr, srv, nullptr);
+  }
 
   template <send_behavior_t sb = send_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
             typename RetType = std::conditional_t<
                 sb == send_behavior_t::HOOK_ON, int32_t,
                 std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<sockaddr_inet_t, int32_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  send(const std::string &addr, uint16_t port, const void *const msg, size_t size) const {
+  send(const std::string &addr, uint16_t port, const void *const msg, size_t size) const noexcept {
     sockaddr_inet_t *peer_addr;
     int32_t peer_fd;
 
@@ -169,7 +174,7 @@ public:
                 sb == send_behavior_t::HOOK_ON, int32_t,
                 std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<sockaddr_inet_t, int32_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type
-  send(const void *const msg, size_t size, SendFunction send_function = ::send) const {
+  send(const void *const msg, size_t size, SendFunction send_function = ::send) const noexcept {
     return send_<sb, SendFunction>(msg, size, send_function);
   }
 
@@ -180,12 +185,13 @@ public:
                 std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
                                    std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>>, void>>>
   typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type
-  recv(RecvFunction recv_function = ::recv) const {
+  recv(RecvFunction recv_function = ::recv) const noexcept {
     return recv_<rb, RecvFunction>(recv_function);
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type start(uint64_t duration_ms = 0) const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type start(uint64_t duration_ms = 0) const
+      noexcept {
     bool nonblock = duration_ms == 0;
     if (nonblock) {
       listen_thread_ = std::thread([this]() -> void { listen_(); });
@@ -205,34 +211,50 @@ public:
     }
   }
 
-  template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type stop() {
-    listen_enabled_ = false;
-    if (listen_thread_.joinable())
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type stop() noexcept {
+    int32_t rc;
+    if (listen_enabled_) {
+      listen_enabled_ = false;
+      rc = 0;
+    } else {
+      rc = -1;
+      goto exit;
+    }
+
+    if (listen_thread_.joinable()) {
       listen_thread_.join();
+      rc = 0;
+    } else {
+      rc = -1;
+      goto exit;
+    }
+
+  exit:
+    return rc;
   }
 
-  void reset() {
+  void reset() noexcept {
     clear_();
     clear_hooks_();
   }
 
-  virtual ~network_tcp_socket_impl() {
+  virtual ~network_tcp_socket_impl() noexcept {
     reset();
     clear_epoll_();
   };
 
 protected:
-  const connected_peer_info_t &connected__() const { return connected_; }
-  const int32_t &fd__() const { return sock_fd_; }
-  const int32_t &epfd__() const { return epfd_; };
-  struct epoll_event *events__() const {
+  const connected_peer_info_t &connected__() const noexcept { return connected_; }
+  const int32_t &fd__() const noexcept { return sock_fd_; }
+  const int32_t &epfd__() const noexcept { return epfd_; };
+  struct epoll_event *events__() const noexcept {
     return events_;
   }
 
-  std::atomic_bool &listen_enabled__() const { return listen_enabled_; }
-  std::thread &listen_thread__() const { return listen_thread_; }
-  std::atomic<state_t> &state__() const { return state_; }
+  std::atomic_bool &listen_enabled__() const noexcept { return listen_enabled_; }
+  std::thread &listen_thread__() const noexcept { return listen_thread_; }
+  std::atomic<state_t> &state__() const noexcept { return state_; }
 
   template <recv_behavior_t rb = recv_behavior_t::HOOK,
             typename RecvFunction = int32_t (*)(int32_t, void *, size_t, int32_t), tcp_sock_t sc = socket_class,
@@ -241,31 +263,32 @@ protected:
                 std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
                                    std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  handle_incoming_data__(int32_t fd, RecvFunction recv_function = ::recv) {
+  handle_incoming_data__(int32_t fd, RecvFunction recv_function = ::recv) noexcept {
     return this->template handle_incoming_data_<rb, RecvFunction>(fd, recv_function);
   }
 
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
             typename RetType =
                 std::conditional_t<cb == connect_behavior_t::HOOK_ON, int32_t, std::pair<sockaddr_inet_t, int32_t>>>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type handle_incoming_peer__() const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type handle_incoming_peer__() const noexcept {
     return this->template handle_incoming_peer_<cb>();
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  get_connected_peer__(const std::string &addr, uint16_t port, sockaddr_inet_t **peer_addr) const {
+  get_connected_peer__(const std::string &addr, uint16_t port, sockaddr_inet_t **peer_addr) const noexcept {
     return get_connected_peer_(addr, port, peer_addr);
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = void>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  get_connected_peer__(int32_t fd, sockaddr_inet_t **peer_addr) const {
+  get_connected_peer__(int32_t fd, sockaddr_inet_t **peer_addr) const noexcept {
     return get_connected_peer_(fd, peer_addr);
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type disconnect_peer__(int32_t fd) const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type disconnect_peer__(int32_t fd) const
+      noexcept {
     return disconnect_peer_(fd);
   }
 
@@ -276,26 +299,26 @@ protected:
                 std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<sockaddr_inet_t, int32_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
   send__(int32_t peer_fd, const sockaddr_inet_t *const peer_addr, const void *const msg, size_t size,
-         SendFunction send_function = ::send) const {
+         SendFunction send_function = ::send) const noexcept {
     return send_<sb, SendFunction>(peer_fd, peer_addr, msg, size, send_function);
   }
 
-  void set_blocking__(int32_t fd) const { set_blocking_(fd); }
-  void set_non_blocking__(int32_t fd) const { set_non_blocking_(fd); }
+  void set_blocking__(int32_t fd) const noexcept { set_blocking_(fd); }
+  void set_non_blocking__(int32_t fd) const noexcept { set_non_blocking_(fd); }
 
-  void set_on_connect_internal_hook__(const std::function<void(int32_t)> &new_hook) {
+  void set_on_connect_internal_hook__(const std::function<void(int32_t)> &new_hook) noexcept {
     on_connect_internal_hook_ = new_hook;
   }
 
-  void reset_on_connect_internal_hook__() {
+  void reset_on_connect_internal_hook__() noexcept {
     on_connect_internal_hook_ = [](int32_t) {};
   }
 
-  void set_on_disconnect_internal_hook__(const std::function<void(int32_t)> &new_hook) {
+  void set_on_disconnect_internal_hook__(const std::function<void(int32_t)> &new_hook) noexcept {
     on_disconnect_internal_hook_ = new_hook;
   }
 
-  void reset_on_disconnect_internal_hook__() {
+  void reset_on_disconnect_internal_hook__() noexcept {
     on_disconnect_internal_hook_ = [](int32_t) {};
   }
 
@@ -333,7 +356,7 @@ private:
                 std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<sockaddr_inet_t, int32_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
   send_(int32_t peer_fd, const sockaddr_inet_t *const peer_addr, const void *const msg, size_t size,
-        SendFunction send_function = ::send) const {
+        SendFunction send_function = ::send) const noexcept {
     int32_t rc;
     fd_set write_fd_set;
     struct timeval write_timeout = {base_t::send_timeout() / 1000, 0u};
@@ -359,9 +382,13 @@ private:
 
           connected_info_lock_.unlock();
         } else {
-          throw std::runtime_error((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return RetType({sockaddr_inet_t(), rc});
         }
       } else {
         FD_ZERO(&write_fd_set);
@@ -405,7 +432,7 @@ private:
                 sb == send_behavior_t::HOOK_ON, int32_t,
                 std::conditional_t<sb == send_behavior_t::HOOK_OFF, std::pair<sockaddr_inet_t, int32_t>, void>>>
   typename std::enable_if<socket_class == tcp_sock_t::CLIENT_UNICAST, RetType>::type
-  send_(const void *const msg, size_t size, SendFunction send_function = ::send) const {
+  send_(const void *const msg, size_t size, SendFunction send_function = ::send) const noexcept {
     int32_t rc;
     fd_set write_fd_set;
     struct timeval write_timeout = {base_t::send_timeout() / 1000, 0u};
@@ -431,9 +458,13 @@ private:
             connected_info_lock_.unlock();
           }
         } else {
-          throw std::runtime_error((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Sendto error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return RetType({sockaddr_inet_t(), rc});
         }
       } else {
         FD_ZERO(&write_fd_set);
@@ -479,31 +510,40 @@ private:
                 std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
                                    std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>>, void>>>
   typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type
-  recv_(RecvFunction recv_function = ::recv) const {
-    int32_t num_ready;
-    int32_t recvd_size = 0;
+  recv_(RecvFunction recv_function = ::recv) const noexcept {
+    int32_t rc, num_ready, recvd_size = 0;
     fd_set read_fd_set;
     struct timeval read_timeout = {base_t::receive_timeout() / 1000, 0u};
     std::vector<std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>> ret;
 
-    if ((num_ready = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::receive_timeout())) < 0)
-      throw std::runtime_error((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::receive_timeout())) < 0) {
+      DEBUG_LOG((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      if constexpr (std::is_same_v<RetType, int32_t>)
+        return rc;
+      else
+        return {{rc, nullptr, sockaddr_inet_t()}};
+    }
 
+    num_ready = rc;
     for (uint32_t i = 0u; i < num_ready; i++) {
       if ((events_[i].data.fd == sock_fd_) && ((events_[i].events & EPOLLIN) == EPOLLIN)) {
         int32_t rc, bytes_pending, recvd;
 
         if ((rc = ::ioctl(sock_fd_, FIONREAD, &bytes_pending)) < 0) {
-          throw std::runtime_error((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {{rc, nullptr, sockaddr_inet_t()}};
         }
 
         void *data = std::malloc(bytes_pending);
       recv:
-        if ((recvd = recv_function(sock_fd_, data, bytes_pending, 0u)) < 0) {
+        if ((rc = recv_function(sock_fd_, data, bytes_pending, 0u)) < 0) {
           if (errno != EAGAIN) {
 
             std::free(data);
@@ -532,9 +572,13 @@ private:
                 return std::move(ret);
               }
             } else {
-              throw std::runtime_error((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") %
-                                        strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                           .str());
+              DEBUG_LOG((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                         __FILE__ % __LINE__)
+                            .str());
+              if constexpr (std::is_same_v<RetType, int32_t>)
+                return rc;
+              else
+                return {{rc, nullptr, sockaddr_inet_t()}};
             }
           } else {
             FD_ZERO(&read_fd_set);
@@ -546,6 +590,7 @@ private:
               goto recv;
           }
         } else {
+          recvd = rc;
           if constexpr (rb == recv_behavior_t::HOOK) {
 
             connected_info_lock_.lock();
@@ -596,11 +641,10 @@ private:
   }
 
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON>
-  int32_t setup_(uint16_t port, const std::string &addr = "") {
+  int32_t setup_(uint16_t port, const std::string &addr = "") noexcept {
     struct addrinfo *addr_info, hints;
-    int32_t rc, trueflag = 1, try_count = 0;
+    int32_t rc, trueflag = 1, try_count = 0, ret;
     const char *addr_str;
-    int32_t ret;
 
     std::memset(&hints, 0x0, sizeof(hints));
     hints.ai_family = family;
@@ -616,48 +660,59 @@ private:
     }
 
     if ((rc = ::getaddrinfo(addr_str, std::to_string(port).c_str(), &hints, &addr_info)) != 0 || addr_info == nullptr) {
-      throw std::runtime_error(
-          (boost::format("Invalid address or port: \"%1%\",\"%2%\" (errno : %3%), (%4%), %5%:%6%\"") % addr %
-           std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
-              .str());
+      DEBUG_LOG((boost::format("Invalid address or port: \"%1%\",\"%2%\" (errno : %3%), (%4%), %5%:%6%\"") % addr %
+                 std::to_string(port) % gai_strerror(rc) % __func__ % __FILE__ % __LINE__)
+                    .str())
+      return -1;
     }
 
     if constexpr (base_t::is_ipv6)
       reinterpret_cast<sockaddr_inet_t *>(addr_info->ai_addr)->sin6_scope_id = this->iface().scopeid;
 
-    open_();
+    if ((rc = open_()) < 0) {
+      DEBUG_LOG((boost::format("Couldn't open socket: (errno : %1%), (%2%), %3%:%4%\"") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str())
+      return rc;
+    }
+
     struct timeval recv_timeout = {base_t::receive_timeout(), 0u};
     struct timeval send_timeout = {base_t::send_timeout(), 0u};
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEADDR, &trueflag, sizeof(trueflag))) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return -1;
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_REUSEPORT, &trueflag, sizeof(trueflag))) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return -1;
     }
 
     trueflag = IP_PMTUDISC_DO;
     if ((rc = ::setsockopt(sock_fd_, protocol, IP_MTU_DISCOVER, &trueflag, sizeof(trueflag))) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return -1;
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(recv_timeout))) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return -1;
     }
 
     if ((rc = ::setsockopt(sock_fd_, SOL_SOCKET, SO_SNDTIMEO, &send_timeout, sizeof(send_timeout))) < 0) {
-      throw std::runtime_error((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Setsockopt error (errno = %1%),(%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return -1;
     }
 
     if constexpr (socket_class == tcp_sock_t::CLIENT_UNICAST) {
@@ -673,21 +728,29 @@ private:
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type bind_(struct addrinfo *addr_info) {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type bind_(struct addrinfo *addr_info) noexcept {
     int32_t rc;
     if ((rc = ::bind(sock_fd_, addr_info->ai_addr, addr_info->ai_addrlen)) != 0) {
       clear_();
-      throw std::runtime_error((boost::format("Could not bind TCP socket (errno = %1%), (%2%), %3%:%4%") %
-                                strerror(rc) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Could not bind TCP socket (errno = %1%), (%2%), %3%:%4%") % strerror(rc) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     return rc;
   }
 
-  template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type clear_() {
-    stop();
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type clear_() noexcept {
+    int32_t rc;
+    if ((rc = stop()) < 0) {
+      DEBUG_LOG((boost::format("Couldn't stop socket (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
+
     connected_info_lock_.lock();
     for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
       std::thread([this, connected = it->second]() -> void {
@@ -697,27 +760,35 @@ private:
           std::notify_all_at_thread_exit(this->cv(), std::move(lock));
         }
       }).detach();
-      if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, it->first, nullptr) < 0u)
-        throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                  __func__ % __FILE__ % __LINE__)
-                                     .str());
+
+      if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_DEL, it->first, nullptr)) < 0u) {
+        DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                   __FILE__ % __LINE__)
+                      .str());
+        return rc;
+      }
+
       ::close(it->first);
     }
 
     connected_.clear();
-    if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ % __FILE__ %
+                 __LINE__)
+                    .str());
+      return rc;
+    }
 
     ::close(sock_fd_);
     state_ = state_t::STOPPED;
     connected_info_lock_.unlock();
+    return rc;
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type disconnect_peer_(const std::string &addr,
-                                                                                            uint16_t srv) const {
+                                                                                            uint16_t srv) const
+      noexcept {
     int16_t peer_fd;
 
     if ((peer_fd = get_connected_peer_(addr, srv, nullptr)) < 0)
@@ -735,7 +806,7 @@ private:
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type disconnect_peer_(int32_t fd) const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type disconnect_peer_(int32_t fd) const noexcept {
     if (connected_.find(fd) != connected_.end()) {
       ::close(fd);
 
@@ -750,8 +821,9 @@ private:
     return -1;
   }
 
-  template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type clear_() {
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type clear_() noexcept {
+    int32_t rc;
     connected_info_lock_.lock();
     if (state_ == state_t::CONNECTED) {
       std::thread([this, connected = connected_]() -> void {
@@ -764,25 +836,29 @@ private:
       std::memset(&connected_, 0x0, sizeof(connected_));
     }
 
-    if (::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_DEL, sock_fd_, nullptr)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ % __FILE__ %
+                 __LINE__)
+                    .str());
+      return rc;
+    }
 
     on_disconnect_internal_hook_(sock_fd_);
     ::close(sock_fd_);
     state_ = state_t::DISCONNECTED;
     connected_info_lock_.unlock();
+
+    return rc;
   }
 
-  void clear_hooks_() {
+  void clear_hooks_() noexcept {
     this->on_connect().clear();
     this->on_disconnect().clear();
     this->on_receive().clear();
     this->on_send().clear();
   }
 
-  void clear_epoll_() {
+  void clear_epoll_() noexcept {
     epoll_fd_lock_.lock();
     ::close(epfd_);
     std::free(events_);
@@ -790,22 +866,28 @@ private:
     epoll_fd_lock_.unlock();
   }
 
-  void open_() {
-    if ((sock_fd_ = ::socket(family, socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, protocol)) < 0) {
+  int32_t open_() noexcept {
+    int32_t rc;
+    if ((rc = ::socket(family, socktype | SOCK_CLOEXEC | SOCK_NONBLOCK, protocol)) < 0) {
       clear_();
-      throw std::runtime_error(
-          (boost::format("Could not create socket, (%1%), %2%:%3%") % __func__ % __FILE__ % __LINE__).str());
+      DEBUG_LOG((boost::format("Could not create socket, (%1%), %2%:%3%") % __func__ % __FILE__ % __LINE__).str());
+      return rc;
     }
 
+    sock_fd_ = rc;
     struct epoll_event event;
     std::memset(&event, 0x0, sizeof(event));
     event.events = epollevents;
     event.data.fd = sock_fd_;
 
-    if (::epoll_ctl(epfd_, EPOLL_CTL_ADD, sock_fd_, &event) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_ADD, sock_fd_, &event)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ % __FILE__ %
+                 __LINE__)
+                    .str());
+      return rc;
+    }
+
+    return rc;
   }
 
   template <recv_behavior_t rb = recv_behavior_t::HOOK,
@@ -815,20 +897,21 @@ private:
                 std::conditional_t<rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET,
                                    std::tuple<int32_t, std::shared_ptr<void>, sockaddr_inet_t>, void>>>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  handle_incoming_data_(int32_t fd, RecvFunction recv_function = ::recv) {
+  handle_incoming_data_(int32_t fd, RecvFunction recv_function = ::recv) noexcept {
     int32_t recvd, rc, bytes_pending;
     fd_set read_fd_set;
     struct timeval read_timeout = {base_t::receive_timeout() / 1000, 0u};
 
     if ((rc = ::ioctl(fd, FIONREAD, &bytes_pending)) < 0) {
-      throw std::runtime_error((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("IOctl error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ % __FILE__ %
+                 __LINE__)
+                    .str());
+      return rc;
     }
 
     void *data = std::malloc(bytes_pending);
   recv:
-    if ((recvd = recv_function(fd, data, bytes_pending, 0u)) < 0) {
+    if ((rc = recv_function(fd, data, bytes_pending, 0u)) < 0) {
       if (errno != EAGAIN) {
 
         std::free(data);
@@ -867,9 +950,13 @@ private:
             return {recvd, std::shared_ptr<void>(), sockaddr_inet_t()};
           }
         } else {
-          throw std::runtime_error((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("Receiveing error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          if constexpr (std::is_same_v<RetType, int32_t>)
+            return rc;
+          else
+            return {rc, nullptr, sockaddr_inet_t()};
         }
       } else {
         FD_ZERO(&read_fd_set);
@@ -880,7 +967,7 @@ private:
         } else
           goto recv;
       }
-    } else if (!recvd) {
+    } else if (!rc) {
 
       connected_info_lock_.lock();
       for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
@@ -897,10 +984,10 @@ private:
 
           if constexpr (rb == recv_behavior_t::HOOK) {
 
-            return recvd;
+            return rc;
           } else if constexpr (rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET) {
 
-            return {recvd, std::shared_ptr<void>(), sockaddr_inet_t()};
+            return {rc, std::shared_ptr<void>(), sockaddr_inet_t()};
           }
         }
       }
@@ -909,20 +996,25 @@ private:
       std::free(data);
       if constexpr (rb == recv_behavior_t::HOOK) {
 
-        return recvd;
+        return rc;
       } else if constexpr (rb == recv_behavior_t::RET || rb == recv_behavior_t::HOOK_RET) {
 
-        return {recvd, std::shared_ptr<void>(), sockaddr_inet_t()};
+        return {rc, nullptr, sockaddr_inet_t()};
       }
     } else {
+      recvd = rc;
       sockaddr_inet_t peer;
       socklen_t peerlen = sizeof(peer);
 
       if ((rc = ::getpeername(fd, reinterpret_cast<struct sockaddr *>(&peer), &peerlen)) < 0) {
         std::free(data);
-        throw std::runtime_error((boost::format("Get peer name failed (errno = %1%), (%2%), %3%:%4%") %
-                                  strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                     .str());
+        DEBUG_LOG((boost::format("Get peer name failed (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                   __FILE__ % __LINE__)
+                      .str());
+        if constexpr (std::is_same_v<RetType, int32_t>)
+          return rc;
+        else
+          return {rc, nullptr, sockaddr_inet_t()};
       }
 
       if constexpr (rb == recv_behavior_t::HOOK) {
@@ -957,7 +1049,9 @@ private:
 
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
             typename RetType = int32_t>
-  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type connect_(const struct addrinfo *addr_info) {
+  typename std::enable_if<sc == tcp_sock_t::CLIENT_UNICAST, RetType>::type
+  connect_(const struct addrinfo *addr_info) noexcept {
+    int32_t rc, num_ready;
     struct epoll_event event;
 
     state_ = state_t::CONNECTING;
@@ -965,36 +1059,39 @@ private:
     event.events = epollevents | EPOLLOUT;
     event.data.fd = sock_fd_;
 
-    if (::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ % __FILE__ %
+                 __LINE__)
+                    .str());
+      return rc;
+    }
 
-    int32_t rc;
     if ((rc = ::connect(sock_fd_, addr_info->ai_addr, sizeof(sockaddr_inet_t))) < 0) {
       if (errno != EINPROGRESS) {
-        throw std::runtime_error((boost::format("Connection error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                  __func__ % __FILE__ % __LINE__)
-                                     .str());
+        DEBUG_LOG((boost::format("Connection error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                   __FILE__ % __LINE__)
+                      .str());
+        return rc;
       }
     }
 
-    int32_t num_ready;
-    if ((num_ready = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::connect_timeout())) < 0) {
-      throw std::runtime_error((boost::format("Epoll wait error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::connect_timeout())) < 0) {
+      DEBUG_LOG((boost::format("Epoll wait error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     for (int32_t i = 0; i < num_ready; i++) {
       if (events_[i].data.fd == sock_fd_) {
-        int32_t epoll_error = 0u, rc;
+        int32_t epoll_error = 0u;
         socklen_t epoll_errlen = sizeof(epoll_error);
         if ((rc = ::getsockopt(sock_fd_, SOL_SOCKET, SO_ERROR, reinterpret_cast<void *>(&epoll_error), &epoll_errlen)) <
             0) {
-          throw std::runtime_error((boost::format("getsockopt() error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+          DEBUG_LOG((boost::format("getsockopt() error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          return rc;
         }
 
         sockaddr_inet_t server;
@@ -1004,10 +1101,12 @@ private:
         event.events = epollevents;
         event.data.fd = sock_fd_;
 
-        if (::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event) < 0u)
-          throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                    __func__ % __FILE__ % __LINE__)
-                                       .str());
+        if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_MOD, sock_fd_, &event)) < 0u) {
+          DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                     __FILE__ % __LINE__)
+                        .str());
+          return rc;
+        }
 
         if (epoll_error) {
           std::thread([this, server]() -> void {
@@ -1043,37 +1142,52 @@ private:
     return state_ == state_t::CONNECTED ? 0 : -1;
   }
 
-  template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type set_non_blocking_(int32_t fd) const {
-    int32_t flags;
-    if ((flags = ::fcntl(fd, F_GETFL, 0)) < 0)
-      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
-                                strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type set_non_blocking_(int32_t fd) const
+      noexcept {
+    int32_t flags, rc;
+    if ((rc = ::fcntl(fd, F_GETFL, 0)) < 0) {
+      DEBUG_LOG((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
+                 __func__ % __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
 
-    if (::fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
-      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
-                                strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+    flags = rc;
+    if ((rc = ::fcntl(fd, F_SETFL, flags | O_NONBLOCK)) < 0) {
+      DEBUG_LOG((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
+                 __func__ % __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
+
+    return rc;
   }
 
-  template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type set_blocking_(int32_t fd) const {
-    int32_t flags;
-    if ((flags = ::fcntl(fd, F_GETFL, 0)) < 0)
-      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
-                                strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type set_blocking_(int32_t fd) const noexcept {
+    int32_t flags, rc;
+    if ((rc = ::fcntl(fd, F_GETFL, 0)) < 0) {
+      DEBUG_LOG((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
+                 __func__ % __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
 
-    if (::fcntl(fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
-      throw std::runtime_error((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") %
-                                strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+    flags = rc;
+    if ((rc = ::fcntl(fd, F_SETFL, flags & ~O_NONBLOCK)) < 0) {
+      DEBUG_LOG((boost::format("Set non-blocking error (errno = %1%), (%2%), %3%:%4%\r\n") % strerror(errno) %
+                 __func__ % __FILE__ % __LINE__)
+                    .str());
+      return rc;
+    }
+
+    return rc;
   }
 
   template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  get_connected_peer_(const std::string &addr, uint16_t port, sockaddr_inet_t **peer_addr) const {
+  get_connected_peer_(const std::string &addr, uint16_t port, sockaddr_inet_t **peer_addr) const noexcept {
     sockaddr_inet_t net_addr;
     int32_t rc;
     void *dst_addr, *dst_port;
@@ -1089,6 +1203,7 @@ private:
     }
 
     if ((rc = ::inet_pton(family, addr.c_str(), dst_addr)) <= 0) {
+      DEBUG_LOG((boost::format("inet_pton() failed for addr = %1%\r\n") % addr.c_str()).str());
       return rc;
     }
 
@@ -1117,12 +1232,13 @@ private:
     }
 
     connected_info_lock_.unlock();
-    return -1;
+    rc = -1;
+    return rc;
   }
 
-  template <tcp_sock_t sc = socket_class, typename RetType = void>
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type
-  get_connected_peer_(int32_t fd, sockaddr_inet_t **peer_addr) const {
+  get_connected_peer_(int32_t fd, sockaddr_inet_t **peer_addr) const noexcept {
     connected_info_lock_.lock();
     for (typename connected_peer_info_t::iterator it = connected_.begin(); it != connected_.end(); it++) {
       if (fd == it->first) {
@@ -1130,7 +1246,7 @@ private:
           *peer_addr = &it->second;
 
         connected_info_lock_.unlock();
-        return;
+        return 0;
       }
     }
 
@@ -1138,29 +1254,38 @@ private:
       *peer_addr = nullptr;
 
     connected_info_lock_.unlock();
+    return -1;
   }
 
   template <connect_behavior_t cb = connect_behavior_t::HOOK_ON, tcp_sock_t sc = socket_class,
             typename RetType =
                 std::conditional_t<cb == connect_behavior_t::HOOK_ON, int32_t, std::pair<sockaddr_inet_t, int32_t>>>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type handle_incoming_peer_() const {
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type handle_incoming_peer_() const noexcept {
     sockaddr_inet_t peer_addr;
     socklen_t peer_addr_size = sizeof(peer_addr);
     uint16_t peer_srv;
     struct epoll_event peer_ev;
-    int32_t peer_fd;
-    int32_t rc;
+    int32_t peer_fd, rc;
     fd_set accept_fd_set;
     struct timeval accept_timeout = {base_t::accept_timeout() / 1000, 0u};
 
     state_ = state_t::CONNECTING;
   accept:
-    if ((peer_fd = ::accept(sock_fd_, reinterpret_cast<struct sockaddr *>(&peer_addr), &peer_addr_size)) < 0) {
+    if ((rc = ::accept(sock_fd_, reinterpret_cast<struct sockaddr *>(&peer_addr), &peer_addr_size)) < 0) {
       if (errno != EAGAIN) {
-        throw std::runtime_error((boost::format("Accept error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) %
-                                  __func__ % __FILE__ % __LINE__)
-                                     .str());
+        DEBUG_LOG((boost::format("Accept error (errno = %1%), (%2%), %3%:%4%") % strerror(errno) % __func__ % __FILE__ %
+                   __LINE__)
+                      .str());
+        if constexpr (cb == connect_behavior_t::HOOK_ON) {
+
+          return rc;
+        } else if constexpr (cb == connect_behavior_t::HOOK_OFF) {
+
+          return {sockaddr_inet_t(), rc};
+        }
       } else {
+        peer_fd = rc;
+
         FD_ZERO(&accept_fd_set);
         FD_SET(sock_fd_, &accept_fd_set);
 
@@ -1177,6 +1302,7 @@ private:
       }
     }
 
+    peer_fd = rc;
     if constexpr (base_t::is_ipv6) {
 
       peer_srv = ::htons(peer_addr.sin6_port);
@@ -1190,10 +1316,18 @@ private:
     peer_ev.data.fd = peer_fd;
     peer_ev.events = EPOLLIN | EPOLLET;
 
-    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_ADD, peer_fd, &peer_ev)) < 0u)
-      throw std::runtime_error((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                __func__ % __FILE__ % __LINE__)
-                                   .str());
+    if ((rc = ::epoll_ctl(epfd_, EPOLL_CTL_ADD, peer_fd, &peer_ev)) < 0u) {
+      DEBUG_LOG((boost::format("Epoll ctl error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ % __FILE__ %
+                 __LINE__)
+                    .str());
+      if constexpr (cb == connect_behavior_t::HOOK_ON) {
+
+        return rc;
+      } else if constexpr (cb == connect_behavior_t::HOOK_OFF) {
+
+        return {sockaddr_inet_t(), rc};
+      }
+    }
 
     connected_info_lock_.lock();
     connected_.insert(std::make_pair(peer_fd, peer_addr));
@@ -1214,40 +1348,42 @@ private:
     }
   }
 
-  template <tcp_sock_t sc = socket_class, typename RetType = void>
-  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type listen_() const {
+  template <tcp_sock_t sc = socket_class, typename RetType = int32_t>
+  typename std::enable_if<sc == tcp_sock_t::SERVER_UNICAST, RetType>::type listen_() const noexcept {
+    int32_t rc, num_ready;
     listen_enabled_ = true;
-    int32_t rc;
     if ((rc = ::listen(sock_fd_, SOMAXCONN)) < 0) {
-      throw std::runtime_error((boost::format("Start listening error: (errno = %1%), (%2%), %3%:%4%\"") %
-                                strerror(errno) % __func__ % __FILE__ % __LINE__)
-                                   .str());
+      DEBUG_LOG((boost::format("Start listening error: (errno = %1%), (%2%), %3%:%4%\"") % strerror(errno) % __func__ %
+                 __FILE__ % __LINE__)
+                    .str());
+      return rc;
     }
 
     state_ = state_t::LISTENING;
     while (listen_enabled_) {
-
-      int32_t num_ready;
-      if ((num_ready = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::accept_timeout())) < 0u) {
-        throw std::runtime_error((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) %
-                                  __func__ % __FILE__ % __LINE__)
-                                     .str());
+      if ((rc = ::epoll_wait(epfd_, events_, base_t::epoll_max_events(), base_t::accept_timeout())) < 0u) {
+        DEBUG_LOG((boost::format("Epoll wait error (errno = %1%) (%2%), %3%:%4%") % strerror(errno) % __func__ %
+                   __FILE__ % __LINE__)
+                      .str());
+        return rc;
       }
 
+      num_ready = rc;
       for (int32_t i = 0; i < num_ready; i++) {
         if (((events_[i].events & EPOLLIN) == EPOLLIN || (events_[i].events & EPOLLET) == EPOLLET) &&
             (events_[i].data.fd == sock_fd_)) {
 
-          handle_incoming_peer_();
+          static_cast<void>(handle_incoming_peer_());
         } else if (((events_[i].events & EPOLLIN) == EPOLLIN || (events_[i].events & EPOLLET) == EPOLLET) &&
                    (events_[i].data.fd != sock_fd_)) {
 
-          handle_incoming_data_(events_[i].data.fd);
+          static_cast<void>(handle_incoming_data_(events_[i].data.fd));
         }
       }
     }
 
     state_ = state_t::STOPPED;
+    return 0;
   }
 };
 

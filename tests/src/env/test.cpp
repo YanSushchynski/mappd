@@ -220,7 +220,4 @@ env_static_t env(
                     runtime_list_static_t(
                         {{"foo0", "sig0", foo0}, {"foo1", "sig1", foo1}, {"foo2", "sig2", foo2}}))))));
 
-TEST(EnvTesting, SimpleTestCase) {
-  auto &env_local = env;
-  env_local.network_manager().run();
-}
+TEST(EnvTesting, SimpleTestCase) { env.network_manager().run(); }

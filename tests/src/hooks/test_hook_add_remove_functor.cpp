@@ -3,23 +3,26 @@
 
 TEST(Hook, add_remove_functor_t) {
   {
-    hook_t<void(int, int)> hook_;
+    hook_t<void(int32_t, int32_t)> hook_;
     std::string testing_string;
     sha256::sha256_hash_type connected_id;
 
-    std::function<void(int, int)> non_pure_lambda = [&testing_string](int a, int b) -> void {
+    std::function<void(int32_t, int32_t)> non_pure_lambda = [&testing_string](int32_t a, int32_t b) -> void {
       testing_string = "Tested!";
     };
 
     functor_t functor_(non_pure_lambda);
     uint32_t hook_error_id = hook_errno_t::HOOK_CLEAR;
 
-    EXPECT_EQ(hook_
-                  .set_error_handler([&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                                      const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME)
-                                         -> void { hook_error_id = error_id; })
-                  .qualifiers.at(hook_.get_id()),
-              hook_errno_t::HOOK_CLEAR);
+    auto op = hook_
+                  .set_error_handler(
+                      [&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
+                                       const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                        hook_error_id = error_id;
+                      })
+                  .qualifiers.at(hook_.get_id());
+
+    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
 
     {
       auto add_result = hook_.add("Function", functor_);
@@ -45,23 +48,26 @@ TEST(Hook, add_remove_functor_t) {
   }
 
   {
-    hook_t<void(int, int)> hook_;
+    hook_t<void(int32_t, int32_t)> hook_;
 
     std::string testing_string;
     sha256::sha256_hash_type connected_id;
-    std::function<void(int, int)> non_pure_lambda = [&testing_string](int a, int b) -> void {
+    std::function<void(int32_t, int32_t)> non_pure_lambda = [&testing_string](int32_t a, int32_t b) -> void {
       testing_string = "Tested!";
     };
 
     functor_t functor_(non_pure_lambda);
     uint32_t hook_error_id = hook_errno_t::HOOK_CLEAR;
 
-    EXPECT_EQ(hook_
-                  .set_error_handler([&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                                      const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME)
-                                         -> void { hook_error_id = error_id; })
-                  .qualifiers.at(hook_.get_id()),
-              hook_errno_t::HOOK_CLEAR);
+    auto op = hook_
+                  .set_error_handler(
+                      [&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
+                                       const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                        hook_error_id = error_id;
+                      })
+                  .qualifiers.at(hook_.get_id());
+
+    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
 
     {
       auto add_result = hook_.add("Function", functor_);
@@ -100,10 +106,10 @@ TEST(Hook, add_remove_functor_t) {
     hook_t<void(int, int)> hook_;
 
     std::string testing_string;
-    std::function<void(int, int)> non_pure_lambda_first = [&testing_string](int a, int b) -> void {
+    std::function<void(int, int)> non_pure_lambda_first = [&testing_string](int32_t a, int32_t b) -> void {
       testing_string += "TestedFirst!";
     };
-    std::function<void(int, int)> non_pure_lambda_second = [&testing_string](int a, int b) -> void {
+    std::function<void(int, int)> non_pure_lambda_second = [&testing_string](int32_t a, int32_t b) -> void {
       testing_string += "TestedSecond!";
     };
 
@@ -111,12 +117,15 @@ TEST(Hook, add_remove_functor_t) {
     functor_t functor_second(non_pure_lambda_second);
     uint32_t hook_error_id = hook_errno_t::HOOK_CLEAR;
 
-    EXPECT_EQ(hook_
-                  .set_error_handler([&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                                      const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME)
-                                         -> void { hook_error_id = error_id; })
-                  .qualifiers.at(hook_.get_id()),
-              hook_errno_t::HOOK_CLEAR);
+    auto op = hook_
+                  .set_error_handler(
+                      [&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
+                                       const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                        hook_error_id = error_id;
+                      })
+                  .qualifiers.at(hook_.get_id());
+
+    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
 
     {
       auto add_result = hook_.add("FirstFunction", functor_first);

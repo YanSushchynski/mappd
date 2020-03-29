@@ -147,7 +147,7 @@ public:
     }
   }
 
-  template <udp_sock_secure_t sc = secure_socket_class, typename RetType = void>
+  template <udp_sock_secure_t sc = secure_socket_class, typename RetType = int32_t>
   typename std::enable_if<sc == udp_sock_secure_t::SERVER_UNICAST_SECURE_AES, RetType>::type stop() {
     return this->base_t::stop();
   }

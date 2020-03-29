@@ -5,9 +5,9 @@ TEST(Sequence, add_remove_member_functions) {
   {
     class Test {
     public:
-      int slot(int a, int b) { return a + b; }
+      int32_t slot(int32_t a, int32_t b) { return a + b; }
 
-      int &increment(int &result) {
+      int32_t &increment(int32_t &result) {
         result++;
         return result;
       }
@@ -18,14 +18,15 @@ TEST(Sequence, add_remove_member_functions) {
     sha256::sha256_hash_type connected_id;
     uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
 
-    EXPECT_EQ(sequence_
+    auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
                                            const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
                         sequence_error_id = error_id;
                       })
-                  .qualifiers.at(sequence_.get_id()),
-              seq_errno_t::SEQ_CLEAR);
+                  .qualifiers.at(sequence_.get_id());
+
+    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
 
     {
       auto add_result = sequence_.add("Summa", &test_, &Test::increment);
@@ -34,7 +35,7 @@ TEST(Sequence, add_remove_member_functions) {
       EXPECT_EQ(add_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("Summa"), std::strlen("Summa")));
 
-      int result = sequence_(5u, 5u);
+      int32_t result = sequence_(5u, 5u);
 
       EXPECT_EQ(result, 5u + 5u + 1u);
       connected_id = add_result.data.first;
@@ -56,9 +57,9 @@ TEST(Sequence, add_remove_member_functions) {
   {
     class Test {
     public:
-      int slot(int a, int b) { return a + b; }
+      int32_t slot(int32_t a, int32_t b) { return a + b; }
 
-      int &increment(int &result) {
+      int32_t &increment(int32_t &result) {
         result++;
         return result;
       }
@@ -70,14 +71,15 @@ TEST(Sequence, add_remove_member_functions) {
     sha256::sha256_hash_type connected_id;
     uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
 
-    EXPECT_EQ(sequence_
+    auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
                                            const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
                         sequence_error_id = error_id;
                       })
-                  .qualifiers.at(sequence_.get_id()),
-              seq_errno_t::SEQ_CLEAR);
+                  .qualifiers.at(sequence_.get_id());
+
+    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
 
     {
       auto add_result = sequence_.add("Summa", &test_, &Test::increment);
@@ -86,7 +88,7 @@ TEST(Sequence, add_remove_member_functions) {
       EXPECT_EQ(add_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("Summa"), std::strlen("Summa")));
 
-      int result = sequence_(5u, 5u);
+      int32_t result = sequence_(5u, 5u);
 
       EXPECT_EQ(result, 5u + 5u + 1u);
       connected_id = add_result.data.first;
@@ -124,15 +126,15 @@ TEST(Sequence, add_remove_member_functions) {
     sha256::sha256_hash_type connected_id;
 
     uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
-
-    EXPECT_EQ(sequence_
+    auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
                                            const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
                         sequence_error_id = error_id;
                       })
-                  .qualifiers.at(sequence_.get_id()),
-              seq_errno_t::SEQ_CLEAR);
+                  .qualifiers.at(sequence_.get_id());
+
+    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
 
     for (unsigned int i = 0; i < 10u; i++) {
 
@@ -142,7 +144,6 @@ TEST(Sequence, add_remove_member_functions) {
       EXPECT_EQ(add_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>(("Summa" + std::to_string(i)).c_str()),
                                 ("Summa" + std::to_string(i)).length()));
-
     }
 
     int result = sequence_(5u, 5u);

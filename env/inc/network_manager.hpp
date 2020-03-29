@@ -66,15 +66,12 @@ public:
           ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
           header.ParseFromArray(data.get(), size);
 
-          /* Calculate hashes */
           sha256::sha256_hash_type invite_hash = sha256::sha256_from_string(header.env_invite());
-
           uint16_t port = header.env_ipv4_stream_port();
           sha256::sha256_hash_type peer_addr_hash =
               sha256::compute(reinterpret_cast<const uint8_t *>(peer_addr), sizeof(peer_addr)) ^
               sha256::compute(reinterpret_cast<const uint8_t *>(&port), sizeof(port));
 
-          /* Add this env to known (not connected in both sides) */
           if (peer_addr_hash != host_hash_) {
             std::lock_guard<std::recursive_mutex> lock_envs(known_envs_lock_);
             std::lock_guard<std::recursive_mutex> lock_peers(peers_lock_);
@@ -199,7 +196,6 @@ private:
     this->env_()->get_lock().unlock();
 
     for (uint32_t i = 0u; i < times; i++) {
-      /* Decide who is next for inviting */
       {
         std::lock_guard<std::recursive_mutex> lock(known_envs_lock_);
         for (const auto &hash_srv_pair : known_envs_) {
@@ -256,7 +252,7 @@ private:
               char peer_addr[INET_ADDRSTRLEN];
               ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
               std::printf(
-                  (boost::format("Client: disconnected from %1%:%2%\r\n") % peer_addr % peer_srv).str().c_str());
+                  "%s", (boost::format("Client: disconnected from %1%:%2%\r\n") % peer_addr % peer_srv).str().c_str());
 
               peers_.erase(hash);
             });

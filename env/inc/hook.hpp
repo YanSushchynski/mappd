@@ -118,7 +118,7 @@ public:
   virtual void operator()(const Args &... args) const { run_(args...); }
   env_status_t<this_t> clear() const { return clear_(); }
   uint64_t call_count() { return call_count_; }
-  
+
   template <typename FunctionType> env_status_t<this_t> set_error_handler(const FunctionType &function) const {
     env_status_t<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(function);

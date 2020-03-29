@@ -16,25 +16,26 @@ TEST(Hook, add_remove_other_hook) {
     hook_t<void(int, int)> hook_two;
 
     uint32_t hook_one_error_id = hook_errno_t::HOOK_CLEAR;
-
-    EXPECT_EQ(hook_one
+    auto op = hook_one
                   .set_error_handler(
                       [&hook_one_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
                                            const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
                         hook_one_error_id = error_id;
                       })
-                  .qualifiers.at(hook_one.get_id()),
-              hook_errno_t::HOOK_CLEAR);
+                  .qualifiers.at(hook_one.get_id());
+
+    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
 
     uint32_t hook_two_error_id = hook_errno_t::HOOK_CLEAR;
-    EXPECT_EQ(hook_two
-                  .set_error_handler(
-                      [&hook_two_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                           const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
-                        hook_two_error_id = error_id;
-                      })
-                  .qualifiers.at(hook_two.get_id()),
-              hook_errno_t::HOOK_CLEAR);
+    op = hook_two
+             .set_error_handler(
+                 [&hook_two_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
+                                      const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                   hook_two_error_id = error_id;
+                 })
+             .qualifiers.at(hook_two.get_id());
+
+    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
 
     {
       auto add_result = hook_one.add("FirstHook", first_hook);
