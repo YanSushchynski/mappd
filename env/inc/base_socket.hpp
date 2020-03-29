@@ -80,8 +80,8 @@ public:
   static constexpr int32_t sock_socktype() { return socktype; }
   static constexpr int32_t sock_protocol() { return protocol; }
 
-  std::condition_variable &cv() { return cv_; }
-  std::mutex &mtx() { return mtx_; }
+  std::condition_variable &cv() const { return cv_; }
+  std::mutex &mtx() const { return mtx_; }
 
   void thr_num_inc() { threads_cnt_++; }
   void thr_num_dec() { threads_cnt_--; }
@@ -107,9 +107,9 @@ private:
                      std::conditional_t<is_domain, const std::string, uint8_t>>
       iface_path_info_;
 
-  std::condition_variable cv_;
-  std::atomic<uint64_t> threads_cnt_;
-  std::mutex mtx_;
+  mutable std::condition_variable cv_;
+  mutable std::atomic<uint64_t> threads_cnt_;
+  mutable std::mutex mtx_;
 
   template <typename RetType = iface_netinfo_s>
   const typename std::enable_if<is_network, RetType>::type get_iface_info_(const std::string &ifname) {

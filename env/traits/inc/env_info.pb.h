@@ -183,9 +183,9 @@ class env_cfg_header_s :
     kEnvNameFieldNumber = 1,
     kEnvHostNameFieldNumber = 5,
     kEnvInviteFieldNumber = 6,
-    kDomainStreamSocketPathFieldNumber = 7,
-    kEnvIpv4StreamPortFieldNumber = 2,
-    kEnvIpv6StreamPortFieldNumber = 3,
+    kDomainTcpSocketPathFieldNumber = 7,
+    kEnvIpv4TcpPortFieldNumber = 2,
+    kEnvIpv6TcpPortFieldNumber = 3,
     kEnvPidFieldNumber = 4,
   };
   // required bytes env_name = 1 [default = ""];
@@ -248,50 +248,50 @@ class env_cfg_header_s :
   std::string* _internal_mutable_env_invite();
   public:
 
-  // required bytes domain_stream_socket_path = 7 [default = ""];
-  bool has_domain_stream_socket_path() const;
+  // required bytes domain_tcp_socket_path = 7 [default = ""];
+  bool has_domain_tcp_socket_path() const;
   private:
-  bool _internal_has_domain_stream_socket_path() const;
+  bool _internal_has_domain_tcp_socket_path() const;
   public:
-  void clear_domain_stream_socket_path();
-  const std::string& domain_stream_socket_path() const;
-  void set_domain_stream_socket_path(const std::string& value);
-  void set_domain_stream_socket_path(std::string&& value);
-  void set_domain_stream_socket_path(const char* value);
-  void set_domain_stream_socket_path(const void* value, size_t size);
-  std::string* mutable_domain_stream_socket_path();
-  std::string* release_domain_stream_socket_path();
-  void set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path);
+  void clear_domain_tcp_socket_path();
+  const std::string& domain_tcp_socket_path() const;
+  void set_domain_tcp_socket_path(const std::string& value);
+  void set_domain_tcp_socket_path(std::string&& value);
+  void set_domain_tcp_socket_path(const char* value);
+  void set_domain_tcp_socket_path(const void* value, size_t size);
+  std::string* mutable_domain_tcp_socket_path();
+  std::string* release_domain_tcp_socket_path();
+  void set_allocated_domain_tcp_socket_path(std::string* domain_tcp_socket_path);
   private:
-  const std::string& _internal_domain_stream_socket_path() const;
-  void _internal_set_domain_stream_socket_path(const std::string& value);
-  std::string* _internal_mutable_domain_stream_socket_path();
-  public:
-
-  // required int32 env_ipv4_stream_port = 2 [default = 0];
-  bool has_env_ipv4_stream_port() const;
-  private:
-  bool _internal_has_env_ipv4_stream_port() const;
-  public:
-  void clear_env_ipv4_stream_port();
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_stream_port() const;
-  void set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv4_stream_port() const;
-  void _internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const std::string& _internal_domain_tcp_socket_path() const;
+  void _internal_set_domain_tcp_socket_path(const std::string& value);
+  std::string* _internal_mutable_domain_tcp_socket_path();
   public:
 
-  // required int32 env_ipv6_stream_port = 3 [default = 0];
-  bool has_env_ipv6_stream_port() const;
+  // required int32 env_ipv4_tcp_port = 2 [default = 0];
+  bool has_env_ipv4_tcp_port() const;
   private:
-  bool _internal_has_env_ipv6_stream_port() const;
+  bool _internal_has_env_ipv4_tcp_port() const;
   public:
-  void clear_env_ipv6_stream_port();
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_stream_port() const;
-  void set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  void clear_env_ipv4_tcp_port();
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_tcp_port() const;
+  void set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv6_stream_port() const;
-  void _internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv4_tcp_port() const;
+  void _internal_set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // required int32 env_ipv6_tcp_port = 3 [default = 0];
+  bool has_env_ipv6_tcp_port() const;
+  private:
+  bool _internal_has_env_ipv6_tcp_port() const;
+  public:
+  void clear_env_ipv6_tcp_port();
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_tcp_port() const;
+  void set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv6_tcp_port() const;
+  void _internal_set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // required int32 env_pid = 4 [default = 0];
@@ -320,9 +320,9 @@ class env_cfg_header_s :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_host_name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_invite_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr domain_stream_socket_path_;
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_stream_port_;
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_stream_port_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr domain_tcp_socket_path_;
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_tcp_port_;
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_tcp_port_;
   ::PROTOBUF_NAMESPACE_ID::int32 env_pid_;
   friend struct ::TableStruct_env_5finfo_2eproto;
 };
@@ -449,7 +449,7 @@ class env_cfg_s :
     kEnvNetworkIfnameFieldNumber = 6,
     kEnvIpv4MulticastGroupAddrFieldNumber = 7,
     kEnvIpv6MulticastGroupAddrFieldNumber = 11,
-    kDomainStreamSocketPathFieldNumber = 16,
+    kDomainTcpSocketPathFieldNumber = 16,
     kDomainUdpSocketPathFieldNumber = 17,
     kEnvHostNameFieldNumber = 21,
     kEnvCaCertFileFieldNumber = 22,
@@ -457,9 +457,9 @@ class env_cfg_s :
     kEnvCertInfoFieldNumber = 24,
     kEnvIpv4BroadcastPortFieldNumber = 8,
     kEnvIpv4MulticastPortFieldNumber = 9,
-    kEnvIpv4StreamPortFieldNumber = 10,
+    kEnvIpv4TcpPortFieldNumber = 10,
     kEnvIpv6MulticastPortFieldNumber = 12,
-    kEnvIpv6StreamPortFieldNumber = 13,
+    kEnvIpv6TcpPortFieldNumber = 13,
     kEnvIpv6EnabledFieldNumber = 15,
     kEnvCertExpTimeFieldNumber = 25,
     kEnvMaxBuffsizeFieldNumber = 18,
@@ -627,24 +627,24 @@ class env_cfg_s :
   std::string* _internal_mutable_env_ipv6_multicast_group_addr();
   public:
 
-  // required bytes domain_stream_socket_path = 16 [default = ""];
-  bool has_domain_stream_socket_path() const;
+  // required bytes domain_tcp_socket_path = 16 [default = ""];
+  bool has_domain_tcp_socket_path() const;
   private:
-  bool _internal_has_domain_stream_socket_path() const;
+  bool _internal_has_domain_tcp_socket_path() const;
   public:
-  void clear_domain_stream_socket_path();
-  const std::string& domain_stream_socket_path() const;
-  void set_domain_stream_socket_path(const std::string& value);
-  void set_domain_stream_socket_path(std::string&& value);
-  void set_domain_stream_socket_path(const char* value);
-  void set_domain_stream_socket_path(const void* value, size_t size);
-  std::string* mutable_domain_stream_socket_path();
-  std::string* release_domain_stream_socket_path();
-  void set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path);
+  void clear_domain_tcp_socket_path();
+  const std::string& domain_tcp_socket_path() const;
+  void set_domain_tcp_socket_path(const std::string& value);
+  void set_domain_tcp_socket_path(std::string&& value);
+  void set_domain_tcp_socket_path(const char* value);
+  void set_domain_tcp_socket_path(const void* value, size_t size);
+  std::string* mutable_domain_tcp_socket_path();
+  std::string* release_domain_tcp_socket_path();
+  void set_allocated_domain_tcp_socket_path(std::string* domain_tcp_socket_path);
   private:
-  const std::string& _internal_domain_stream_socket_path() const;
-  void _internal_set_domain_stream_socket_path(const std::string& value);
-  std::string* _internal_mutable_domain_stream_socket_path();
+  const std::string& _internal_domain_tcp_socket_path() const;
+  void _internal_set_domain_tcp_socket_path(const std::string& value);
+  std::string* _internal_mutable_domain_tcp_socket_path();
   public:
 
   // required bytes domain_udp_socket_path = 17 [default = ""];
@@ -773,17 +773,17 @@ class env_cfg_s :
   void _internal_set_env_ipv4_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // required int32 env_ipv4_stream_port = 10 [default = 0];
-  bool has_env_ipv4_stream_port() const;
+  // required int32 env_ipv4_tcp_port = 10 [default = 0];
+  bool has_env_ipv4_tcp_port() const;
   private:
-  bool _internal_has_env_ipv4_stream_port() const;
+  bool _internal_has_env_ipv4_tcp_port() const;
   public:
-  void clear_env_ipv4_stream_port();
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_stream_port() const;
-  void set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  void clear_env_ipv4_tcp_port();
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_tcp_port() const;
+  void set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv4_stream_port() const;
-  void _internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv4_tcp_port() const;
+  void _internal_set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // required int32 env_ipv6_multicast_port = 12 [default = 0];
@@ -799,17 +799,17 @@ class env_cfg_s :
   void _internal_set_env_ipv6_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // required int32 env_ipv6_stream_port = 13 [default = 0];
-  bool has_env_ipv6_stream_port() const;
+  // required int32 env_ipv6_tcp_port = 13 [default = 0];
+  bool has_env_ipv6_tcp_port() const;
   private:
-  bool _internal_has_env_ipv6_stream_port() const;
+  bool _internal_has_env_ipv6_tcp_port() const;
   public:
-  void clear_env_ipv6_stream_port();
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_stream_port() const;
-  void set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  void clear_env_ipv6_tcp_port();
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_tcp_port() const;
+  void set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv6_stream_port() const;
-  void _internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_env_ipv6_tcp_port() const;
+  void _internal_set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // required bool env_ipv6_enabled = 15 [default = false];
@@ -908,7 +908,7 @@ class env_cfg_s :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_network_ifname_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_ipv4_multicast_group_addr_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_ipv6_multicast_group_addr_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr domain_stream_socket_path_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr domain_tcp_socket_path_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr domain_udp_socket_path_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_host_name_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_ca_cert_file_;
@@ -916,9 +916,9 @@ class env_cfg_s :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr env_cert_info_;
   ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_broadcast_port_;
   ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_multicast_port_;
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_stream_port_;
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv4_tcp_port_;
   ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_multicast_port_;
-  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_stream_port_;
+  ::PROTOBUF_NAMESPACE_ID::int32 env_ipv6_tcp_port_;
   bool env_ipv6_enabled_;
   ::PROTOBUF_NAMESPACE_ID::uint64 env_cert_exp_time_;
   ::PROTOBUF_NAMESPACE_ID::int32 env_max_buffsize_;
@@ -1009,60 +1009,60 @@ inline void env_cfg_header_s::set_allocated_env_name(std::string* env_name) {
   // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.env_name)
 }
 
-// required int32 env_ipv4_stream_port = 2 [default = 0];
-inline bool env_cfg_header_s::_internal_has_env_ipv4_stream_port() const {
+// required int32 env_ipv4_tcp_port = 2 [default = 0];
+inline bool env_cfg_header_s::_internal_has_env_ipv4_tcp_port() const {
   bool value = (_has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
-inline bool env_cfg_header_s::has_env_ipv4_stream_port() const {
-  return _internal_has_env_ipv4_stream_port();
+inline bool env_cfg_header_s::has_env_ipv4_tcp_port() const {
+  return _internal_has_env_ipv4_tcp_port();
 }
-inline void env_cfg_header_s::clear_env_ipv4_stream_port() {
-  env_ipv4_stream_port_ = 0;
+inline void env_cfg_header_s::clear_env_ipv4_tcp_port() {
+  env_ipv4_tcp_port_ = 0;
   _has_bits_[0] &= ~0x00000010u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::_internal_env_ipv4_stream_port() const {
-  return env_ipv4_stream_port_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::_internal_env_ipv4_tcp_port() const {
+  return env_ipv4_tcp_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::env_ipv4_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_ipv4_stream_port)
-  return _internal_env_ipv4_stream_port();
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::env_ipv4_tcp_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_ipv4_tcp_port)
+  return _internal_env_ipv4_tcp_port();
 }
-inline void env_cfg_header_s::_internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::_internal_set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00000010u;
-  env_ipv4_stream_port_ = value;
+  env_ipv4_tcp_port_ = value;
 }
-inline void env_cfg_header_s::set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_env_ipv4_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_ipv4_stream_port)
+inline void env_cfg_header_s::set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_env_ipv4_tcp_port(value);
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_ipv4_tcp_port)
 }
 
-// required int32 env_ipv6_stream_port = 3 [default = 0];
-inline bool env_cfg_header_s::_internal_has_env_ipv6_stream_port() const {
+// required int32 env_ipv6_tcp_port = 3 [default = 0];
+inline bool env_cfg_header_s::_internal_has_env_ipv6_tcp_port() const {
   bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
-inline bool env_cfg_header_s::has_env_ipv6_stream_port() const {
-  return _internal_has_env_ipv6_stream_port();
+inline bool env_cfg_header_s::has_env_ipv6_tcp_port() const {
+  return _internal_has_env_ipv6_tcp_port();
 }
-inline void env_cfg_header_s::clear_env_ipv6_stream_port() {
-  env_ipv6_stream_port_ = 0;
+inline void env_cfg_header_s::clear_env_ipv6_tcp_port() {
+  env_ipv6_tcp_port_ = 0;
   _has_bits_[0] &= ~0x00000020u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::_internal_env_ipv6_stream_port() const {
-  return env_ipv6_stream_port_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::_internal_env_ipv6_tcp_port() const {
+  return env_ipv6_tcp_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::env_ipv6_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_ipv6_stream_port)
-  return _internal_env_ipv6_stream_port();
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::env_ipv6_tcp_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_ipv6_tcp_port)
+  return _internal_env_ipv6_tcp_port();
 }
-inline void env_cfg_header_s::_internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::_internal_set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00000020u;
-  env_ipv6_stream_port_ = value;
+  env_ipv6_tcp_port_ = value;
 }
-inline void env_cfg_header_s::set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_env_ipv6_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_ipv6_stream_port)
+inline void env_cfg_header_s::set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_env_ipv6_tcp_port(value);
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_ipv6_tcp_port)
 }
 
 // required int32 env_pid = 4 [default = 0];
@@ -1235,75 +1235,75 @@ inline void env_cfg_header_s::set_allocated_env_invite(std::string* env_invite) 
   // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.env_invite)
 }
 
-// required bytes domain_stream_socket_path = 7 [default = ""];
-inline bool env_cfg_header_s::_internal_has_domain_stream_socket_path() const {
+// required bytes domain_tcp_socket_path = 7 [default = ""];
+inline bool env_cfg_header_s::_internal_has_domain_tcp_socket_path() const {
   bool value = (_has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
-inline bool env_cfg_header_s::has_domain_stream_socket_path() const {
-  return _internal_has_domain_stream_socket_path();
+inline bool env_cfg_header_s::has_domain_tcp_socket_path() const {
+  return _internal_has_domain_tcp_socket_path();
 }
-inline void env_cfg_header_s::clear_domain_stream_socket_path() {
-  domain_stream_socket_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void env_cfg_header_s::clear_domain_tcp_socket_path() {
+  domain_tcp_socket_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000008u;
 }
-inline const std::string& env_cfg_header_s::domain_stream_socket_path() const {
-  // @@protoc_insertion_point(field_get:env_cfg_header_s.domain_stream_socket_path)
-  return _internal_domain_stream_socket_path();
+inline const std::string& env_cfg_header_s::domain_tcp_socket_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.domain_tcp_socket_path)
+  return _internal_domain_tcp_socket_path();
 }
-inline void env_cfg_header_s::set_domain_stream_socket_path(const std::string& value) {
-  _internal_set_domain_stream_socket_path(value);
-  // @@protoc_insertion_point(field_set:env_cfg_header_s.domain_stream_socket_path)
+inline void env_cfg_header_s::set_domain_tcp_socket_path(const std::string& value) {
+  _internal_set_domain_tcp_socket_path(value);
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.domain_tcp_socket_path)
 }
-inline std::string* env_cfg_header_s::mutable_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_mutable:env_cfg_header_s.domain_stream_socket_path)
-  return _internal_mutable_domain_stream_socket_path();
+inline std::string* env_cfg_header_s::mutable_domain_tcp_socket_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_header_s.domain_tcp_socket_path)
+  return _internal_mutable_domain_tcp_socket_path();
 }
-inline const std::string& env_cfg_header_s::_internal_domain_stream_socket_path() const {
-  return domain_stream_socket_path_.GetNoArena();
+inline const std::string& env_cfg_header_s::_internal_domain_tcp_socket_path() const {
+  return domain_tcp_socket_path_.GetNoArena();
 }
-inline void env_cfg_header_s::_internal_set_domain_stream_socket_path(const std::string& value) {
+inline void env_cfg_header_s::_internal_set_domain_tcp_socket_path(const std::string& value) {
   _has_bits_[0] |= 0x00000008u;
-  domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  domain_tcp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_cfg_header_s::set_domain_stream_socket_path(std::string&& value) {
+inline void env_cfg_header_s::set_domain_tcp_socket_path(std::string&& value) {
   _has_bits_[0] |= 0x00000008u;
-  domain_stream_socket_path_.SetNoArena(
+  domain_tcp_socket_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_cfg_header_s.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_header_s.domain_tcp_socket_path)
 }
-inline void env_cfg_header_s::set_domain_stream_socket_path(const char* value) {
+inline void env_cfg_header_s::set_domain_tcp_socket_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000008u;
-  domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_cfg_header_s.domain_stream_socket_path)
+  domain_tcp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:env_cfg_header_s.domain_tcp_socket_path)
 }
-inline void env_cfg_header_s::set_domain_stream_socket_path(const void* value, size_t size) {
+inline void env_cfg_header_s::set_domain_tcp_socket_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000008u;
-  domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  domain_tcp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_cfg_header_s.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_header_s.domain_tcp_socket_path)
 }
-inline std::string* env_cfg_header_s::_internal_mutable_domain_stream_socket_path() {
+inline std::string* env_cfg_header_s::_internal_mutable_domain_tcp_socket_path() {
   _has_bits_[0] |= 0x00000008u;
-  return domain_stream_socket_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return domain_tcp_socket_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_cfg_header_s::release_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_release:env_cfg_header_s.domain_stream_socket_path)
-  if (!_internal_has_domain_stream_socket_path()) {
+inline std::string* env_cfg_header_s::release_domain_tcp_socket_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_header_s.domain_tcp_socket_path)
+  if (!_internal_has_domain_tcp_socket_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000008u;
-  return domain_stream_socket_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return domain_tcp_socket_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_cfg_header_s::set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path) {
-  if (domain_stream_socket_path != nullptr) {
+inline void env_cfg_header_s::set_allocated_domain_tcp_socket_path(std::string* domain_tcp_socket_path) {
+  if (domain_tcp_socket_path != nullptr) {
     _has_bits_[0] |= 0x00000008u;
   } else {
     _has_bits_[0] &= ~0x00000008u;
   }
-  domain_stream_socket_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), domain_stream_socket_path);
-  // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.domain_stream_socket_path)
+  domain_tcp_socket_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), domain_tcp_socket_path);
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.domain_tcp_socket_path)
 }
 
 // -------------------------------------------------------------------
@@ -1863,32 +1863,32 @@ inline void env_cfg_s::set_env_ipv4_multicast_port(::PROTOBUF_NAMESPACE_ID::int3
   // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_multicast_port)
 }
 
-// required int32 env_ipv4_stream_port = 10 [default = 0];
-inline bool env_cfg_s::_internal_has_env_ipv4_stream_port() const {
+// required int32 env_ipv4_tcp_port = 10 [default = 0];
+inline bool env_cfg_s::_internal_has_env_ipv4_tcp_port() const {
   bool value = (_has_bits_[0] & 0x00010000u) != 0;
   return value;
 }
-inline bool env_cfg_s::has_env_ipv4_stream_port() const {
-  return _internal_has_env_ipv4_stream_port();
+inline bool env_cfg_s::has_env_ipv4_tcp_port() const {
+  return _internal_has_env_ipv4_tcp_port();
 }
-inline void env_cfg_s::clear_env_ipv4_stream_port() {
-  env_ipv4_stream_port_ = 0;
+inline void env_cfg_s::clear_env_ipv4_tcp_port() {
+  env_ipv4_tcp_port_ = 0;
   _has_bits_[0] &= ~0x00010000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv4_stream_port() const {
-  return env_ipv4_stream_port_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv4_tcp_port() const {
+  return env_ipv4_tcp_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv4_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv4_stream_port)
-  return _internal_env_ipv4_stream_port();
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv4_tcp_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv4_tcp_port)
+  return _internal_env_ipv4_tcp_port();
 }
-inline void env_cfg_s::_internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00010000u;
-  env_ipv4_stream_port_ = value;
+  env_ipv4_tcp_port_ = value;
 }
-inline void env_cfg_s::set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_env_ipv4_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_stream_port)
+inline void env_cfg_s::set_env_ipv4_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_env_ipv4_tcp_port(value);
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_tcp_port)
 }
 
 // required bytes env_ipv6_multicast_group_addr = 11 [default = ""];
@@ -1990,32 +1990,32 @@ inline void env_cfg_s::set_env_ipv6_multicast_port(::PROTOBUF_NAMESPACE_ID::int3
   // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_multicast_port)
 }
 
-// required int32 env_ipv6_stream_port = 13 [default = 0];
-inline bool env_cfg_s::_internal_has_env_ipv6_stream_port() const {
+// required int32 env_ipv6_tcp_port = 13 [default = 0];
+inline bool env_cfg_s::_internal_has_env_ipv6_tcp_port() const {
   bool value = (_has_bits_[0] & 0x00040000u) != 0;
   return value;
 }
-inline bool env_cfg_s::has_env_ipv6_stream_port() const {
-  return _internal_has_env_ipv6_stream_port();
+inline bool env_cfg_s::has_env_ipv6_tcp_port() const {
+  return _internal_has_env_ipv6_tcp_port();
 }
-inline void env_cfg_s::clear_env_ipv6_stream_port() {
-  env_ipv6_stream_port_ = 0;
+inline void env_cfg_s::clear_env_ipv6_tcp_port() {
+  env_ipv6_tcp_port_ = 0;
   _has_bits_[0] &= ~0x00040000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv6_stream_port() const {
-  return env_ipv6_stream_port_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv6_tcp_port() const {
+  return env_ipv6_tcp_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv6_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv6_stream_port)
-  return _internal_env_ipv6_stream_port();
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv6_tcp_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv6_tcp_port)
+  return _internal_env_ipv6_tcp_port();
 }
-inline void env_cfg_s::_internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00040000u;
-  env_ipv6_stream_port_ = value;
+  env_ipv6_tcp_port_ = value;
 }
-inline void env_cfg_s::set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_env_ipv6_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_stream_port)
+inline void env_cfg_s::set_env_ipv6_tcp_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_env_ipv6_tcp_port(value);
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_tcp_port)
 }
 
 // required bool env_ipv4_enabled = 14 [default = true];
@@ -2074,75 +2074,75 @@ inline void env_cfg_s::set_env_ipv6_enabled(bool value) {
   // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_enabled)
 }
 
-// required bytes domain_stream_socket_path = 16 [default = ""];
-inline bool env_cfg_s::_internal_has_domain_stream_socket_path() const {
+// required bytes domain_tcp_socket_path = 16 [default = ""];
+inline bool env_cfg_s::_internal_has_domain_tcp_socket_path() const {
   bool value = (_has_bits_[0] & 0x00000100u) != 0;
   return value;
 }
-inline bool env_cfg_s::has_domain_stream_socket_path() const {
-  return _internal_has_domain_stream_socket_path();
+inline bool env_cfg_s::has_domain_tcp_socket_path() const {
+  return _internal_has_domain_tcp_socket_path();
 }
-inline void env_cfg_s::clear_domain_stream_socket_path() {
-  domain_stream_socket_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+inline void env_cfg_s::clear_domain_tcp_socket_path() {
+  domain_tcp_socket_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000100u;
 }
-inline const std::string& env_cfg_s::domain_stream_socket_path() const {
-  // @@protoc_insertion_point(field_get:env_cfg_s.domain_stream_socket_path)
-  return _internal_domain_stream_socket_path();
+inline const std::string& env_cfg_s::domain_tcp_socket_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.domain_tcp_socket_path)
+  return _internal_domain_tcp_socket_path();
 }
-inline void env_cfg_s::set_domain_stream_socket_path(const std::string& value) {
-  _internal_set_domain_stream_socket_path(value);
-  // @@protoc_insertion_point(field_set:env_cfg_s.domain_stream_socket_path)
+inline void env_cfg_s::set_domain_tcp_socket_path(const std::string& value) {
+  _internal_set_domain_tcp_socket_path(value);
+  // @@protoc_insertion_point(field_set:env_cfg_s.domain_tcp_socket_path)
 }
-inline std::string* env_cfg_s::mutable_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_mutable:env_cfg_s.domain_stream_socket_path)
-  return _internal_mutable_domain_stream_socket_path();
+inline std::string* env_cfg_s::mutable_domain_tcp_socket_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.domain_tcp_socket_path)
+  return _internal_mutable_domain_tcp_socket_path();
 }
-inline const std::string& env_cfg_s::_internal_domain_stream_socket_path() const {
-  return domain_stream_socket_path_.GetNoArena();
+inline const std::string& env_cfg_s::_internal_domain_tcp_socket_path() const {
+  return domain_tcp_socket_path_.GetNoArena();
 }
-inline void env_cfg_s::_internal_set_domain_stream_socket_path(const std::string& value) {
+inline void env_cfg_s::_internal_set_domain_tcp_socket_path(const std::string& value) {
   _has_bits_[0] |= 0x00000100u;
-  domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  domain_tcp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_cfg_s::set_domain_stream_socket_path(std::string&& value) {
+inline void env_cfg_s::set_domain_tcp_socket_path(std::string&& value) {
   _has_bits_[0] |= 0x00000100u;
-  domain_stream_socket_path_.SetNoArena(
+  domain_tcp_socket_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.domain_tcp_socket_path)
 }
-inline void env_cfg_s::set_domain_stream_socket_path(const char* value) {
+inline void env_cfg_s::set_domain_tcp_socket_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000100u;
-  domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_cfg_s.domain_stream_socket_path)
+  domain_tcp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.domain_tcp_socket_path)
 }
-inline void env_cfg_s::set_domain_stream_socket_path(const void* value, size_t size) {
+inline void env_cfg_s::set_domain_tcp_socket_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000100u;
-  domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  domain_tcp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.domain_tcp_socket_path)
 }
-inline std::string* env_cfg_s::_internal_mutable_domain_stream_socket_path() {
+inline std::string* env_cfg_s::_internal_mutable_domain_tcp_socket_path() {
   _has_bits_[0] |= 0x00000100u;
-  return domain_stream_socket_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return domain_tcp_socket_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_cfg_s::release_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_release:env_cfg_s.domain_stream_socket_path)
-  if (!_internal_has_domain_stream_socket_path()) {
+inline std::string* env_cfg_s::release_domain_tcp_socket_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.domain_tcp_socket_path)
+  if (!_internal_has_domain_tcp_socket_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000100u;
-  return domain_stream_socket_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return domain_tcp_socket_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_cfg_s::set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path) {
-  if (domain_stream_socket_path != nullptr) {
+inline void env_cfg_s::set_allocated_domain_tcp_socket_path(std::string* domain_tcp_socket_path) {
+  if (domain_tcp_socket_path != nullptr) {
     _has_bits_[0] |= 0x00000100u;
   } else {
     _has_bits_[0] &= ~0x00000100u;
   }
-  domain_stream_socket_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), domain_stream_socket_path);
-  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.domain_stream_socket_path)
+  domain_tcp_socket_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), domain_tcp_socket_path);
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.domain_tcp_socket_path)
 }
 
 // required bytes domain_udp_socket_path = 17 [default = ""];

@@ -508,7 +508,7 @@ private:
 };
 
 template <udp_sock_type_e sc, bool multithread>
-struct domain_udp_socket : domain_udp_socket_impl_s<AF_UNIX, sc, multithread> {
+struct domain_udp_socket_s : domain_udp_socket_impl_s<AF_UNIX, sc, multithread> {
   using domain_udp_socket_impl_s<AF_UNIX, sc, multithread>::domain_udp_socket_impl_s;
 };
 

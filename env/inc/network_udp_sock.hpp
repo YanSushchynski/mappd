@@ -800,12 +800,12 @@ private:
 };
 
 template <udp_sock_type_e sc, bool multithread>
-struct network_udp_socket_ipv4 : network_udp_socket_impl_s<AF_INET, sc, multithread> {
+struct network_udp_socket_ipv4_s : network_udp_socket_impl_s<AF_INET, sc, multithread> {
   using network_udp_socket_impl_s<AF_INET, sc, multithread>::network_udp_socket_impl_s;
 };
 
 template <udp_sock_type_e sc, bool multithread>
-struct network_udp_socket_ipv6 : network_udp_socket_impl_s<AF_INET6, sc, multithread> {
+struct network_udp_socket_ipv6_s : network_udp_socket_impl_s<AF_INET6, sc, multithread> {
   using network_udp_socket_impl_s<AF_INET6, sc, multithread>::network_udp_socket_impl_s;
 };
 

@@ -233,7 +233,7 @@ public:
   const auto &path() const { return this->base_s::path(); }
 
 private:
-  mutable secure_layer_t<(is_secure_tcp_aes_type(secure_socket_class))
+  mutable secure_layer_s<(is_secure_tcp_aes_type(secure_socket_class))
                              ? aes_key_size_bits
                              : (is_secure_tcp_tls_x509_type(secure_socket_class)) ? rsa_key_size_bits : 0u,
                          tcp_sock_secure_type_e, secure_socket_class>
@@ -388,7 +388,7 @@ private:
 };
 
 template <tcp_sock_secure_type_e sc, bool multithread>
-struct domain_tcp_socket_secure : domain_tcp_socket_secure_impl_s<AF_UNIX, sc, multithread> {
+struct domain_tcp_socket_secure_s : domain_tcp_socket_secure_impl_s<AF_UNIX, sc, multithread> {
   using domain_tcp_socket_secure_impl_s<AF_UNIX, sc, multithread>::domain_tcp_socket_secure_impl_s;
 };
 

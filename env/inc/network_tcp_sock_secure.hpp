@@ -232,7 +232,7 @@ public:
   const auto &iface() const { return this->base_s::iface(); }
 
 private:
-  mutable secure_layer_t<(is_secure_tcp_aes_type(secure_socket_class))
+  mutable secure_layer_s<(is_secure_tcp_aes_type(secure_socket_class))
                              ? aes_key_size_bits
                              : (is_secure_tcp_tls_x509_type(secure_socket_class)) ? rsa_key_size_bits : 0u,
                          tcp_sock_secure_type_e, secure_socket_class>

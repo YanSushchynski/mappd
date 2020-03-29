@@ -9,8 +9,9 @@ void foo0(int argc, char *argv[], const struct env_base_s *const env_) { std::pr
 void foo1(int argc, char *argv[], const struct env_base_s *const env_) { std::printf("Foo1\r\n"); }
 void foo2(int argc, char *argv[], const struct env_base_s *const env_) { std::printf("Foo2\r\n"); }
 
-auto &env = env_static_sglt_gen_s<env_networking_type_e::IPV4>::env_static_inst(
+auto &env = env_static_sglt_gen_s<env_networking_type_e::IPV4_SC>::env_static_inst(
     "TestEnv",
+	"01234567890123456789102345678901",
     cmps_list_static_s(
         cmps_static_s(
 

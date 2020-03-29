@@ -1395,12 +1395,12 @@ private:
 };
 
 template <tcp_sock_type_e sc, bool multithread>
-struct network_tcp_socket_ipv4 : network_tcp_socket_impl_s<AF_INET, sc, multithread> {
+struct network_tcp_socket_ipv4_s : network_tcp_socket_impl_s<AF_INET, sc, multithread> {
   using network_tcp_socket_impl_s<AF_INET, sc, multithread>::network_tcp_socket_impl_s;
 };
 
 template <tcp_sock_type_e sc, bool multithread>
-struct network_tcp_socket_ipv6 : network_tcp_socket_impl_s<AF_INET6, sc, multithread> {
+struct network_tcp_socket_ipv6_s : network_tcp_socket_impl_s<AF_INET6, sc, multithread> {
   using network_tcp_socket_impl_s<AF_INET6, sc, multithread>::network_tcp_socket_impl_s;
 };
 

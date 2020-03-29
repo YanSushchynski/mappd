@@ -5,21 +5,20 @@
 #include "secure_layer.hpp"
 #include "udp_sock_secure_type.hpp"
 
-template <uint32_t family, udp_sock_secure_type_e secure_socket_class, bool multithread>
+template <uint32_t family, udp_sock_secure_type_e secure_socket_class, bool multithread, uint32_t aes_key_size_bits>
 struct network_udp_socket_secure_impl_s
     : protected network_udp_socket_impl_s<
           family, static_cast<udp_sock_type_e>(static_cast<uint32_t>(secure_socket_class)), multithread> {
 public:
-  static constexpr uint32_t dgram_aes_key_size_bits = 256u;
   using base_s =
       network_udp_socket_impl_s<family, static_cast<udp_sock_type_e>(static_cast<uint32_t>(secure_socket_class)),
                                 multithread>;
-  using this_t = network_udp_socket_secure_impl_s<family, secure_socket_class, multithread>;
+		using this_t = network_udp_socket_secure_impl_s<family, secure_socket_class, multithread, aes_key_size_bits>;
   static constexpr bool is_ipv6 = base_s::is_ipv6;
 
   template <udp_sock_secure_type_e sc = secure_socket_class>
   explicit network_udp_socket_secure_impl_s(
-      const std::string &iface, const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
+      const std::string &iface, const char (&dgram_aes_key)[(aes_key_size_bits / 8u) + 1u],
       typename std::enable_if<sc == udp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES ||
                                   (!is_ipv6 && sc == udp_sock_secure_type_e::SERVER_BROADCAST_SECURE_AES) ||
                                   sc == udp_sock_secure_type_e::SERVER_MULTICAST_SECURE_AES,
@@ -28,7 +27,7 @@ public:
 
   template <udp_sock_secure_type_e sc = secure_socket_class>
   explicit network_udp_socket_secure_impl_s(
-      const std::string &iface, const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
+      const std::string &iface, const char (&dgram_aes_key)[(aes_key_size_bits / 8u) + 1u],
       typename std::enable_if<sc == udp_sock_secure_type_e::CLIENT_UNICAST_SECURE_AES ||
                                   (!is_ipv6 && sc == udp_sock_secure_type_e::CLIENT_BROADCAST_SECURE_AES),
                               udp_sock_secure_type_e>::type * = nullptr)
@@ -37,7 +36,7 @@ public:
   template <udp_sock_secure_type_e sc = secure_socket_class>
   explicit network_udp_socket_secure_impl_s(
       const std::string &iface, const std::string &mcast_gr_addr, uint16_t srv,
-      const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
+      const char (&dgram_aes_key)[(aes_key_size_bits / 8u) + 1u],
       typename std::enable_if<sc == udp_sock_secure_type_e::CLIENT_MULTICAST_SECURE_AES, udp_sock_secure_type_e>::type
           * = nullptr)
       : base_s(iface, mcast_gr_addr, srv), sl_(dgram_aes_key) {}
@@ -225,7 +224,7 @@ public:
   void reset() { this->base_s::reset(); }
 
 private:
-  const secure_layer_t<dgram_aes_key_size_bits, udp_sock_secure_type_e, secure_socket_class> sl_;
+  const secure_layer_s<aes_key_size_bits, udp_sock_secure_type_e, secure_socket_class> sl_;
 
   template <udp_sock_secure_type_e sc = secure_socket_class, typename RetType = void>
   typename std::enable_if<sc == udp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES ||
@@ -242,14 +241,14 @@ private:
   }
 };
 
-template <udp_sock_secure_type_e sc, bool multithread>
-struct network_udp_socket_secure_ipv4_s : network_udp_socket_secure_impl_s<AF_INET, sc, multithread> {
-  using network_udp_socket_secure_impl_s<AF_INET, sc, multithread>::network_udp_socket_secure_impl_s;
+template <udp_sock_secure_type_e sc, bool multithread, uint32_t key_size>
+struct network_udp_socket_secure_ipv4_s : network_udp_socket_secure_impl_s<AF_INET, sc, multithread, key_size> {
+  using network_udp_socket_secure_impl_s<AF_INET, sc, multithread, key_size>::network_udp_socket_secure_impl_s;
 };
 
-template <udp_sock_secure_type_e sc, bool multithread>
-struct network_udp_socket_secure_ipv6_s : network_udp_socket_secure_impl_s<AF_INET6, sc, multithread> {
-  using network_udp_socket_secure_impl_s<AF_INET6, sc, multithread>::network_udp_socket_secure_impl_s;
+template <udp_sock_secure_type_e sc, bool multithread, uint32_t key_size>
+struct network_udp_socket_secure_ipv6_s : network_udp_socket_secure_impl_s<AF_INET6, sc, multithread, key_size> {
+  using network_udp_socket_secure_impl_s<AF_INET6, sc, multithread, key_size>::network_udp_socket_secure_impl_s;
 };
 
 #endif /* NETWORK_UDP_SOCK_SECURE_HPP */

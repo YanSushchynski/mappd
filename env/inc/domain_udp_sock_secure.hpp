@@ -16,7 +16,7 @@ struct domain_udp_socket_secure_impl_s
                 "Only unicast is allowed in domain network");
 
 public:
-  static constexpr uint32_t dgram_aes_key_size_bits = 256u;
+  static constexpr uint32_t aes_key_size_bits = 256u;
   using base_s =
       domain_udp_socket_impl_s<family, static_cast<udp_sock_type_e>(static_cast<uint32_t>(secure_socket_class)),
                                multithread>;
@@ -24,14 +24,14 @@ public:
 
   template <udp_sock_secure_type_e sc = secure_socket_class>
   explicit domain_udp_socket_secure_impl_s(
-      const std::string &path, const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
+      const std::string &path, const char (&dgram_aes_key)[(aes_key_size_bits / 8u) + 1u],
       typename std::enable_if<sc == udp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES, udp_sock_secure_type_e>::type * =
           nullptr)
       : base_s(path), sl_(dgram_aes_key) {}
 
   template <udp_sock_secure_type_e sc = secure_socket_class>
   explicit domain_udp_socket_secure_impl_s(
-      const char (&dgram_aes_key)[(dgram_aes_key_size_bits / 8u) + 1u],
+      const char (&dgram_aes_key)[(aes_key_size_bits / 8u) + 1u],
       typename std::enable_if<sc == udp_sock_secure_type_e::CLIENT_UNICAST_SECURE_AES, udp_sock_secure_type_e>::type * =
           nullptr)
       : base_s(), sl_(dgram_aes_key) {}
@@ -160,7 +160,7 @@ public:
   void reset() { this->base_s::reset(); }
 
 private:
-  const secure_layer_t<dgram_aes_key_size_bits, udp_sock_secure_type_e, secure_socket_class> sl_;
+  const secure_layer_s<aes_key_size_bits, udp_sock_secure_type_e, secure_socket_class> sl_;
 
   template <udp_sock_secure_type_e sc = secure_socket_class, typename RetType = void>
   typename std::enable_if<sc == udp_sock_secure_type_e::SERVER_UNICAST_SECURE_AES, RetType>::type listen_() {
@@ -174,7 +174,7 @@ private:
 };
 
 template <udp_sock_secure_type_e sc, bool multithread>
-struct domain_udp_socket_secure : domain_udp_socket_secure_impl_s<AF_UNIX, sc, multithread> {
+struct domain_udp_socket_secure_s : domain_udp_socket_secure_impl_s<AF_UNIX, sc, multithread> {
   using domain_udp_socket_secure_impl_s<AF_UNIX, sc, multithread>::domain_udp_socket_secure_impl_s;
 };
 

@@ -7,24 +7,27 @@
 #include <libconfig.h++>
 #include <mutex>
 
+static constexpr uint32_t aes_key_size_bits = 256u;
 enum struct env_networking_type_e : uint32_t {
+  DOMAIN = 0u,
   IPV4,
   IPV6,
   IPV4_IPV6,
-  DOMAIN,
   DOMAIN_IPV4,
   DOMAIN_IPV6,
   DOMAIN_IPV4_IPV6,
+  DOMAIN_SC,
   IPV4_SC,
   IPV6_SC,
   IPV4_IPV6_SC,
-  DOMAIN_SC,
   DOMAIN_IPV4_SC,
   DOMAIN_IPV6_SC,
-  DOMAIN_IPV4_IPV6_SC
+  DOMAIN_IPV4_IPV6_SC,
+  ENV_NETW_TYPE_NUM,
+  UNDEFINED
 };
 
-static constexpr bool is_secure_type(env_networking_type_e nt) {
+static constexpr bool is_secure_type(enum env_networking_type_e nt) {
   return nt == env_networking_type_e::IPV4_SC || nt == env_networking_type_e::IPV6_SC ||
          nt == env_networking_type_e::IPV4_IPV6_SC || nt == env_networking_type_e::DOMAIN_SC ||
          nt == env_networking_type_e::DOMAIN_IPV4_SC || nt == env_networking_type_e::DOMAIN_IPV6_SC ||
@@ -71,18 +74,18 @@ struct env_base_s {
 
     info_.set_env_ipv4_multicast_group_addr("224.0.0.1");
     info_.set_env_ipv4_broadcast_port(4000);
-    info_.set_env_ipv4_stream_port(4001);
+    info_.set_env_ipv4_tcp_port(4001);
     info_.set_env_ipv4_multicast_port(4003);
 
     info_.set_env_ipv6_multicast_group_addr("ff02:1::1");
-    info_.set_env_ipv6_stream_port(4003);
+    info_.set_env_ipv6_tcp_port(4003);
     info_.set_env_ipv6_multicast_port(4005);
 
     info_.set_env_ipv4_enabled(true);
     info_.set_env_ipv6_enabled(true);
 
     info_.set_domain_udp_socket_path("./udp_socket.socket");
-    info_.set_domain_stream_socket_path("./stream_socket.socket");
+    info_.set_domain_tcp_socket_path("./tcp_socket.socket");
 
     info_.set_env_max_buffsize(1024);
     info_.set_env_broadcast_interval_ms(100u);
@@ -132,14 +135,14 @@ private:
   const struct env_cfg_header_s get_info_header_(const struct env_cfg_s &info) const {
     struct env_cfg_header_s header;
     header.set_env_name(info.env_name());
-    header.set_env_ipv4_stream_port(info.env_ipv4_stream_port());
-    header.set_env_ipv6_stream_port(info.env_ipv6_stream_port());
+    header.set_env_ipv4_tcp_port(info.env_ipv4_tcp_port());
+    header.set_env_ipv6_tcp_port(info.env_ipv6_tcp_port());
     header.set_env_pid(info.env_pid());
     header.set_env_host_name(info.env_host_name());
     header.set_env_invite(
         reinterpret_cast<const char *>(const_cast<const uint8_t *>(sha256::sha256_hash_type{0u}.data())));
 
-    header.set_domain_stream_socket_path(info.domain_stream_socket_path());
+    header.set_domain_tcp_socket_path(info.domain_tcp_socket_path());
     return std::move(header);
   }
 };

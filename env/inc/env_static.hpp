@@ -9,15 +9,23 @@
 template <env_networking_type_e, typename...> struct env_static_s : public env_base_s {};
 
 template <env_networking_type_e nt> struct env_static_sglt_gen_s {
-  template <typename Composition, typename... Compositions>
+  template <typename Enabled = void, typename Composition, typename... Compositions>
   static struct env_static_s<nt, Composition, Compositions...> &
-  env_static_inst(const std::string &name, const cmps_list_static_s<Composition, Compositions...> &compositions) {
-    static env_static_s<nt, Composition, Compositions...> *inst_ = nullptr;
-    if (!inst_) {
-      inst_ = new env_static_s<nt, Composition, Compositions...>(name, compositions);
-    }
+  env_static_inst(const std::string &name, const char (&key)[(aes_key_size_bits / 8u) + 1u],
+                  const cmps_list_static_s<Composition, Compositions...> &compositions,
+                  typename std::enable_if<is_secure_type(nt), Enabled>::type * = nullptr) {
+    static const std::unique_ptr<env_static_s<nt, Composition, Compositions...>> inst{
+        new env_static_s<nt, Composition, Compositions...>(name, key, compositions)};
+    return *inst;
+  }
 
-    return *inst_;
+  template <typename Enabled = void, typename Composition, typename... Compositions>
+  static struct env_static_s<nt, Composition, Compositions...> &
+  env_static_inst(const std::string &name, const cmps_list_static_s<Composition, Compositions...> &compositions,
+                  typename std::enable_if<!is_secure_type(nt), Enabled>::type * = nullptr) {
+    static const std::unique_ptr<env_static_s<nt, Composition, Compositions...>> inst{
+        new env_static_s<nt, Composition, Compositions...>(name, compositions)};
+    return *inst;
   }
 };
 
@@ -28,9 +36,18 @@ private:
   using this_s = env_static_s<nt, Composition, Compositions...>;
 
   friend struct env_static_sglt_gen_s<nt>;
+
+  template <typename Enabled>
   friend this_s &env_static_sglt_gen_s<nt>::env_static_inst(const std::string &,
-                                                            const cmps_list_static_s<Composition, Compositions...> &);
-  
+                                                            const cmps_list_static_s<Composition, Compositions...> &,
+                                                            typename std::enable_if<is_secure_type(nt), Enabled>::type);
+
+  template <typename Enabled>
+  friend this_s &env_static_sglt_gen_s<nt>::env_static_inst(const std::string &,
+                                                            const char (&)[(aes_key_size_bits / 8u) + 1u],
+                                                            const cmps_list_static_s<Composition, Compositions...> &,
+                                                            typename std::enable_if<is_secure_type(nt), Enabled>::type);
+
 public:
   explicit env_static_s(const this_s &) = delete;
   explicit env_static_s(this_s &&) = delete;
@@ -48,9 +65,20 @@ private:
    * later or earlier (order isn't specified) */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuninitialized"
-  explicit env_static_s(const std::string &name, const cmps_list_static_s<Composition, Compositions...> &compositions)
+  template <typename Enabled = void>
+  explicit env_static_s(const std::string &name, const char (&key)[(aes_key_size_bits / 8u) + 1u],
+                        const cmps_list_static_s<Composition, Compositions...> &compositions,
+                        typename std::enable_if<is_secure_type(nt), Enabled>::type * = nullptr)
       : base_s(name), cmps_(compositions), pm_(pm_sglt_gen_s::pm_inst(this, cmps_)),
-        nm_(nm_sglt_gen_s<nt>::nm_inst("12345678901234567890123456789000", this)) {
+        nm_(nm_sglt_gen_s<nt>::nm_inst(key, this)) {
+    cmps_.setenv(this);
+  }
+
+  template <typename Enabled = void>
+  explicit env_static_s(const std::string &name, const cmps_list_static_s<Composition, Compositions...> &compositions,
+                        typename std::enable_if<!is_secure_type(nt), Enabled>::type * = nullptr)
+      : base_s(name), cmps_(compositions), pm_(pm_sglt_gen_s::pm_inst(this, cmps_)),
+        nm_(nm_sglt_gen_s<nt>::nm_inst(this)) {
     cmps_.setenv(this);
   }
 #pragma GCC diagnostic pop
