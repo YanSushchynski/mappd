@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-static uint32_t dbg_level;
+static thread_local uint32_t dbg_level;
 #define DEBUG_LOG(str)                                                                                                 \
   if (dbg_level > 0) {                                                                                                 \
     std::printf("%s\r\n", str.c_str());                                                                                \
