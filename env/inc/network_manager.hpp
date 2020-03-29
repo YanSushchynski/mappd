@@ -106,14 +106,14 @@ public:
       uint16_t peer_srv = ::htons(peer.sin_port);
       char peer_addr[INET_ADDRSTRLEN];
       ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-      std::printf("%s", (boost::format("Server: peer %1%:%2% connected!\r\n") % peer_addr % peer_srv).str().c_str());
+      DEBUG_LOG((boost::format("Server: peer %1%:%2% connected!\r\n") % peer_addr % peer_srv).str());
     });
 
     ipv4_stream_srv.on_disconnect().add("OnDisonnectHook", [this](struct sockaddr_in peer, auto *unit) -> void {
       uint16_t peer_srv = ::htons(peer.sin_port);
       char peer_addr[INET_ADDRSTRLEN];
       ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-      std::printf("%s", (boost::format("Server: peer %1%:%2% disconnected!\r\n") % peer_addr % peer_srv).str().c_str());
+      DEBUG_LOG((boost::format("Server: peer %1%:%2% disconnected!\r\n") % peer_addr % peer_srv).str());
     });
 
     ipv4_stream_srv.on_receive().add(
@@ -121,10 +121,9 @@ public:
           uint16_t peer_srv = ::htons(peer.sin_port);
           char peer_addr[INET_ADDRSTRLEN];
           ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-          std::printf("%s", (boost::format("Server: received message \"%1%\" from peer %2%:%3%\r\n") %
-                             std::string(reinterpret_cast<char *>(data.get()), size) % peer_addr % peer_srv)
-                                .str()
-                                .c_str());
+          DEBUG_LOG((boost::format("Server: received message \"%1%\" from peer %2%:%3%\r\n") %
+                     std::string(reinterpret_cast<char *>(data.get()), size) % peer_addr % peer_srv)
+                        .str());
         });
 
     ipv4_stream_srv.start();
@@ -239,8 +238,7 @@ private:
               uint16_t peer_srv = ::htons(peer.sin_port);
               char peer_addr[INET_ADDRSTRLEN];
               ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-              std::printf("%s",
-                          (boost::format("Client: connected to %1%:%2%\r\n") % peer_addr % peer_srv).str().c_str());
+			  DEBUG_LOG((boost::format("Client: connected to %1%:%2%\r\n") % peer_addr % peer_srv).str());
             });
 
         unit->on_disconnect().add(
@@ -251,9 +249,7 @@ private:
               uint16_t peer_srv = ::htons(peer.sin_port);
               char peer_addr[INET_ADDRSTRLEN];
               ::inet_ntop(AF_INET, &peer.sin_addr, peer_addr, sizeof(peer_addr));
-              std::printf(
-                  "%s", (boost::format("Client: disconnected from %1%:%2%\r\n") % peer_addr % peer_srv).str().c_str());
-
+			  DEBUG_LOG((boost::format("Client: disconnected from %1%:%2%\r\n") % peer_addr % peer_srv).str());
               peers_.erase(hash);
             });
 
