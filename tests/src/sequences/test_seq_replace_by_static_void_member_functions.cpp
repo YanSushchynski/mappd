@@ -13,21 +13,21 @@ TEST(Sequence, replace_by_static_void_member_functions) {
 
     Test test_;
     sequence_t sequence_(&test_, &Test::base);
-    uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
+    uint32_t sequence_error_id = static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR);
     auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                           const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                           const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         sequence_error_id = error_id;
                       })
                   .qualifiers.at(sequence_.get_id());
 
-    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
 
     {
       auto add_result = sequence_.add("Seq1", Test::seq1);
 
-      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
       EXPECT_EQ(add_result.data.first, sha256::compute(reinterpret_cast<const uint8_t *>("Seq1"), std::strlen("Seq1")));
 
       sequence_(5u, 5u);
@@ -36,14 +36,14 @@ TEST(Sequence, replace_by_static_void_member_functions) {
     {
       auto replace_result = sequence_.replace("Seq1", "Seq2", Test::seq2);
 
-      EXPECT_EQ(replace_result.status.qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+      EXPECT_EQ(replace_result.status.qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
       EXPECT_EQ(replace_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("Seq2"), std::strlen("Seq2")));
 
       sequence_(5u, 5u);
     }
 
-    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
   }
 
   {
@@ -59,21 +59,21 @@ TEST(Sequence, replace_by_static_void_member_functions) {
     std::function<void(int, int)> base = [](int a, int b) -> void { (void)(a + b); };
     sequence_t sequence_(base);
 
-    uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
+    uint32_t sequence_error_id = static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR);
     auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                           const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                           const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         sequence_error_id = error_id;
                       })
                   .qualifiers.at(sequence_.get_id());
 
-    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
 
     {
       auto add_result = sequence_.add("Seq1", Test::seq1);
 
-      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
       EXPECT_EQ(add_result.data.first, sha256::compute(reinterpret_cast<const uint8_t *>("Seq1"), std::strlen("Seq1")));
 
       sequence_(5u, 5u);
@@ -82,14 +82,14 @@ TEST(Sequence, replace_by_static_void_member_functions) {
     {
       auto replace_result = sequence_.replace("Seq1", "Seq2", Test::seq2);
 
-      EXPECT_EQ(replace_result.status.qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+      EXPECT_EQ(replace_result.status.qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
       EXPECT_EQ(replace_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("Seq2"), std::strlen("Seq2")));
 
       sequence_(5u, 5u);
     }
 
-    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
   }
 
   {
@@ -109,21 +109,21 @@ TEST(Sequence, replace_by_static_void_member_functions) {
     };
 
     sequence_t sequence_(base);
-    uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
+    uint32_t sequence_error_id = static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR);
     auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                           const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                           const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         sequence_error_id = error_id;
                       })
                   .qualifiers.at(sequence_.get_id());
 
-    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
 
     {
       auto add_result = sequence_.add("Seq1", Test::seq1);
 
-      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
       EXPECT_EQ(add_result.data.first, sha256::compute(reinterpret_cast<const uint8_t *>("Seq1"), std::strlen("Seq1")));
 
       sequence_(5u, 5u);
@@ -133,7 +133,7 @@ TEST(Sequence, replace_by_static_void_member_functions) {
     {
       auto replace_result = sequence_.replace("Seq1", "Seq2", Test::seq2);
 
-      EXPECT_EQ(replace_result.status.qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+      EXPECT_EQ(replace_result.status.qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
       EXPECT_EQ(replace_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("Seq2"), std::strlen("Seq2")));
 
@@ -141,6 +141,6 @@ TEST(Sequence, replace_by_static_void_member_functions) {
       EXPECT_STREQ(testing_string.c_str(), std::to_string(5 + 5).c_str());
     }
 
-    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
   }
 }

@@ -8,50 +8,50 @@
 #include "type_traits_ex.hpp"
 #include <queue>
 
-template <typename EntityType> struct base_port_t<EntityType> : public port_node_t {
+template <typename EntityType> struct base_port_t<EntityType> : public port_base_s {
 public:
-  using base_t = port_node_t;
+  using base_s = port_base_s;
   using data_t = EntityType;
-  using this_t = base_port_t<data_t>;
-  using name_t = typename base_t::name_t;
+  using this_s = base_port_t<data_t>;
+  using name_t = typename base_s::name_t;
 
-  template <typename NameType> explicit base_port_t(const NameType &name) : base_t(name){};
+  explicit base_port_t(const std::string &name) : base_s(name){};
 
-  env_status_t<this_t> connect_port(const port_node_t &port) const { return connect_port_(port.info().id()); }
-  env_status_t<this_t> connect_port(const sha256::sha256_hash_type &id) const { return connect_port_(id); }
+  struct env_status_s<this_s> connect_port(const port_base_s &port) const { return connect_port_(port.info().id()); }
+  struct env_status_s<this_s> connect_port(const sha256::sha256_hash_type &id) const { return connect_port_(id); }
 
-  env_status_t<this_t> disconnect_port(const port_node_t &port) const { return disconnect_port_(port.info().id()); }
-  env_status_t<this_t> disconnect_port(const sha256::sha256_hash_type &id) const { return disconnect_port_(id); }
+  struct env_status_s<this_s> disconnect_port(const port_base_s &port) const { return disconnect_port_(port.info().id()); }
+  struct env_status_s<this_s> disconnect_port(const sha256::sha256_hash_type &id) const { return disconnect_port_(id); }
 
-  env_status_t<this_t> replace_port(const port_node_t &port_which, const port_node_t &port_by) const {
+  struct env_status_s<this_s> replace_port(const port_base_s &port_which, const port_base_s &port_by) const {
     return replace_port_(port_which.info().id(), port_by.info().id());
   }
 
-  env_status_t<this_t> replace_port(const sha256::sha256_hash_type &id_which,
+  struct env_status_s<this_s> replace_port(const sha256::sha256_hash_type &id_which,
                                     const sha256::sha256_hash_type &id_by) const {
     return replace_port_(id_which, id_by);
   }
 
-  env_status_t<this_t> connect_proxy(const port_node_t &port) const { return connect_proxy_(port.info().id()); }
-  env_status_t<this_t> connect_proxy(const sha256::sha256_hash_type &id) const { return connect_proxy_(id); }
+  struct env_status_s<this_s> connect_proxy(const port_base_s &port) const { return connect_proxy_(port.info().id()); }
+  struct env_status_s<this_s> connect_proxy(const sha256::sha256_hash_type &id) const { return connect_proxy_(id); }
 
-  env_status_t<this_t> disconnect_proxy(const port_node_t &port) const { return disconnect_proxy_(port.info().id()); }
-  env_status_t<this_t> disconnect_proxy(const sha256::sha256_hash_type &id) const { return disconnect_proxy_(id); }
+  struct env_status_s<this_s> disconnect_proxy(const port_base_s &port) const { return disconnect_proxy_(port.info().id()); }
+  struct env_status_s<this_s> disconnect_proxy(const sha256::sha256_hash_type &id) const { return disconnect_proxy_(id); }
 
-  env_status_t<this_t> replace_proxy(const port_node_t &port_which, const port_node_t &port_by) const {
+  struct env_status_s<this_s> replace_proxy(const port_base_s &port_which, const port_base_s &port_by) const {
     return replace_proxy_(port_which.info().id(), port_by.info().id());
   };
 
-  env_status_t<this_t> replace_proxy(const sha256::sha256_hash_type &id_which,
+  struct env_status_s<this_s> replace_proxy(const sha256::sha256_hash_type &id_which,
                                      const sha256::sha256_hash_type &id_by) const {
     return replace_proxy_(id_which, id_by);
   };
 
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
-  env_status_t<this_t> connect_port_(const port_node_t &port) const {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_s> connect_port_(const port_base_s &port) const {
+    struct env_status_s<this_s> temp_status(this);
 
     if (this->connected().size() < this->MAX_CONNECTIONS) {
 
@@ -60,39 +60,39 @@ private:
         // this->connected().push_back();
 
         // 		if( !this->env()->port_manager.is_connected(
-        // std::forward< port_info_t >( info ), std::forward< port_info_t >(
+        // std::forward< struct port_info_s >( info ), std::forward< struct port_info_s >(
         // this->info() ))){
 
         // 		  auto connect_port_status =
-        // this->env()->port_manager.connect_port( std::forward< port_info_t >(
-        // info ), std::forward< port_info_t >( this->info() )); /* TODO: change
+        // this->env()->port_manager.connect_port( std::forward< struct port_info_s >(
+        // info ), std::forward< struct port_info_s >( this->info() )); /* TODO: change
         // connection algorithm( use "port_manager" as part of environment ) */
         // 		  temp_status.qualifiers.insert( std::make_pair(
-        // this->get_id(), env_errno_t::ENV_CLEAR )); 		  goto finish;
+        // this->get_id(), env_errno_e::ENV_CLEAR )); 		  goto finish;
 
         // 		} else {
 
         // 		  temp_status.qualifiers.insert( std::make_pair(
-        // this->get_id(), env_errno_t::ENV_CLEAR )); 		  goto finish;
+        // this->get_id(), env_errno_e::ENV_CLEAR )); 		  goto finish;
         // 		}
       } else {
 
-        temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_PORT_EXISTS));
+        temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_PORT_EXISTS));
         this->error_handler()(this->get_id(), temp_status.qualifiers.at(this->get_id()),
-                              error_case_t::ERROR_CASE_RUNTIME);
+                              error_case_e::ERROR_CASE_RUNTIME);
       }
     } else {
 
-      temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_MAX_PORTS_CONNECTED));
+      temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_MAX_PORTS_CONNECTED));
       this->error_handler()(this->get_id(), temp_status.qualifiers.at(this->get_id()),
-                            error_case_t::ERROR_CASE_RUNTIME);
+                            error_case_e::ERROR_CASE_RUNTIME);
     }
 
     return temp_status;
   }
 
-  env_status_t<this_t> connect_port_(const sha256::sha256_hash_type &id) const {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_s> connect_port_(const sha256::sha256_hash_type &id) const {
+    struct env_status_s<this_s> temp_status(this);
 
     if (this->connected().size() < this->MAX_CONNECTIONS) {
 
@@ -101,81 +101,81 @@ private:
         // this->connected().push_back();
 
         // 		if( !this->env()->port_manager.is_connected(
-        // std::forward< port_info_t >( info ), std::forward< port_info_t >(
+        // std::forward< struct port_info_s >( info ), std::forward< struct port_info_s >(
         // this->info() ))){
 
         // 		  auto connect_port_status =
-        // this->env()->port_manager.connect_port( std::forward< port_info_t
-        // >( info ), std::forward< port_info_t >( this->info() )); /* TODO:
+        // this->env()->port_manager.connect_port( std::forward< struct port_info_s
+        // >( info ), std::forward< struct port_info_s >( this->info() )); /* TODO:
         // change connection algorithm( use "port_manager" as part of
         // environment ) */ 		  temp_status.qualifiers.insert(
-        // std::make_pair( this->get_id(), env_errno_t::ENV_CLEAR ));
+        // std::make_pair( this->get_id(), env_errno_e::ENV_CLEAR ));
         // goto finish;
 
         // 		} else {
 
         // 		  temp_status.qualifiers.insert( std::make_pair(
-        // this->get_id(), env_errno_t::ENV_CLEAR )); 		  goto
+        // this->get_id(), env_errno_e::ENV_CLEAR )); 		  goto
         // finish;
         // 		}
       } else {
 
-        temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_PORT_EXISTS));
+        temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_PORT_EXISTS));
         this->error_handler()(this->get_id(), temp_status.qualifiers.at(this->get_id()),
-                              error_case_t::ERROR_CASE_RUNTIME);
+                              error_case_e::ERROR_CASE_RUNTIME);
       }
     } else {
 
-      temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_MAX_PORTS_CONNECTED));
+      temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_MAX_PORTS_CONNECTED));
       this->error_handler()(this->get_id(), temp_status.qualifiers.at(this->get_id()),
-                            error_case_t::ERROR_CASE_RUNTIME);
+                            error_case_e::ERROR_CASE_RUNTIME);
     }
 
     return temp_status;
   }
 
-  env_status_t<this_t> disconnect_port_(const port_node_t &port) const {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_s> disconnect_port_(const port_base_s &port) const {
+    struct env_status_s<this_s> temp_status(this);
 
     // if (this->env()->port_manager().is_connected(port.info(), this->info())) {
 
     //   this->env()->port_manager().disconnect_port(port.info(), this->info());
     // } else {
 
-    //   temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_PORT_MISSING));
+    //   temp_status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_PORT_MISSING));
     //   this->error_handler()(this->get_id(), temp_status.qualifiers.at(this->get_id()),
-    //                         error_case_t::ERROR_CASE_RUNTIME);
+    //                         error_case_e::ERROR_CASE_RUNTIME);
     // }
 
     return temp_status;
   }
 
-  env_status_t<this_t> disconnect_port_(const sha256::sha256_hash_type &id) const {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_s> disconnect_port_(const sha256::sha256_hash_type &id) const {
+    struct env_status_s<this_s> temp_status(this);
 
-    // if( this->env()->port_manager.is_connected( std::forward< port_info_t >(
-    // info ), std::forward< port_info_t >( this->info() ))){
+    // if( this->env()->port_manager.is_connected( std::forward< struct port_info_s >(
+    // info ), std::forward< struct port_info_s >( this->info() ))){
 
-    //   this->env()->port_manager.disconnect_port( std::forward< port_info_t >(
-    //   info ), std::forward< port_info_t >( this->info() ));
+    //   this->env()->port_manager.disconnect_port( std::forward< struct port_info_s >(
+    //   info ), std::forward< struct port_info_s >( this->info() ));
 
     // } else {
 
     //   temp_status.qualifiers.insert( std::make_pair( this->get_id(),
-    //   env_errno_t::ENV_PORT_MISSING )); this->error_handler()(
+    //   env_errno_e::ENV_PORT_MISSING )); this->error_handler()(
     //   this->get_id(), temp_status.qualifiers.at( this->get_id() ),
-    //   error_case_t::ERROR_CASE_RUNTIME );
+    //   error_case_e::ERROR_CASE_RUNTIME );
     // }
 
     return temp_status;
   }
 
-  env_status_t<this_t> replace_port_(const sha256::sha256_hash_type &id_which,
+  struct env_status_s<this_s> replace_port_(const sha256::sha256_hash_type &id_which,
                                      const sha256::sha256_hash_type &id_by) const {
-    env_status_t<this_t> temp_status(this);
-    env_status_t<this_t> disconnect_port_status = disconnect_port_(id_which);
+    struct env_status_s<this_s> temp_status(this);
+    struct env_status_s<this_s> disconnect_port_status = disconnect_port_(id_which);
 
-    if (disconnect_port_status.qualifiers.at(this->get_id()) != env_errno_t::ENV_CLEAR) {
+    if (disconnect_port_status.qualifiers.at(this->get_id()) != env_errno_e::ENV_CLEAR) {
 
       temp_status.qualifiers.insert(
           std::make_pair(this->get_id(), disconnect_port_status.qualifiers.at(this->get_id())));
@@ -187,19 +187,19 @@ private:
     }
   }
 
-  env_status_t<this_t> connect_proxy_(const sha256::sha256_hash_type &id) const {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_s> connect_proxy_(const sha256::sha256_hash_type &id) const {
+    struct env_status_s<this_s> temp_status(this);
     return temp_status;
   }
 
-  env_status_t<this_t> disconnect_proxy_(const sha256::sha256_hash_type &id) const {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_s> disconnect_proxy_(const sha256::sha256_hash_type &id) const {
+    struct env_status_s<this_s> temp_status(this);
     return temp_status;
   }
 
-  env_status_t<this_t> replace_proxy_(const sha256::sha256_hash_type &id_which,
+  struct env_status_s<this_s> replace_proxy_(const sha256::sha256_hash_type &id_which,
                                       const sha256::sha256_hash_type &id_by) const {
-    env_status_t<this_t> temp_status(this);
+    struct env_status_s<this_s> temp_status(this);
     return temp_status;
   }
 };

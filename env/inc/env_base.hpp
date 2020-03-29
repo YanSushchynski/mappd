@@ -7,8 +7,60 @@
 #include <libconfig.h++>
 #include <mutex>
 
-struct env_base_t {
-  explicit env_base_t(const std::string &name) : name_(name) {
+enum struct env_networking_type_e : uint32_t {
+  IPV4,
+  IPV6,
+  IPV4_IPV6,
+  DOMAIN,
+  DOMAIN_IPV4,
+  DOMAIN_IPV6,
+  DOMAIN_IPV4_IPV6,
+  IPV4_SC,
+  IPV6_SC,
+  IPV4_IPV6_SC,
+  DOMAIN_SC,
+  DOMAIN_IPV4_SC,
+  DOMAIN_IPV6_SC,
+  DOMAIN_IPV4_IPV6_SC
+};
+
+static constexpr bool is_secure_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::IPV4_SC || nt == env_networking_type_e::IPV6_SC ||
+         nt == env_networking_type_e::IPV4_IPV6_SC || nt == env_networking_type_e::DOMAIN_SC ||
+         nt == env_networking_type_e::DOMAIN_IPV4_SC || nt == env_networking_type_e::DOMAIN_IPV6_SC ||
+         nt == env_networking_type_e::DOMAIN_IPV4_IPV6_SC;
+}
+
+static constexpr bool is_ipv4_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::IPV4 || nt == env_networking_type_e::IPV4_SC;
+}
+
+static constexpr bool is_ipv6_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::IPV6 || nt == env_networking_type_e::IPV6_SC;
+}
+
+static constexpr bool is_ipv4_ipv6_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::IPV4_IPV6 || nt == env_networking_type_e::IPV4_IPV6_SC;
+}
+
+static constexpr bool is_domain_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::DOMAIN || nt == env_networking_type_e::DOMAIN_SC;
+}
+
+static constexpr bool is_domain_ipv4_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::DOMAIN_IPV4 || nt == env_networking_type_e::DOMAIN_IPV4_SC;
+}
+
+static constexpr bool is_domain_ipv6_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::DOMAIN_IPV6 || nt == env_networking_type_e::DOMAIN_IPV6_SC;
+}
+
+static constexpr bool is_domain_ipv4_ipv6_type(env_networking_type_e nt) {
+  return nt == env_networking_type_e::DOMAIN_IPV4_IPV6 || nt == env_networking_type_e::DOMAIN_IPV4_IPV6_SC;
+}
+
+struct env_base_s {
+  explicit env_base_s(const std::string &name) : name_(name) {
     info_.set_env_name(name_);
 
     info_.set_env_headers_path("./headers");
@@ -60,25 +112,25 @@ struct env_base_t {
     info_.set_env_host_name(hostname);
   };
 
-  virtual ~env_base_t() = default;
+  virtual ~env_base_s() = default;
 
   virtual void configure(const libconfig::Setting &env_config) {
     throw std::runtime_error("Runtime configuration allowed only in dynamic evironments");
   };
 
-  virtual int run(int argc, char *argv[]) = 0;
-  const env_config_t &info() const { return info_; }
-  const env_config_header_t info_header() const { return get_info_header_(info_); }
+  virtual int run(int argc, char *argv[]) const = 0;
+  const struct env_cfg_s &info() const { return info_; }
+  const struct env_cfg_header_s info_header() const { return get_info_header_(info_); }
   const std::string &name() const { return name_; };
   std::mutex &get_lock() const { return access_mtx_; };
 
 private:
   mutable std::mutex access_mtx_;
-  env_config_t info_;
+  struct env_cfg_s info_;
   const std::string name_;
 
-  const env_config_header_t get_info_header_(const env_config_t &info) const {
-    env_config_header_t header;
+  const struct env_cfg_header_s get_info_header_(const struct env_cfg_s &info) const {
+    struct env_cfg_header_s header;
     header.set_env_name(info.env_name());
     header.set_env_ipv4_stream_port(info.env_ipv4_stream_port());
     header.set_env_ipv6_stream_port(info.env_ipv6_stream_port());

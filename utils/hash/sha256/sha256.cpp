@@ -58,6 +58,7 @@ static inline void transform(StateType &S, uint8_t const *Data) {
   }
 }
 
+sha256::sha256_hash_type sha256::compute(const std::string &str) { return sha256::compute(str.data(), str.size()); }
 sha256::sha256_hash_type sha256::compute(const void *const data, const size_t size) {
   StateType State = {0x6a09e667u, 0xbb67ae85u, 0x3c6ef372u, 0xa54ff53au,
                      0x510e527fu, 0x9b05688cu, 0x1f83d9abu, 0x5be0cd19u};

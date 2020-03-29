@@ -20,21 +20,21 @@ TEST(Hook, replace_static_member_functions) {
 
     std::string captured_string;
     sha256::sha256_hash_type connected_id;
-    uint32_t hook_error_id = hook_errno_t::HOOK_CLEAR;
+    uint32_t hook_error_id = static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR);
     auto op = hook_
                   .set_error_handler(
                       [&hook_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                       const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                       const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         hook_error_id = error_id;
                       })
                   .qualifiers.at(hook_.get_id());
 
-    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
 
     {
       auto add_result = hook_.add("FirstSumma", Test::slot1);
 
-      EXPECT_EQ(add_result.status.qualifiers.at(hook_.get_id()), hook_errno_t::HOOK_CLEAR);
+      EXPECT_EQ(add_result.status.qualifiers.at(hook_.get_id()), static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
       EXPECT_EQ(add_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("FirstSumma"), std::strlen("FirstSumma")));
 
@@ -46,7 +46,7 @@ TEST(Hook, replace_static_member_functions) {
     {
       auto replace_result = hook_.replace("FirstSumma", "SecondSumma", Test::slot2);
 
-      EXPECT_EQ(replace_result.status.qualifiers.at(hook_.get_id()), hook_errno_t::HOOK_CLEAR);
+      EXPECT_EQ(replace_result.status.qualifiers.at(hook_.get_id()), static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
       EXPECT_EQ(replace_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("SecondSumma"), std::strlen("SecondSumma")));
 
@@ -54,7 +54,7 @@ TEST(Hook, replace_static_member_functions) {
       EXPECT_STREQ(captured_string.c_str(), "SecondSumma = 30");
       captured_string.clear();
     }
-
-    EXPECT_EQ(hook_.clear().qualifiers.at(hook_.get_id()), hook_errno_t::HOOK_CLEAR);
+	
+    EXPECT_EQ(hook_.clear().qualifiers.at(hook_.get_id()), static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
   }
 }

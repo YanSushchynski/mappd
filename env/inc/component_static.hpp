@@ -5,23 +5,22 @@
 #include "port_list_static.hpp"
 #include "runtime_list.hpp"
 
-template <typename...> struct component_static_t : public component_node_t {};
+template <typename...> struct cmp_static_s : public cmp_base_s {};
 template <uint32_t runtime_list_size, typename... Ports>
-struct component_static_t<port_list_static_t<Ports...>, runtime_list_static_t<runtime_list_size>>
-    : public component_node_t {
-  using base_t = component_node_t;
-  using this_t = component_static_t<Ports...>;
+struct cmp_static_s<port_list_static_s<Ports...>, runtime_list_static_s<runtime_list_size>> : public cmp_base_s {
+  using base_t = cmp_base_s;
+  using this_t = cmp_static_s<Ports...>;
   using name_t = std::string;
 
   static constexpr uint32_t port_list_size = sizeof...(Ports);
 
-  template <typename NameType, typename PortList, typename RuntimeList>
-  explicit component_static_t(const NameType &name, const PortList &port_list, const RuntimeList &runtime_list)
+  template <typename PortList, typename RuntimeList>
+  explicit cmp_static_s(const std::string &name, const PortList &port_list, const RuntimeList &runtime_list)
       : base_t(name), port_list_(port_list), runtime_list_(runtime_list) {
     update_info();
   };
 
-  virtual ~component_static_t() = default;
+  virtual ~cmp_static_s() = default;
 
   void update_info() const {
     std::string type = typestr<this_t>;
@@ -57,24 +56,24 @@ struct component_static_t<port_list_static_t<Ports...>, runtime_list_static_t<ru
       }(runtime_list_[i]);
   }
 
-  void setenv(struct env_base_t *const p_env) const {
+  void setenv(struct env_base_s *const p_env) const {
     this->base_t::setenv(p_env);
     for (unsigned int i = 0; i < port_list_size; i++)
       std::visit_at(
           i, [&p_env](const auto &port) -> void { port.setenv(p_env); }, port_list_);
   }
 
-  const port_list_static_t<Ports...> &ports() const { return port_list_; }
-  const runtime_list_static_t<runtime_list_size> &runnables() const { return runtime_list_; }
+  const port_list_static_s<Ports...> &ports() const { return port_list_; }
+  const runtime_list_static_s<runtime_list_size> &runnables() const { return runtime_list_; }
 
 private:
-  const port_list_static_t<Ports...> port_list_;
-  const runtime_list_static_t<runtime_list_size> runtime_list_;
+  const port_list_static_s<Ports...> port_list_;
+  const runtime_list_static_s<runtime_list_size> runtime_list_;
 };
 
-template <typename NameType, uint32_t runtime_list_size, typename... Ports>
-explicit component_static_t(const NameType &, const port_list_static_t<Ports...> &,
-                            const runtime_list_static_t<runtime_list_size> &)
-    ->component_static_t<port_list_static_t<Ports...>, runtime_list_static_t<runtime_list_size>>;
+template <uint32_t runtime_list_size, typename... Ports>
+explicit cmp_static_s(const std::string &, const port_list_static_s<Ports...> &,
+                      const runtime_list_static_s<runtime_list_size> &)
+    ->cmp_static_s<port_list_static_s<Ports...>, runtime_list_static_s<runtime_list_size>>;
 
 #endif /* COMPONENT_HPP */

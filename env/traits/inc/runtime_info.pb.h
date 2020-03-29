@@ -54,32 +54,32 @@ struct TableStruct_runtime_5finfo_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_runtime_5finfo_2eproto;
-class runtime_list_info_t;
-class runtime_list_info_tDefaultTypeInternal;
-extern runtime_list_info_tDefaultTypeInternal _runtime_list_info_t_default_instance_;
+class runtime_list_info_s;
+class runtime_list_info_sDefaultTypeInternal;
+extern runtime_list_info_sDefaultTypeInternal _runtime_list_info_s_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
-template<> ::runtime_list_info_t* Arena::CreateMaybeMessage<::runtime_list_info_t>(Arena*);
+template<> ::runtime_list_info_s* Arena::CreateMaybeMessage<::runtime_list_info_s>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 // ===================================================================
 
-class runtime_list_info_t :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:runtime_list_info_t) */ {
+class runtime_list_info_s :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:runtime_list_info_s) */ {
  public:
-  runtime_list_info_t();
-  virtual ~runtime_list_info_t();
+  runtime_list_info_s();
+  virtual ~runtime_list_info_s();
 
-  runtime_list_info_t(const runtime_list_info_t& from);
-  runtime_list_info_t(runtime_list_info_t&& from) noexcept
-    : runtime_list_info_t() {
+  runtime_list_info_s(const runtime_list_info_s& from);
+  runtime_list_info_s(runtime_list_info_s&& from) noexcept
+    : runtime_list_info_s() {
     *this = ::std::move(from);
   }
 
-  inline runtime_list_info_t& operator=(const runtime_list_info_t& from) {
+  inline runtime_list_info_s& operator=(const runtime_list_info_s& from) {
     CopyFrom(from);
     return *this;
   }
-  inline runtime_list_info_t& operator=(runtime_list_info_t&& from) noexcept {
+  inline runtime_list_info_s& operator=(runtime_list_info_s&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -104,37 +104,37 @@ class runtime_list_info_t :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const runtime_list_info_t& default_instance();
+  static const runtime_list_info_s& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const runtime_list_info_t* internal_default_instance() {
-    return reinterpret_cast<const runtime_list_info_t*>(
-               &_runtime_list_info_t_default_instance_);
+  static inline const runtime_list_info_s* internal_default_instance() {
+    return reinterpret_cast<const runtime_list_info_s*>(
+               &_runtime_list_info_s_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(runtime_list_info_t& a, runtime_list_info_t& b) {
+  friend void swap(runtime_list_info_s& a, runtime_list_info_s& b) {
     a.Swap(&b);
   }
-  inline void Swap(runtime_list_info_t* other) {
+  inline void Swap(runtime_list_info_s* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline runtime_list_info_t* New() const final {
-    return CreateMaybeMessage<runtime_list_info_t>(nullptr);
+  inline runtime_list_info_s* New() const final {
+    return CreateMaybeMessage<runtime_list_info_s>(nullptr);
   }
 
-  runtime_list_info_t* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<runtime_list_info_t>(arena);
+  runtime_list_info_s* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<runtime_list_info_s>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const runtime_list_info_t& from);
-  void MergeFrom(const runtime_list_info_t& from);
+  void CopyFrom(const runtime_list_info_s& from);
+  void MergeFrom(const runtime_list_info_s& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -148,10 +148,10 @@ class runtime_list_info_t :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(runtime_list_info_t* other);
+  void InternalSwap(runtime_list_info_s* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "runtime_list_info_t";
+    return "runtime_list_info_s";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -317,7 +317,7 @@ class runtime_list_info_t :
   void _internal_set_pid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:runtime_list_info_t)
+  // @@protoc_insertion_point(class_scope:runtime_list_info_s)
  private:
   class _Internal;
 
@@ -345,460 +345,460 @@ class runtime_list_info_t :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// runtime_list_info_t
+// runtime_list_info_s
 
 // required bytes id = 1 [default = ""];
-inline bool runtime_list_info_t::_internal_has_id() const {
+inline bool runtime_list_info_s::_internal_has_id() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool runtime_list_info_t::has_id() const {
+inline bool runtime_list_info_s::has_id() const {
   return _internal_has_id();
 }
-inline void runtime_list_info_t::clear_id() {
+inline void runtime_list_info_s::clear_id() {
   id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& runtime_list_info_t::id() const {
-  // @@protoc_insertion_point(field_get:runtime_list_info_t.id)
+inline const std::string& runtime_list_info_s::id() const {
+  // @@protoc_insertion_point(field_get:runtime_list_info_s.id)
   return _internal_id();
 }
-inline void runtime_list_info_t::set_id(const std::string& value) {
+inline void runtime_list_info_s::set_id(const std::string& value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:runtime_list_info_t.id)
+  // @@protoc_insertion_point(field_set:runtime_list_info_s.id)
 }
-inline std::string* runtime_list_info_t::mutable_id() {
-  // @@protoc_insertion_point(field_mutable:runtime_list_info_t.id)
+inline std::string* runtime_list_info_s::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:runtime_list_info_s.id)
   return _internal_mutable_id();
 }
-inline const std::string& runtime_list_info_t::_internal_id() const {
+inline const std::string& runtime_list_info_s::_internal_id() const {
   return id_.GetNoArena();
 }
-inline void runtime_list_info_t::_internal_set_id(const std::string& value) {
+inline void runtime_list_info_s::_internal_set_id(const std::string& value) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void runtime_list_info_t::set_id(std::string&& value) {
+inline void runtime_list_info_s::set_id(std::string&& value) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_t.id)
+  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_s.id)
 }
-inline void runtime_list_info_t::set_id(const char* value) {
+inline void runtime_list_info_s::set_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:runtime_list_info_t.id)
+  // @@protoc_insertion_point(field_set_char:runtime_list_info_s.id)
 }
-inline void runtime_list_info_t::set_id(const void* value, size_t size) {
+inline void runtime_list_info_s::set_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_t.id)
+  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_s.id)
 }
-inline std::string* runtime_list_info_t::_internal_mutable_id() {
+inline std::string* runtime_list_info_s::_internal_mutable_id() {
   _has_bits_[0] |= 0x00000001u;
   return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* runtime_list_info_t::release_id() {
-  // @@protoc_insertion_point(field_release:runtime_list_info_t.id)
+inline std::string* runtime_list_info_s::release_id() {
+  // @@protoc_insertion_point(field_release:runtime_list_info_s.id)
   if (!_internal_has_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000001u;
   return id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void runtime_list_info_t::set_allocated_id(std::string* id) {
+inline void runtime_list_info_s::set_allocated_id(std::string* id) {
   if (id != nullptr) {
     _has_bits_[0] |= 0x00000001u;
   } else {
     _has_bits_[0] &= ~0x00000001u;
   }
   id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
-  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_t.id)
+  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_s.id)
 }
 
 // required bytes name_hash = 2 [default = ""];
-inline bool runtime_list_info_t::_internal_has_name_hash() const {
+inline bool runtime_list_info_s::_internal_has_name_hash() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
-inline bool runtime_list_info_t::has_name_hash() const {
+inline bool runtime_list_info_s::has_name_hash() const {
   return _internal_has_name_hash();
 }
-inline void runtime_list_info_t::clear_name_hash() {
+inline void runtime_list_info_s::clear_name_hash() {
   name_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000002u;
 }
-inline const std::string& runtime_list_info_t::name_hash() const {
-  // @@protoc_insertion_point(field_get:runtime_list_info_t.name_hash)
+inline const std::string& runtime_list_info_s::name_hash() const {
+  // @@protoc_insertion_point(field_get:runtime_list_info_s.name_hash)
   return _internal_name_hash();
 }
-inline void runtime_list_info_t::set_name_hash(const std::string& value) {
+inline void runtime_list_info_s::set_name_hash(const std::string& value) {
   _internal_set_name_hash(value);
-  // @@protoc_insertion_point(field_set:runtime_list_info_t.name_hash)
+  // @@protoc_insertion_point(field_set:runtime_list_info_s.name_hash)
 }
-inline std::string* runtime_list_info_t::mutable_name_hash() {
-  // @@protoc_insertion_point(field_mutable:runtime_list_info_t.name_hash)
+inline std::string* runtime_list_info_s::mutable_name_hash() {
+  // @@protoc_insertion_point(field_mutable:runtime_list_info_s.name_hash)
   return _internal_mutable_name_hash();
 }
-inline const std::string& runtime_list_info_t::_internal_name_hash() const {
+inline const std::string& runtime_list_info_s::_internal_name_hash() const {
   return name_hash_.GetNoArena();
 }
-inline void runtime_list_info_t::_internal_set_name_hash(const std::string& value) {
+inline void runtime_list_info_s::_internal_set_name_hash(const std::string& value) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void runtime_list_info_t::set_name_hash(std::string&& value) {
+inline void runtime_list_info_s::set_name_hash(std::string&& value) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_s.name_hash)
 }
-inline void runtime_list_info_t::set_name_hash(const char* value) {
+inline void runtime_list_info_s::set_name_hash(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:runtime_list_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_char:runtime_list_info_s.name_hash)
 }
-inline void runtime_list_info_t::set_name_hash(const void* value, size_t size) {
+inline void runtime_list_info_s::set_name_hash(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_s.name_hash)
 }
-inline std::string* runtime_list_info_t::_internal_mutable_name_hash() {
+inline std::string* runtime_list_info_s::_internal_mutable_name_hash() {
   _has_bits_[0] |= 0x00000002u;
   return name_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* runtime_list_info_t::release_name_hash() {
-  // @@protoc_insertion_point(field_release:runtime_list_info_t.name_hash)
+inline std::string* runtime_list_info_s::release_name_hash() {
+  // @@protoc_insertion_point(field_release:runtime_list_info_s.name_hash)
   if (!_internal_has_name_hash()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000002u;
   return name_hash_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void runtime_list_info_t::set_allocated_name_hash(std::string* name_hash) {
+inline void runtime_list_info_s::set_allocated_name_hash(std::string* name_hash) {
   if (name_hash != nullptr) {
     _has_bits_[0] |= 0x00000002u;
   } else {
     _has_bits_[0] &= ~0x00000002u;
   }
   name_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name_hash);
-  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_s.name_hash)
 }
 
 // required bytes hostid = 3 [default = ""];
-inline bool runtime_list_info_t::_internal_has_hostid() const {
+inline bool runtime_list_info_s::_internal_has_hostid() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
-inline bool runtime_list_info_t::has_hostid() const {
+inline bool runtime_list_info_s::has_hostid() const {
   return _internal_has_hostid();
 }
-inline void runtime_list_info_t::clear_hostid() {
+inline void runtime_list_info_s::clear_hostid() {
   hostid_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000004u;
 }
-inline const std::string& runtime_list_info_t::hostid() const {
-  // @@protoc_insertion_point(field_get:runtime_list_info_t.hostid)
+inline const std::string& runtime_list_info_s::hostid() const {
+  // @@protoc_insertion_point(field_get:runtime_list_info_s.hostid)
   return _internal_hostid();
 }
-inline void runtime_list_info_t::set_hostid(const std::string& value) {
+inline void runtime_list_info_s::set_hostid(const std::string& value) {
   _internal_set_hostid(value);
-  // @@protoc_insertion_point(field_set:runtime_list_info_t.hostid)
+  // @@protoc_insertion_point(field_set:runtime_list_info_s.hostid)
 }
-inline std::string* runtime_list_info_t::mutable_hostid() {
-  // @@protoc_insertion_point(field_mutable:runtime_list_info_t.hostid)
+inline std::string* runtime_list_info_s::mutable_hostid() {
+  // @@protoc_insertion_point(field_mutable:runtime_list_info_s.hostid)
   return _internal_mutable_hostid();
 }
-inline const std::string& runtime_list_info_t::_internal_hostid() const {
+inline const std::string& runtime_list_info_s::_internal_hostid() const {
   return hostid_.GetNoArena();
 }
-inline void runtime_list_info_t::_internal_set_hostid(const std::string& value) {
+inline void runtime_list_info_s::_internal_set_hostid(const std::string& value) {
   _has_bits_[0] |= 0x00000004u;
   hostid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void runtime_list_info_t::set_hostid(std::string&& value) {
+inline void runtime_list_info_s::set_hostid(std::string&& value) {
   _has_bits_[0] |= 0x00000004u;
   hostid_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_t.hostid)
+  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_s.hostid)
 }
-inline void runtime_list_info_t::set_hostid(const char* value) {
+inline void runtime_list_info_s::set_hostid(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000004u;
   hostid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:runtime_list_info_t.hostid)
+  // @@protoc_insertion_point(field_set_char:runtime_list_info_s.hostid)
 }
-inline void runtime_list_info_t::set_hostid(const void* value, size_t size) {
+inline void runtime_list_info_s::set_hostid(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000004u;
   hostid_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_t.hostid)
+  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_s.hostid)
 }
-inline std::string* runtime_list_info_t::_internal_mutable_hostid() {
+inline std::string* runtime_list_info_s::_internal_mutable_hostid() {
   _has_bits_[0] |= 0x00000004u;
   return hostid_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* runtime_list_info_t::release_hostid() {
-  // @@protoc_insertion_point(field_release:runtime_list_info_t.hostid)
+inline std::string* runtime_list_info_s::release_hostid() {
+  // @@protoc_insertion_point(field_release:runtime_list_info_s.hostid)
   if (!_internal_has_hostid()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000004u;
   return hostid_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void runtime_list_info_t::set_allocated_hostid(std::string* hostid) {
+inline void runtime_list_info_s::set_allocated_hostid(std::string* hostid) {
   if (hostid != nullptr) {
     _has_bits_[0] |= 0x00000004u;
   } else {
     _has_bits_[0] &= ~0x00000004u;
   }
   hostid_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), hostid);
-  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_t.hostid)
+  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_s.hostid)
 }
 
 // required bytes composition_id = 4 [default = ""];
-inline bool runtime_list_info_t::_internal_has_composition_id() const {
+inline bool runtime_list_info_s::_internal_has_composition_id() const {
   bool value = (_has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
-inline bool runtime_list_info_t::has_composition_id() const {
+inline bool runtime_list_info_s::has_composition_id() const {
   return _internal_has_composition_id();
 }
-inline void runtime_list_info_t::clear_composition_id() {
+inline void runtime_list_info_s::clear_composition_id() {
   composition_id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000008u;
 }
-inline const std::string& runtime_list_info_t::composition_id() const {
-  // @@protoc_insertion_point(field_get:runtime_list_info_t.composition_id)
+inline const std::string& runtime_list_info_s::composition_id() const {
+  // @@protoc_insertion_point(field_get:runtime_list_info_s.composition_id)
   return _internal_composition_id();
 }
-inline void runtime_list_info_t::set_composition_id(const std::string& value) {
+inline void runtime_list_info_s::set_composition_id(const std::string& value) {
   _internal_set_composition_id(value);
-  // @@protoc_insertion_point(field_set:runtime_list_info_t.composition_id)
+  // @@protoc_insertion_point(field_set:runtime_list_info_s.composition_id)
 }
-inline std::string* runtime_list_info_t::mutable_composition_id() {
-  // @@protoc_insertion_point(field_mutable:runtime_list_info_t.composition_id)
+inline std::string* runtime_list_info_s::mutable_composition_id() {
+  // @@protoc_insertion_point(field_mutable:runtime_list_info_s.composition_id)
   return _internal_mutable_composition_id();
 }
-inline const std::string& runtime_list_info_t::_internal_composition_id() const {
+inline const std::string& runtime_list_info_s::_internal_composition_id() const {
   return composition_id_.GetNoArena();
 }
-inline void runtime_list_info_t::_internal_set_composition_id(const std::string& value) {
+inline void runtime_list_info_s::_internal_set_composition_id(const std::string& value) {
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void runtime_list_info_t::set_composition_id(std::string&& value) {
+inline void runtime_list_info_s::set_composition_id(std::string&& value) {
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_s.composition_id)
 }
-inline void runtime_list_info_t::set_composition_id(const char* value) {
+inline void runtime_list_info_s::set_composition_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:runtime_list_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_char:runtime_list_info_s.composition_id)
 }
-inline void runtime_list_info_t::set_composition_id(const void* value, size_t size) {
+inline void runtime_list_info_s::set_composition_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_s.composition_id)
 }
-inline std::string* runtime_list_info_t::_internal_mutable_composition_id() {
+inline std::string* runtime_list_info_s::_internal_mutable_composition_id() {
   _has_bits_[0] |= 0x00000008u;
   return composition_id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* runtime_list_info_t::release_composition_id() {
-  // @@protoc_insertion_point(field_release:runtime_list_info_t.composition_id)
+inline std::string* runtime_list_info_s::release_composition_id() {
+  // @@protoc_insertion_point(field_release:runtime_list_info_s.composition_id)
   if (!_internal_has_composition_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000008u;
   return composition_id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void runtime_list_info_t::set_allocated_composition_id(std::string* composition_id) {
+inline void runtime_list_info_s::set_allocated_composition_id(std::string* composition_id) {
   if (composition_id != nullptr) {
     _has_bits_[0] |= 0x00000008u;
   } else {
     _has_bits_[0] &= ~0x00000008u;
   }
   composition_id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), composition_id);
-  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_s.composition_id)
 }
 
 // required bytes component_id = 5 [default = ""];
-inline bool runtime_list_info_t::_internal_has_component_id() const {
+inline bool runtime_list_info_s::_internal_has_component_id() const {
   bool value = (_has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
-inline bool runtime_list_info_t::has_component_id() const {
+inline bool runtime_list_info_s::has_component_id() const {
   return _internal_has_component_id();
 }
-inline void runtime_list_info_t::clear_component_id() {
+inline void runtime_list_info_s::clear_component_id() {
   component_id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000010u;
 }
-inline const std::string& runtime_list_info_t::component_id() const {
-  // @@protoc_insertion_point(field_get:runtime_list_info_t.component_id)
+inline const std::string& runtime_list_info_s::component_id() const {
+  // @@protoc_insertion_point(field_get:runtime_list_info_s.component_id)
   return _internal_component_id();
 }
-inline void runtime_list_info_t::set_component_id(const std::string& value) {
+inline void runtime_list_info_s::set_component_id(const std::string& value) {
   _internal_set_component_id(value);
-  // @@protoc_insertion_point(field_set:runtime_list_info_t.component_id)
+  // @@protoc_insertion_point(field_set:runtime_list_info_s.component_id)
 }
-inline std::string* runtime_list_info_t::mutable_component_id() {
-  // @@protoc_insertion_point(field_mutable:runtime_list_info_t.component_id)
+inline std::string* runtime_list_info_s::mutable_component_id() {
+  // @@protoc_insertion_point(field_mutable:runtime_list_info_s.component_id)
   return _internal_mutable_component_id();
 }
-inline const std::string& runtime_list_info_t::_internal_component_id() const {
+inline const std::string& runtime_list_info_s::_internal_component_id() const {
   return component_id_.GetNoArena();
 }
-inline void runtime_list_info_t::_internal_set_component_id(const std::string& value) {
+inline void runtime_list_info_s::_internal_set_component_id(const std::string& value) {
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void runtime_list_info_t::set_component_id(std::string&& value) {
+inline void runtime_list_info_s::set_component_id(std::string&& value) {
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_t.component_id)
+  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_s.component_id)
 }
-inline void runtime_list_info_t::set_component_id(const char* value) {
+inline void runtime_list_info_s::set_component_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:runtime_list_info_t.component_id)
+  // @@protoc_insertion_point(field_set_char:runtime_list_info_s.component_id)
 }
-inline void runtime_list_info_t::set_component_id(const void* value, size_t size) {
+inline void runtime_list_info_s::set_component_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_t.component_id)
+  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_s.component_id)
 }
-inline std::string* runtime_list_info_t::_internal_mutable_component_id() {
+inline std::string* runtime_list_info_s::_internal_mutable_component_id() {
   _has_bits_[0] |= 0x00000010u;
   return component_id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* runtime_list_info_t::release_component_id() {
-  // @@protoc_insertion_point(field_release:runtime_list_info_t.component_id)
+inline std::string* runtime_list_info_s::release_component_id() {
+  // @@protoc_insertion_point(field_release:runtime_list_info_s.component_id)
   if (!_internal_has_component_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000010u;
   return component_id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void runtime_list_info_t::set_allocated_component_id(std::string* component_id) {
+inline void runtime_list_info_s::set_allocated_component_id(std::string* component_id) {
   if (component_id != nullptr) {
     _has_bits_[0] |= 0x00000010u;
   } else {
     _has_bits_[0] &= ~0x00000010u;
   }
   component_id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), component_id);
-  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_t.component_id)
+  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_s.component_id)
 }
 
 // required int32 pid = 6 [default = 0];
-inline bool runtime_list_info_t::_internal_has_pid() const {
+inline bool runtime_list_info_s::_internal_has_pid() const {
   bool value = (_has_bits_[0] & 0x00000040u) != 0;
   return value;
 }
-inline bool runtime_list_info_t::has_pid() const {
+inline bool runtime_list_info_s::has_pid() const {
   return _internal_has_pid();
 }
-inline void runtime_list_info_t::clear_pid() {
+inline void runtime_list_info_s::clear_pid() {
   pid_ = 0;
   _has_bits_[0] &= ~0x00000040u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 runtime_list_info_t::_internal_pid() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 runtime_list_info_s::_internal_pid() const {
   return pid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 runtime_list_info_t::pid() const {
-  // @@protoc_insertion_point(field_get:runtime_list_info_t.pid)
+inline ::PROTOBUF_NAMESPACE_ID::int32 runtime_list_info_s::pid() const {
+  // @@protoc_insertion_point(field_get:runtime_list_info_s.pid)
   return _internal_pid();
 }
-inline void runtime_list_info_t::_internal_set_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void runtime_list_info_s::_internal_set_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00000040u;
   pid_ = value;
 }
-inline void runtime_list_info_t::set_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void runtime_list_info_s::set_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_pid(value);
-  // @@protoc_insertion_point(field_set:runtime_list_info_t.pid)
+  // @@protoc_insertion_point(field_set:runtime_list_info_s.pid)
 }
 
 // required bytes thread_id = 7 [default = ""];
-inline bool runtime_list_info_t::_internal_has_thread_id() const {
+inline bool runtime_list_info_s::_internal_has_thread_id() const {
   bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
-inline bool runtime_list_info_t::has_thread_id() const {
+inline bool runtime_list_info_s::has_thread_id() const {
   return _internal_has_thread_id();
 }
-inline void runtime_list_info_t::clear_thread_id() {
+inline void runtime_list_info_s::clear_thread_id() {
   thread_id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000020u;
 }
-inline const std::string& runtime_list_info_t::thread_id() const {
-  // @@protoc_insertion_point(field_get:runtime_list_info_t.thread_id)
+inline const std::string& runtime_list_info_s::thread_id() const {
+  // @@protoc_insertion_point(field_get:runtime_list_info_s.thread_id)
   return _internal_thread_id();
 }
-inline void runtime_list_info_t::set_thread_id(const std::string& value) {
+inline void runtime_list_info_s::set_thread_id(const std::string& value) {
   _internal_set_thread_id(value);
-  // @@protoc_insertion_point(field_set:runtime_list_info_t.thread_id)
+  // @@protoc_insertion_point(field_set:runtime_list_info_s.thread_id)
 }
-inline std::string* runtime_list_info_t::mutable_thread_id() {
-  // @@protoc_insertion_point(field_mutable:runtime_list_info_t.thread_id)
+inline std::string* runtime_list_info_s::mutable_thread_id() {
+  // @@protoc_insertion_point(field_mutable:runtime_list_info_s.thread_id)
   return _internal_mutable_thread_id();
 }
-inline const std::string& runtime_list_info_t::_internal_thread_id() const {
+inline const std::string& runtime_list_info_s::_internal_thread_id() const {
   return thread_id_.GetNoArena();
 }
-inline void runtime_list_info_t::_internal_set_thread_id(const std::string& value) {
+inline void runtime_list_info_s::_internal_set_thread_id(const std::string& value) {
   _has_bits_[0] |= 0x00000020u;
   thread_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void runtime_list_info_t::set_thread_id(std::string&& value) {
+inline void runtime_list_info_s::set_thread_id(std::string&& value) {
   _has_bits_[0] |= 0x00000020u;
   thread_id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_t.thread_id)
+  // @@protoc_insertion_point(field_set_rvalue:runtime_list_info_s.thread_id)
 }
-inline void runtime_list_info_t::set_thread_id(const char* value) {
+inline void runtime_list_info_s::set_thread_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000020u;
   thread_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:runtime_list_info_t.thread_id)
+  // @@protoc_insertion_point(field_set_char:runtime_list_info_s.thread_id)
 }
-inline void runtime_list_info_t::set_thread_id(const void* value, size_t size) {
+inline void runtime_list_info_s::set_thread_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000020u;
   thread_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_t.thread_id)
+  // @@protoc_insertion_point(field_set_pointer:runtime_list_info_s.thread_id)
 }
-inline std::string* runtime_list_info_t::_internal_mutable_thread_id() {
+inline std::string* runtime_list_info_s::_internal_mutable_thread_id() {
   _has_bits_[0] |= 0x00000020u;
   return thread_id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* runtime_list_info_t::release_thread_id() {
-  // @@protoc_insertion_point(field_release:runtime_list_info_t.thread_id)
+inline std::string* runtime_list_info_s::release_thread_id() {
+  // @@protoc_insertion_point(field_release:runtime_list_info_s.thread_id)
   if (!_internal_has_thread_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000020u;
   return thread_id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void runtime_list_info_t::set_allocated_thread_id(std::string* thread_id) {
+inline void runtime_list_info_s::set_allocated_thread_id(std::string* thread_id) {
   if (thread_id != nullptr) {
     _has_bits_[0] |= 0x00000020u;
   } else {
     _has_bits_[0] &= ~0x00000020u;
   }
   thread_id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), thread_id);
-  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_t.thread_id)
+  // @@protoc_insertion_point(field_set_allocated:runtime_list_info_s.thread_id)
 }
 
 #ifdef __GNUC__

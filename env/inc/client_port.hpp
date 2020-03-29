@@ -5,20 +5,20 @@
 
 template <typename RetType, typename... Args>
 struct port_t<RetType(Args...), port_types_t::client_port_types_t::PORT_TYPE_CLIENT_SYNC>
-    : public base_client_port_t<runtime_t::RUNTIME_SYNC, RetType(Args...)> {
+  : public base_client_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), RetType(Args...)> {
 private:
-  friend struct env_base_t;
-
+  friend struct env_base_s;
+  
 public:
   using data_t = response<RetType>;
   using function_t = RetType(Args...);
-  using base_t = base_client_port_t<runtime_t::RUNTIME_SYNC, function_t>;
+  using base_t = base_client_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), function_t>;
   using this_t = port_t<function_t, port_types_t::client_port_types_t::PORT_TYPE_CLIENT_SYNC>;
 
-  template <typename NameType> explicit port_t(const NameType &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_t(name){};
 
 protected:
-  env_status_t<base_t> request__(const std::string &server_name, const std::string &call_name,
+  struct env_status_s<base_t> request__(const std::string &server_name, const std::string &call_name,
                                  const Args &... args) const {
     const sha256::sha256_hash_type server_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(server_name.data()), server_name.length());
@@ -27,47 +27,47 @@ protected:
     return this->create_request(server_id, call_id, args...);
   }
 
-  env_data_t<data_t, base_t> response__() const { return this->get_response(); }
+  struct env_data_s<data_t, base_t> response__() const { return this->get_response(); }
 };
 
 template <typename RetType, typename... Args>
 struct port_t<RetType(Args...), port_types_t::client_port_types_t::PORT_TYPE_CLIENT_ASYNC>
-    : public base_client_port_t<runtime_t::RUNTIME_ASYNC, RetType(Args...)> {
+    : public base_client_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), RetType(Args...)> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using data_t = response<RetType>;
   using function_t = RetType(Args...);
-  using base_t = base_client_port_t<runtime_t::RUNTIME_ASYNC, function_t>;
+  using base_t = base_client_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), function_t>;
   using this_t = port_t<function_t, port_types_t::client_port_types_t::PORT_TYPE_CLIENT_ASYNC>;
 
-  template <typename NameType> explicit port_t(const NameType &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_t(name){};
 
 protected:
-  env_data_t<data_t, base_t> call__(const std::string &server_name, const std::string &call_name,
+  struct env_data_s<data_t, base_t> call__(const std::string &server_name, const std::string &call_name,
                                     const Args &... args) const {
-    env_data_t<data_t, base_t> temp_data(this);
+    struct env_data_s<data_t, base_t> temp_data(this);
     const sha256::sha256_hash_type server_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(server_name.data()), server_name.length());
     const sha256::sha256_hash_type call_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(call_name.data()), call_name.length());
-    env_status_t<base_t> request_status = this->create_request(server_id, call_id, args...);
+    struct env_status_s<base_t> request_status = this->create_request(server_id, call_id, args...);
 
-    if (request_status.qualifiers.at(this->get_id()) != env_errno_t::ENV_CLEAR) {
+    if (request_status.qualifiers.at(this->get_id()) != env_errno_e::ENV_CLEAR) {
       temp_data.status.qualifiers.insert(std::make_pair(this->get_id(), request_status.qualifiers.at(this->get_id())));
       return temp_data;
     } else {
-      env_status_t<base_t> forwarding_status = this->forward();
+      struct env_status_s<base_t> forwarding_status = this->forward();
 
-      if (forwarding_status.qualifiers.at(this->get_id()) != env_errno_t::ENV_CLEAR) {
+      if (forwarding_status.qualifiers.at(this->get_id()) != env_errno_e::ENV_CLEAR) {
         temp_data.status.qualifiers.insert(
             std::make_pair(this->get_id(), forwarding_status.qualifiers.at(this->get_id())));
         return temp_data;
       } else {
-        env_data_t<data_t, base_t> response_data = this->get_response();
+        struct env_data_s<data_t, base_t> response_data = this->get_response();
 
-        if (response_data.status.qualifiers.at(this->get_id()) != env_errno_t::ENV_CLEAR) {
+        if (response_data.status.qualifiers.at(this->get_id()) != env_errno_e::ENV_CLEAR) {
           temp_data.status.qualifiers.insert(
               std::make_pair(this->get_id(), response_data.status.qualifiers.at(this->get_id())));
           return temp_data;
@@ -86,7 +86,7 @@ template <typename Prototype>
 class sync_client_port_t final : public port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                                                port_types_t::client_port_types_t::PORT_TYPE_CLIENT_SYNC> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using this_t = sync_client_port_t<Prototype>;
@@ -97,7 +97,7 @@ public:
   using data_t = typename port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                                  port_types_t::client_port_types_t::PORT_TYPE_CLIENT_SYNC>::data_t;
 
-  template <typename NameType> explicit sync_client_port_t(const NameType &name) : base_t(name) {
+  explicit sync_client_port_t(const std::string &name) : base_t(name) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -106,19 +106,19 @@ public:
   };
 
   template <typename... Args>
-  env_status_t<base_t> request(const std::string &server_name, const std::string &call_name,
+  struct env_status_s<base_t> request(const std::string &server_name, const std::string &call_name,
                                const Args &... args) const {
     return this->request__(server_name, call_name, args...);
   };
 
-  env_data_t<data_t, base_t> response() const { return this->response__(); }
+  struct env_data_s<data_t, base_t> response() const { return this->response__(); }
 };
 
 template <typename Prototype>
 class async_client_port_t final : public port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                                                 port_types_t::client_port_types_t::PORT_TYPE_CLIENT_ASYNC> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using this_t = async_client_port_t<Prototype>;
@@ -129,7 +129,7 @@ public:
   using data_t = typename port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                                  port_types_t::client_port_types_t::PORT_TYPE_CLIENT_ASYNC>::data_t;
 
-  template <typename NameType> explicit async_client_port_t(const NameType &name) : base_t(name) {
+  explicit async_client_port_t(const std::string &name) : base_t(name) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -139,7 +139,7 @@ public:
   };
 
   template <typename... Args>
-  env_data_t<data_t, base_t> call(const std::string &server_name, const std::string &call_name,
+  struct env_data_s<data_t, base_t> call(const std::string &server_name, const std::string &call_name,
                                   const Args &... args) const {
     return this->call__(server_name, call_name, args...);
   }

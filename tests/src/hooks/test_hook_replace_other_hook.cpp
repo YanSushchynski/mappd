@@ -16,40 +16,40 @@ TEST(Hook, replace_other_hook) {
     hook_t<void(int, int)> hook_one;
     hook_t<void(int, int)> hook_two;
 
-    uint32_t hook_one_error_id = hook_errno_t::HOOK_CLEAR;
+    uint32_t hook_one_error_id = static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR);
     auto op = hook_one
                   .set_error_handler(
                       [&hook_one_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                           const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                           const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         hook_one_error_id = error_id;
                       })
                   .qualifiers.at(hook_one.get_id());
 
-    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
 
-    uint32_t hook_two_error_id = hook_errno_t::HOOK_CLEAR;
+    uint32_t hook_two_error_id = static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR);
     op = hook_two
              .set_error_handler(
                  [&hook_two_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                      const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                      const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                    hook_two_error_id = error_id;
                  })
              .qualifiers.at(hook_two.get_id());
 
-    EXPECT_EQ(op, hook_errno_t::HOOK_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
 
     {
       auto add_result = hook_one.add("FirstHook", first_hook);
 
-      EXPECT_EQ(add_result.status.qualifiers.at(hook_one.get_id()), hook_errno_t::HOOK_CLEAR);
+      EXPECT_EQ(add_result.status.qualifiers.at(hook_one.get_id()), static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
       EXPECT_EQ(add_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("FirstHook"), std::strlen("FirstHook")));
     }
 
     {
       auto add_result = hook_two.add("SecondHook", second_hook);
-
-      EXPECT_EQ(add_result.status.qualifiers.at(hook_two.get_id()), hook_errno_t::HOOK_CLEAR);
+	  
+      EXPECT_EQ(add_result.status.qualifiers.at(hook_two.get_id()), static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
       EXPECT_EQ(add_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("SecondHook"), std::strlen("SecondHook")));
     }
@@ -57,7 +57,7 @@ TEST(Hook, replace_other_hook) {
     {
       auto replace_result = hook_one.replace("FirstHook", "SecondHook", hook_two);
 
-      EXPECT_EQ(replace_result.status.qualifiers.at(hook_one.get_id()), hook_errno_t::HOOK_CLEAR);
+      EXPECT_EQ(replace_result.status.qualifiers.at(hook_one.get_id()), static_cast<uint32_t>(hook_errno_e::HOOK_CLEAR));
       EXPECT_EQ(replace_result.data.first,
                 sha256::compute(reinterpret_cast<const uint8_t *>("SecondHook"), std::strlen("SecondHook")));
     }

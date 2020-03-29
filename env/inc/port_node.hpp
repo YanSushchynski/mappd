@@ -3,42 +3,44 @@
 
 #include "env_utils.hpp"
 
-struct env_base_t;
+struct env_base_s;
 
-struct port_node_t {
+struct port_base_s {
 public:
   static constexpr uint32_t BUFFER_SIZE = 8u;
   static constexpr uint32_t MAX_CONNECTIONS = 8u;
 
-  using this_t = port_node_t;
+  using this_s = port_base_s;
   using name_t = std::string;
 
-  template <typename NameType>
-  explicit port_node_t(const NameType &name)
+  explicit port_base_s(const std::string &name)
       : error_handler_([](const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &) -> void {}),
         name_(name), env_(nullptr){};
 
-  explicit port_node_t(const this_t &) = default;
-  explicit port_node_t(this_t &&) = default;
+  explicit port_base_s(const this_s &) = default;
+  explicit port_base_s(this_s &&) = default;
 
-  this_t &operator=(const this_t &) = delete;
-  this_t &operator=(this_t &&) = delete;
+  this_s &operator=(const this_s &) = delete;
+  this_s &operator=(this_s &&) = delete;
 
-  virtual ~port_node_t() = default;
+  virtual ~port_base_s() = default;
 
-  template <typename Function> env_status_t<this_t> set_error_handler(const Function &function) {
+  template <typename Function> struct env_status_s<this_s> set_error_handler(const Function &function) {
     return set_error_handler_<Function>(function);
   }
 
   template <typename OwnerClass, typename Function>
-  env_status_t<this_t> set_error_handler(const OwnerClass *const p_class, const Function &function) {
+  struct env_status_s<this_s> set_error_handler(const OwnerClass *const p_class, const Function &function) {
     return set_error_handler_<OwnerClass, Function>(p_class, function);
   }
 
-  port_info_t &info() const { return info_; }
-  const std::vector<port_info_t> &connected() const { return connected_; }
-  const std::vector<port_info_t>::iterator find_port(const sha256::sha256_hash_type &id,
-                                                     const sha256::sha256_hash_type &typehash) const {
+  struct port_info_s &
+  info() const {
+    return info_;
+  }
+  const std::vector<struct port_info_s> &connected() const { return connected_; }
+  const std::vector<struct port_info_s>::iterator find_port(const sha256::sha256_hash_type &id,
+                                                            const sha256::sha256_hash_type &typehash) const {
     return find_port_(id);
   }
 
@@ -51,17 +53,18 @@ public:
 
   const std::string &get_name() const { return name_; }
   uint32_t max_buffer_size() const { return BUFFER_SIZE; }
-  const struct env_base_t *env() const { return env_; }
+  const struct env_base_s *env() const { return env_; }
   void update_info() const { update_info_(); }
   void print_info() const { print_info_(); }
-  void setenv(const struct env_base_t *const p_env) const { env_ = const_cast<struct env_base_t *>(p_env); }
+  void setenv(const struct env_base_s *const p_env) const { env_ = const_cast<struct env_base_s *>(p_env); }
 
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
-  const std::vector<port_info_t>::iterator find_port_(const sha256::sha256_hash_type &id) const {
-    return std::find_if(connected_.begin(), connected_.end(),
-                        [&id](const port_info_t &part) -> bool { return sha256::sha256_from_string(part.id()) == id; });
+  const std::vector<struct port_info_s>::iterator find_port_(const sha256::sha256_hash_type &id) const {
+    return std::find_if(connected_.begin(), connected_.end(), [&id](const struct port_info_s &part) -> bool {
+      return sha256::sha256_from_string(part.id()) == id;
+    });
   }
 
   bool is_connected_(const sha256::sha256_hash_type &id) const {
@@ -88,28 +91,30 @@ private:
                 info_.component_id().c_str(), info_.composition_id().c_str());
   }
 
-  template <typename Function> env_status_t<this_t> set_error_handler_(const Function &function) {
-    env_status_t temp_status(this);
+  template <typename Function> struct env_status_s<this_s> set_error_handler_(const Function &function) {
+    struct env_status_s<this_s> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(function);
     update_info_();
-    temp_status.qualifiers.insert(std::make_pair(sha256::sha256_from_string(info_.id()), env_errno_t::ENV_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(sha256::sha256_from_string(info_.id()),
+                                                 static_cast<uint32_t>(env_errno_e::ENV_CLEAR)));
     return temp_status;
   }
 
   template <typename OwnerClass, typename Function>
-  env_status_t<this_t> set_error_handler_(const OwnerClass *const p_class, const Function &function) {
-    env_status_t temp_status(this);
+  struct env_status_s<this_s> set_error_handler_(const OwnerClass *const p_class, const Function &function) {
+    struct env_status_s<this_s> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(p_class, function);
     update_info_();
-    temp_status.qualifiers.insert(std::make_pair(sha256::sha256_from_string(info_.id()), env_errno_t::ENV_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(sha256::sha256_from_string(info_.id()),
+                                                 static_cast<uint32_t>(env_errno_e::ENV_CLEAR)));
     return temp_status;
   }
 
-  mutable struct env_base_t *env_;
+  mutable struct env_base_s *env_;
   const std::string name_;
-  mutable port_info_t info_;
-  mutable std::vector<port_info_t> connected_;
-  mutable std::vector<port_info_t> proxies_;
+  mutable struct port_info_s info_;
+  mutable std::vector<struct port_info_s> connected_;
+  mutable std::vector<struct port_info_s> proxies_;
   std::function<void(const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &)> error_handler_;
 };
 

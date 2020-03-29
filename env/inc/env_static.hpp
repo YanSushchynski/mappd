@@ -1,45 +1,63 @@
 #ifndef ENV_STATIC_HPP
 #define ENV_STATIC_HPP
 
-#include "domain_network_manager.hpp"
 #include "env_base.hpp"
 #include "env_utils.hpp"
 #include "network_manager.hpp"
 #include "port_manager.hpp"
 
-template <typename... Compositions> struct env_static_t : public env_base_t {
-public:
-  using base_t = env_base_t;
-  using this_t = env_static_t<Compositions...>;
+template <env_networking_type_e, typename...> struct env_static_s : public env_base_s {};
 
-  template <typename NameType>
-  explicit env_static_t(const NameType &name, const composition_list_static_t<Compositions...> &compositions)
-      : base_t(name), compositions_(compositions), port_manager_(this, compositions_),
-        network_manager_("12345678901234567890123456789000", this),
-        domain_network_manager_("12345678901234567890123456789000", this) {
-    compositions_.setenv(this);
+template <env_networking_type_e nt> struct env_static_sglt_gen_s {
+  template <typename Composition, typename... Compositions>
+  static struct env_static_s<nt, Composition, Compositions...> &
+  env_static_inst(const std::string &name, const cmps_list_static_s<Composition, Compositions...> &compositions) {
+    static env_static_s<nt, Composition, Compositions...> *inst_ = nullptr;
+    if (!inst_) {
+      inst_ = new env_static_s<nt, Composition, Compositions...>(name, compositions);
+    }
+
+    return *inst_;
   }
+};
 
-  explicit env_static_t(const this_t &) = default;
-  explicit env_static_t(this_t &&) = default;
-  this_t &operator=(const this_t &) = delete;
-  this_t &operator=(this_t &&) = delete;
+template <env_networking_type_e nt, typename Composition, typename... Compositions>
+struct env_static_s<nt, Composition, Compositions...> : public env_base_s {
+private:
+  using base_s = env_base_s;
+  using this_s = env_static_s<nt, Composition, Compositions...>;
 
-  virtual ~env_static_t() = default;
+  friend struct env_static_sglt_gen_s<nt>;
+  friend this_s &env_static_sglt_gen_s<nt>::env_static_inst(const std::string &,
+                                                            const cmps_list_static_s<Composition, Compositions...> &);
 
-  struct port_manager_base_t &port_manager() { return port_manager_; }
-  struct nm_t<> &network_manager() { return network_manager_; }
-  struct domain_nm_t<> &domain_network_manager() { return domain_network_manager_; }
-  struct composition_list_static_t<Compositions...> &compositions() { return compositions_; }
+public:
+  explicit env_static_s(const this_s &) = delete;
+  explicit env_static_s(this_s &&) = delete;
+  this_s &operator=(const this_s &) = delete;
+  this_s &operator=(this_s &&) = delete;
+  virtual ~env_static_s() = default;
+
+  const nm_s<nt> &nm() const { return nm_; }
 
   virtual void configure(const libconfig::Setting &env_config) override{};
-  virtual int32_t run(int32_t argc, char *argv[]) override { return 0; };
+  virtual int32_t run(int32_t argc, char *argv[]) const override { return 0; };
 
 private:
-  mutable nm_t<> network_manager_;
-  mutable domain_nm_t<> domain_network_manager_;
-  mutable port_manager_t<Compositions...> port_manager_;
-  mutable composition_list_static_t<Compositions...> compositions_;
+  /* Disabling of warning related to uninitialized reference (not critical in this case because it will be initialized
+   * later or earlier (order isn't specified) */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+  explicit env_static_s(const std::string &name, const cmps_list_static_s<Composition, Compositions...> &compositions)
+      : base_s(name), cmps_(compositions), pm_(pm_sglt_gen_s::pm_inst(this, cmps_)),
+        nm_(nm_sglt_gen_s<nt>::nm_inst("12345678901234567890123456789000", this)) {
+    cmps_.setenv(this);
+  }
+#pragma GCC diagnostic pop
+
+  const struct nm_s<nt> &nm_;
+  const struct pm_s<Composition, Compositions...> &pm_;
+  const struct cmps_list_static_s<Composition, Compositions...> &cmps_;
 };
 
 #endif /* ENV_STATIC_HPP */

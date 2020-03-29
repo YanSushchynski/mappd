@@ -138,7 +138,7 @@ static void start(const char *file) {
       if (!pid) {
 
         /* Forked - configure and run env*/
-        // env_base_t *p_env = p_env_mod->sym<env_base_t>(env_name);
+        // env_base_s *p_env = p_env_mod->sym<env_base_s>(env_name);
         // p_env->configure(env_cfg);
         // p_env->run(env_cl_argc, env_cl_argv);
         std::exit(EXIT_SUCCESS);

@@ -5,50 +5,51 @@
 
 template <typename DataType>
 struct port_t<DataType, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_SYNC>
-    : public base_sender_port_t<runtime_t::RUNTIME_SYNC, DataType> {
+    : public base_sender_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), DataType> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using data_t = DataType;
-  using this_t = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_SYNC>;
-  using base_t = base_sender_port_t<runtime_t::RUNTIME_SYNC, DataType>;
+  using this_s = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_SYNC>;
+  using base_s = base_sender_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), DataType>;
 
-  template <typename NameType> explicit port_t(const NameType &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_s(name){};
 };
 
 template <typename DataType>
 struct port_t<DataType, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_ASYNC>
-    : public base_sender_port_t<runtime_t::RUNTIME_ASYNC, DataType> {
+    : public base_sender_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), DataType> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using data_t = DataType;
-  using this_t = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_ASYNC>;
-  using base_t = base_sender_port_t<runtime_t::RUNTIME_ASYNC, DataType>;
+  using this_s = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_ASYNC>;
+  using base_s = base_sender_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), DataType>;
 
-  template <typename NameType> explicit port_t(const NameType &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_s(name){};
 };
 
 template <typename DataType>
 struct sync_sender_port_t final : public port_t<DataType, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_SYNC> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using data_t = DataType;
-  using this_t = sync_sender_port_t<data_t>;
-  using base_t = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_SYNC>;
+  using this_s = sync_sender_port_t<data_t>;
+  using base_s = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_SYNC>;
 
-  env_status_t<this_t> write(const data_t &data) {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_s> write(const data_t &data) {
+    struct env_status_s<this_s> temp_status(this);
     return this->enqueue_data(data);
   }
 
-  template <typename NameType> explicit sync_sender_port_t(const NameType &name) : base_t(name) {
+  explicit sync_sender_port_t(const std::string &name)
+      : base_s(name) {
     sha256::sha256_hash_type hash =
-        sha256::compute(reinterpret_cast<const uint8_t *>(typestr<this_t>.data()), typestr<this_t>.length());
+        sha256::compute(reinterpret_cast<const uint8_t *>(typestr<this_s>.data()), typestr<this_s>.length());
     this->info().set_port_type_hash(hash.data(), hash.size());
     this->update_info();
   };
@@ -57,27 +58,28 @@ public:
 template <typename DataType>
 struct async_sender_port_t final : public port_t<DataType, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_ASYNC> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using data_t = DataType;
-  using this_t = async_sender_port_t<data_t>;
-  using base_t = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_ASYNC>;
+  using this_s = async_sender_port_t<data_t>;
+  using base_s = port_t<data_t, port_types_t::sender_port_types_t::PORT_TYPE_SENDER_ASYNC>;
 
-  env_status_t<this_t> write(const data_t &data) {
-    env_status_t<this_t> temp_status(this);
-    auto enqueue_data_status = this->enqueue_data(data);
+  struct env_status_s<this_s> write(const data_t &data) {
+    struct env_status_s<this_s> temp_status(this);
+    auto enqueue_data_status = this -> enqueue_data(data);
 
-    if (temp_status.qualifiers.at(this->get_id()) != env_errno_t::ENV_CLEAR) {
+    if (temp_status.qualifiers.at(this->get_id()) != env_errno_e::ENV_CLEAR) {
       return temp_status;
     } else {
       return this->forward();
     }
   }
 
-  template <typename NameType> explicit async_sender_port_t(const NameType &name) : base_t(name) {
+  explicit async_sender_port_t(const std::string &name)
+      : base_s(name) {
     sha256::sha256_hash_type hash =
-        sha256::compute(reinterpret_cast<const uint8_t *>(typestr<this_t>.data()), typestr<this_t>.length());
+        sha256::compute(reinterpret_cast<const uint8_t *>(typestr<this_s>.data()), typestr<this_s>.length());
 
     this->info().set_port_type_hash(hash.data(), hash.size());
     this->update_info();

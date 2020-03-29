@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-message runtime_list_info_t {
+message runtime_list_info_s {
   required bytes id = 1 [default = ""];
   required bytes name_hash = 2 [default = ""];
   required bytes hostid = 3 [default = ""];

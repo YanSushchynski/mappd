@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-message component_info_t {
+message cmp_info_s {
   required bytes id = 1  [default = ""];
   required bytes name_hash = 2 [default = ""];
   required bytes component_type_hash = 3 [default = ""];

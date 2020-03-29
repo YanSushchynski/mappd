@@ -54,32 +54,32 @@ struct TableStruct_composition_5finfo_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_composition_5finfo_2eproto;
-class composition_info_t;
-class composition_info_tDefaultTypeInternal;
-extern composition_info_tDefaultTypeInternal _composition_info_t_default_instance_;
+class cmps_info_s;
+class cmps_info_sDefaultTypeInternal;
+extern cmps_info_sDefaultTypeInternal _cmps_info_s_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
-template<> ::composition_info_t* Arena::CreateMaybeMessage<::composition_info_t>(Arena*);
+template<> ::cmps_info_s* Arena::CreateMaybeMessage<::cmps_info_s>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 // ===================================================================
 
-class composition_info_t :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:composition_info_t) */ {
+class cmps_info_s :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:cmps_info_s) */ {
  public:
-  composition_info_t();
-  virtual ~composition_info_t();
+  cmps_info_s();
+  virtual ~cmps_info_s();
 
-  composition_info_t(const composition_info_t& from);
-  composition_info_t(composition_info_t&& from) noexcept
-    : composition_info_t() {
+  cmps_info_s(const cmps_info_s& from);
+  cmps_info_s(cmps_info_s&& from) noexcept
+    : cmps_info_s() {
     *this = ::std::move(from);
   }
 
-  inline composition_info_t& operator=(const composition_info_t& from) {
+  inline cmps_info_s& operator=(const cmps_info_s& from) {
     CopyFrom(from);
     return *this;
   }
-  inline composition_info_t& operator=(composition_info_t&& from) noexcept {
+  inline cmps_info_s& operator=(cmps_info_s&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -104,37 +104,37 @@ class composition_info_t :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const composition_info_t& default_instance();
+  static const cmps_info_s& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const composition_info_t* internal_default_instance() {
-    return reinterpret_cast<const composition_info_t*>(
-               &_composition_info_t_default_instance_);
+  static inline const cmps_info_s* internal_default_instance() {
+    return reinterpret_cast<const cmps_info_s*>(
+               &_cmps_info_s_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(composition_info_t& a, composition_info_t& b) {
+  friend void swap(cmps_info_s& a, cmps_info_s& b) {
     a.Swap(&b);
   }
-  inline void Swap(composition_info_t* other) {
+  inline void Swap(cmps_info_s* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline composition_info_t* New() const final {
-    return CreateMaybeMessage<composition_info_t>(nullptr);
+  inline cmps_info_s* New() const final {
+    return CreateMaybeMessage<cmps_info_s>(nullptr);
   }
 
-  composition_info_t* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<composition_info_t>(arena);
+  cmps_info_s* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<cmps_info_s>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const composition_info_t& from);
-  void MergeFrom(const composition_info_t& from);
+  void CopyFrom(const cmps_info_s& from);
+  void MergeFrom(const cmps_info_s& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -148,10 +148,10 @@ class composition_info_t :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(composition_info_t* other);
+  void InternalSwap(cmps_info_s* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "composition_info_t";
+    return "cmps_info_s";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -240,7 +240,7 @@ class composition_info_t :
   std::string* _internal_mutable_composition_type_hash();
   public:
 
-  // @@protoc_insertion_point(class_scope:composition_info_t)
+  // @@protoc_insertion_point(class_scope:cmps_info_s)
  private:
   class _Internal;
 
@@ -264,219 +264,219 @@ class composition_info_t :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// composition_info_t
+// cmps_info_s
 
 // required bytes id = 1 [default = ""];
-inline bool composition_info_t::_internal_has_id() const {
+inline bool cmps_info_s::_internal_has_id() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool composition_info_t::has_id() const {
+inline bool cmps_info_s::has_id() const {
   return _internal_has_id();
 }
-inline void composition_info_t::clear_id() {
+inline void cmps_info_s::clear_id() {
   id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& composition_info_t::id() const {
-  // @@protoc_insertion_point(field_get:composition_info_t.id)
+inline const std::string& cmps_info_s::id() const {
+  // @@protoc_insertion_point(field_get:cmps_info_s.id)
   return _internal_id();
 }
-inline void composition_info_t::set_id(const std::string& value) {
+inline void cmps_info_s::set_id(const std::string& value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:composition_info_t.id)
+  // @@protoc_insertion_point(field_set:cmps_info_s.id)
 }
-inline std::string* composition_info_t::mutable_id() {
-  // @@protoc_insertion_point(field_mutable:composition_info_t.id)
+inline std::string* cmps_info_s::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:cmps_info_s.id)
   return _internal_mutable_id();
 }
-inline const std::string& composition_info_t::_internal_id() const {
+inline const std::string& cmps_info_s::_internal_id() const {
   return id_.GetNoArena();
 }
-inline void composition_info_t::_internal_set_id(const std::string& value) {
+inline void cmps_info_s::_internal_set_id(const std::string& value) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void composition_info_t::set_id(std::string&& value) {
+inline void cmps_info_s::set_id(std::string&& value) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:composition_info_t.id)
+  // @@protoc_insertion_point(field_set_rvalue:cmps_info_s.id)
 }
-inline void composition_info_t::set_id(const char* value) {
+inline void cmps_info_s::set_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:composition_info_t.id)
+  // @@protoc_insertion_point(field_set_char:cmps_info_s.id)
 }
-inline void composition_info_t::set_id(const void* value, size_t size) {
+inline void cmps_info_s::set_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:composition_info_t.id)
+  // @@protoc_insertion_point(field_set_pointer:cmps_info_s.id)
 }
-inline std::string* composition_info_t::_internal_mutable_id() {
+inline std::string* cmps_info_s::_internal_mutable_id() {
   _has_bits_[0] |= 0x00000001u;
   return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* composition_info_t::release_id() {
-  // @@protoc_insertion_point(field_release:composition_info_t.id)
+inline std::string* cmps_info_s::release_id() {
+  // @@protoc_insertion_point(field_release:cmps_info_s.id)
   if (!_internal_has_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000001u;
   return id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void composition_info_t::set_allocated_id(std::string* id) {
+inline void cmps_info_s::set_allocated_id(std::string* id) {
   if (id != nullptr) {
     _has_bits_[0] |= 0x00000001u;
   } else {
     _has_bits_[0] &= ~0x00000001u;
   }
   id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
-  // @@protoc_insertion_point(field_set_allocated:composition_info_t.id)
+  // @@protoc_insertion_point(field_set_allocated:cmps_info_s.id)
 }
 
 // required bytes name_hash = 2 [default = ""];
-inline bool composition_info_t::_internal_has_name_hash() const {
+inline bool cmps_info_s::_internal_has_name_hash() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
-inline bool composition_info_t::has_name_hash() const {
+inline bool cmps_info_s::has_name_hash() const {
   return _internal_has_name_hash();
 }
-inline void composition_info_t::clear_name_hash() {
+inline void cmps_info_s::clear_name_hash() {
   name_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000002u;
 }
-inline const std::string& composition_info_t::name_hash() const {
-  // @@protoc_insertion_point(field_get:composition_info_t.name_hash)
+inline const std::string& cmps_info_s::name_hash() const {
+  // @@protoc_insertion_point(field_get:cmps_info_s.name_hash)
   return _internal_name_hash();
 }
-inline void composition_info_t::set_name_hash(const std::string& value) {
+inline void cmps_info_s::set_name_hash(const std::string& value) {
   _internal_set_name_hash(value);
-  // @@protoc_insertion_point(field_set:composition_info_t.name_hash)
+  // @@protoc_insertion_point(field_set:cmps_info_s.name_hash)
 }
-inline std::string* composition_info_t::mutable_name_hash() {
-  // @@protoc_insertion_point(field_mutable:composition_info_t.name_hash)
+inline std::string* cmps_info_s::mutable_name_hash() {
+  // @@protoc_insertion_point(field_mutable:cmps_info_s.name_hash)
   return _internal_mutable_name_hash();
 }
-inline const std::string& composition_info_t::_internal_name_hash() const {
+inline const std::string& cmps_info_s::_internal_name_hash() const {
   return name_hash_.GetNoArena();
 }
-inline void composition_info_t::_internal_set_name_hash(const std::string& value) {
+inline void cmps_info_s::_internal_set_name_hash(const std::string& value) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void composition_info_t::set_name_hash(std::string&& value) {
+inline void cmps_info_s::set_name_hash(std::string&& value) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:composition_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_rvalue:cmps_info_s.name_hash)
 }
-inline void composition_info_t::set_name_hash(const char* value) {
+inline void cmps_info_s::set_name_hash(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:composition_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_char:cmps_info_s.name_hash)
 }
-inline void composition_info_t::set_name_hash(const void* value, size_t size) {
+inline void cmps_info_s::set_name_hash(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:composition_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_pointer:cmps_info_s.name_hash)
 }
-inline std::string* composition_info_t::_internal_mutable_name_hash() {
+inline std::string* cmps_info_s::_internal_mutable_name_hash() {
   _has_bits_[0] |= 0x00000002u;
   return name_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* composition_info_t::release_name_hash() {
-  // @@protoc_insertion_point(field_release:composition_info_t.name_hash)
+inline std::string* cmps_info_s::release_name_hash() {
+  // @@protoc_insertion_point(field_release:cmps_info_s.name_hash)
   if (!_internal_has_name_hash()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000002u;
   return name_hash_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void composition_info_t::set_allocated_name_hash(std::string* name_hash) {
+inline void cmps_info_s::set_allocated_name_hash(std::string* name_hash) {
   if (name_hash != nullptr) {
     _has_bits_[0] |= 0x00000002u;
   } else {
     _has_bits_[0] &= ~0x00000002u;
   }
   name_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name_hash);
-  // @@protoc_insertion_point(field_set_allocated:composition_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_allocated:cmps_info_s.name_hash)
 }
 
 // required bytes composition_type_hash = 3 [default = ""];
-inline bool composition_info_t::_internal_has_composition_type_hash() const {
+inline bool cmps_info_s::_internal_has_composition_type_hash() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
-inline bool composition_info_t::has_composition_type_hash() const {
+inline bool cmps_info_s::has_composition_type_hash() const {
   return _internal_has_composition_type_hash();
 }
-inline void composition_info_t::clear_composition_type_hash() {
+inline void cmps_info_s::clear_composition_type_hash() {
   composition_type_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000004u;
 }
-inline const std::string& composition_info_t::composition_type_hash() const {
-  // @@protoc_insertion_point(field_get:composition_info_t.composition_type_hash)
+inline const std::string& cmps_info_s::composition_type_hash() const {
+  // @@protoc_insertion_point(field_get:cmps_info_s.composition_type_hash)
   return _internal_composition_type_hash();
 }
-inline void composition_info_t::set_composition_type_hash(const std::string& value) {
+inline void cmps_info_s::set_composition_type_hash(const std::string& value) {
   _internal_set_composition_type_hash(value);
-  // @@protoc_insertion_point(field_set:composition_info_t.composition_type_hash)
+  // @@protoc_insertion_point(field_set:cmps_info_s.composition_type_hash)
 }
-inline std::string* composition_info_t::mutable_composition_type_hash() {
-  // @@protoc_insertion_point(field_mutable:composition_info_t.composition_type_hash)
+inline std::string* cmps_info_s::mutable_composition_type_hash() {
+  // @@protoc_insertion_point(field_mutable:cmps_info_s.composition_type_hash)
   return _internal_mutable_composition_type_hash();
 }
-inline const std::string& composition_info_t::_internal_composition_type_hash() const {
+inline const std::string& cmps_info_s::_internal_composition_type_hash() const {
   return composition_type_hash_.GetNoArena();
 }
-inline void composition_info_t::_internal_set_composition_type_hash(const std::string& value) {
+inline void cmps_info_s::_internal_set_composition_type_hash(const std::string& value) {
   _has_bits_[0] |= 0x00000004u;
   composition_type_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void composition_info_t::set_composition_type_hash(std::string&& value) {
+inline void cmps_info_s::set_composition_type_hash(std::string&& value) {
   _has_bits_[0] |= 0x00000004u;
   composition_type_hash_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:composition_info_t.composition_type_hash)
+  // @@protoc_insertion_point(field_set_rvalue:cmps_info_s.composition_type_hash)
 }
-inline void composition_info_t::set_composition_type_hash(const char* value) {
+inline void cmps_info_s::set_composition_type_hash(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000004u;
   composition_type_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:composition_info_t.composition_type_hash)
+  // @@protoc_insertion_point(field_set_char:cmps_info_s.composition_type_hash)
 }
-inline void composition_info_t::set_composition_type_hash(const void* value, size_t size) {
+inline void cmps_info_s::set_composition_type_hash(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000004u;
   composition_type_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:composition_info_t.composition_type_hash)
+  // @@protoc_insertion_point(field_set_pointer:cmps_info_s.composition_type_hash)
 }
-inline std::string* composition_info_t::_internal_mutable_composition_type_hash() {
+inline std::string* cmps_info_s::_internal_mutable_composition_type_hash() {
   _has_bits_[0] |= 0x00000004u;
   return composition_type_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* composition_info_t::release_composition_type_hash() {
-  // @@protoc_insertion_point(field_release:composition_info_t.composition_type_hash)
+inline std::string* cmps_info_s::release_composition_type_hash() {
+  // @@protoc_insertion_point(field_release:cmps_info_s.composition_type_hash)
   if (!_internal_has_composition_type_hash()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000004u;
   return composition_type_hash_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void composition_info_t::set_allocated_composition_type_hash(std::string* composition_type_hash) {
+inline void cmps_info_s::set_allocated_composition_type_hash(std::string* composition_type_hash) {
   if (composition_type_hash != nullptr) {
     _has_bits_[0] |= 0x00000004u;
   } else {
     _has_bits_[0] &= ~0x00000004u;
   }
   composition_type_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), composition_type_hash);
-  // @@protoc_insertion_point(field_set_allocated:composition_info_t.composition_type_hash)
+  // @@protoc_insertion_point(field_set_allocated:cmps_info_s.composition_type_hash)
 }
 
 #ifdef __GNUC__

@@ -20,11 +20,11 @@
 
 #include "sha256.hpp"
 
-enum error_case_t : uint32_t { ERROR_CASE_CONSTRUCT, ERROR_CASE_DESTRUCT, ERROR_CASE_RUNTIME };
-enum runtime_t : uint32_t { RUNTIME_SYNC, RUNTIME_ASYNC, RUNTIME_COMMON };
-enum route_t : uint32_t { ROUTE_CONNECT, ROUTE_PROXY, ROUTE_OUT };
+enum struct error_case_e : uint32_t { ERROR_CASE_CONSTRUCT, ERROR_CASE_DESTRUCT, ERROR_CASE_RUNTIME };
+enum struct runtime_e : uint32_t { RUNTIME_SYNC, RUNTIME_ASYNC, RUNTIME_COMMON };
+enum struct route_e : uint32_t { ROUTE_CONNECT, ROUTE_PROXY, ROUTE_OUT };
 
-enum env_errno_t : uint32_t {
+enum struct env_errno_e : uint32_t {
   ENV_NOT_INITED,
   ENV_CLEAR,
   ENV_BUFFER_EMPTY,
@@ -39,9 +39,9 @@ enum env_errno_t : uint32_t {
   ENV_CALL_MISSING
 };
 
-enum hook_errno_t : uint32_t { HOOK_CLEAR, HOOK_MISSING, HOOK_EXISTS, HOOK_UNKNOWN };
-enum seq_errno_t : uint32_t { SEQ_CLEAR, SEQ_MISSING, SEQ_EXISTS, SEQ_UNKNOWN };
-enum funct_errno_t : uint32_t { FUNCT_CLEAR, FUNCT_MISSING, FUNCT_EXISTS, FUNCT_UNKNOWN };
+enum struct hook_errno_e : uint32_t { HOOK_CLEAR, HOOK_MISSING, HOOK_EXISTS, HOOK_UNKNOWN };
+enum struct seq_errno_e : uint32_t { SEQ_CLEAR, SEQ_MISSING, SEQ_EXISTS, SEQ_UNKNOWN };
+enum struct funct_errno_e : uint32_t { FUNCT_CLEAR, FUNCT_MISSING, FUNCT_EXISTS, FUNCT_UNKNOWN };
 
 template <typename... Args> struct request {
   request() : server_id(0u), request_id(0u), payload(std::forward_as_tuple(Args()...)){};
@@ -79,32 +79,32 @@ struct type_select<EntityType, typename std::enable_if<!std::is_entity_is_functi
   using type = EntityType;
 };
 
-template <typename RelatedClass> struct env_status_t {
-  using this_t = env_status_t;
+template <typename RelatedClass> struct env_status_s {
+  using this_t = struct env_status_s;
   using related_class_t = RelatedClass;
 
-  env_status_t() : ptr_related_class(nullptr), id_{0u} {};
-  env_status_t(const related_class_t *const p_class) : ptr_related_class(p_class), id_(p_class->get_id()){};
+  env_status_s() : ptr_related_class(nullptr), id_{0u} {};
+  env_status_s(const related_class_t *const p_class) : ptr_related_class(p_class), id_(p_class->get_id()){};
 
-  virtual ~env_status_t() = default;
+  virtual ~env_status_s() = default;
 
   const sha256::sha256_hash_type id_;
   const related_class_t *const ptr_related_class;
   std::map<sha256::sha256_hash_type, uint32_t> qualifiers;
 };
 
-template <typename EntityType, typename RelatedClass> struct env_data_t {
+template <typename EntityType, typename RelatedClass> struct env_data_s {
   using data_t = typename type_select<EntityType>::type;
   using related_class_t = RelatedClass;
-  using this_t = env_data_t<EntityType, related_class_t>;
+  using this_t = env_data_s<EntityType, related_class_t>;
 
-  env_data_t(const related_class_t *const p_class) : status(env_status_t(p_class)){};
-  env_data_t(const related_class_t *const p_class, const data_t &init) : status(env_status_t(p_class)), data(init){};
+  env_data_s(const related_class_t *const p_class) : status(env_status_s(p_class)){};
+  env_data_s(const related_class_t *const p_class, const data_t &init) : status(env_status_s(p_class)), data(init){};
 
-  virtual ~env_data_t() = default;
+  virtual ~env_data_s() = default;
 
   data_t data;
-  env_status_t<related_class_t> status;
+  struct env_status_s<related_class_t> status;
 };
 
 extern std::string demangle(const char *name);

@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-message composition_info_t {
+message cmps_info_s {
   required bytes id = 1 [default = ""];
   required bytes name_hash = 2 [default = ""];
   required bytes composition_type_hash = 3 [default = ""];

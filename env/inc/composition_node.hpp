@@ -1,27 +1,27 @@
-#ifndef COMPOSITION_NODE_HPP
-#define COMPOSITION_NODE_HPP
+#ifndef COMPOSITION_BASE_HPP
+#define COMPOSITION_BASE_HPP
 
 #include "env_utils.hpp"
 #include "sha256.hpp"
 
-struct composition_node_t {
+struct cmps_base_s {
 public:
-  using this_t = composition_node_t;
-  template <typename NameType> explicit composition_node_t(const NameType &name) : name_(name), env_(nullptr){};
+  using this_s = cmps_base_s;
+  explicit cmps_base_s(const std::string &name) : name_(name), env_(nullptr){};
 
-  explicit composition_node_t(const this_t &) = default;
-  explicit composition_node_t(this_t &&) = default;
-  this_t &operator=(const this_t &) = delete;
-  this_t &operator=(this_t &&) = delete;
+  explicit cmps_base_s(const this_s &) = default;
+  explicit cmps_base_s(this_s &&) = default;
+  this_s &operator=(const this_s &) = delete;
+  this_s &operator=(this_s &&) = delete;
 
-  virtual ~composition_node_t() = default;
+  virtual ~cmps_base_s() = default;
 
-  composition_info_t &info() const { return info_; }
+  struct cmps_info_s &info() const { return info_; }
 
-  const struct env_base_t *env() const { return env_; }
+  const struct env_base_s *env() const { return env_; }
 
   void print_info() const { print_info_(); }
-  void setenv(struct env_base_t *p_env) const { env_ = p_env; }
+  void setenv(struct env_base_s *p_env) const { env_ = p_env; }
   const std::string &name() const { return name_; }
 
   void update_info_base() const {
@@ -43,10 +43,10 @@ private:
                 "%s,\r\n",
                 info_.id().c_str(), info_.name_hash().c_str(), info_.composition_type_hash().c_str());
   }
-  
+
   const std::string name_;
-  mutable struct env_base_t *env_;
-  mutable composition_info_t info_;
+  mutable struct env_base_s *env_;
+  mutable struct cmps_info_s info_;
 };
 
-#endif /* COMPOSITION_NODE_HPP */
+#endif /* COMPOSITION_BASE_HPP */

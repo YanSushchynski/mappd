@@ -7,7 +7,7 @@ template <typename DataType>
 struct port_t<DataType, port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER>
     : public base_receiver_port_t<DataType> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
   static constexpr uint32_t friend_ports[] = {port_types_t::sender_port_types_t::PORT_TYPE_SENDER_SYNC,
                                               port_types_t::sender_port_types_t::PORT_TYPE_SENDER_ASYNC};
 
@@ -17,7 +17,7 @@ public:
   using this_t = port_t<data_t, port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER>;
   using name_t = typename base_t::name_t;
   static constexpr uint32_t port_type = port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER;
-  template <typename NameType> explicit port_t(const NameType &name) : base_t(name){};
+  explicit port_t(const std::string &name) : base_t(name){};
 
   template <typename PortType> constexpr bool is_friend(uint32_t type) const {
     bool is_friend = false;
@@ -33,7 +33,7 @@ public:
 template <typename DataType>
 struct receiver_port_t : public port_t<DataType, port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using data_t = DataType;
@@ -41,11 +41,11 @@ public:
   using base_t = port_t<data_t, port_types_t::receiver_port_types_t::PORT_TYPE_RECEIVER>;
   using name_t = typename base_t::name_t;
 
-  env_status_t<this_t> read(data_t &data) {
-    env_status_t<this_t> temp_status(this);
-    auto sender_response = this->dequeue_data();
+  struct env_status_s<this_t> read(data_t &data) {
+    struct env_status_s<this_t> temp_status(this);
+    auto sender_response = this -> dequeue_data();
 
-    if (sender_response.status.qualifiers.at(this->get_id()) != env_errno_t::ENV_CLEAR) {
+    if (sender_response.status.qualifiers.at(this->get_id()) != env_errno_e::ENV_CLEAR) {
 
       return sender_response.status;
     } else {
@@ -55,7 +55,8 @@ public:
     }
   }
 
-  template <typename NameType> explicit receiver_port_t(const NameType &name) : base_t(name) {
+  explicit receiver_port_t(const std::string &name)
+      : base_t(name) {
     std::string type = typestr<this_t>;
     sha256::sha256_hash_type type_hash = sha256::compute(reinterpret_cast<const uint8_t *>(type.data()), type.length());
     this->info().set_port_type_hash(type_hash.data(), type_hash.size());

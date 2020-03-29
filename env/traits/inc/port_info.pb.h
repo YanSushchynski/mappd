@@ -54,32 +54,32 @@ struct TableStruct_port_5finfo_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_port_5finfo_2eproto;
-class port_info_t;
-class port_info_tDefaultTypeInternal;
-extern port_info_tDefaultTypeInternal _port_info_t_default_instance_;
+class port_info_s;
+class port_info_sDefaultTypeInternal;
+extern port_info_sDefaultTypeInternal _port_info_s_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
-template<> ::port_info_t* Arena::CreateMaybeMessage<::port_info_t>(Arena*);
+template<> ::port_info_s* Arena::CreateMaybeMessage<::port_info_s>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 // ===================================================================
 
-class port_info_t :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:port_info_t) */ {
+class port_info_s :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:port_info_s) */ {
  public:
-  port_info_t();
-  virtual ~port_info_t();
+  port_info_s();
+  virtual ~port_info_s();
 
-  port_info_t(const port_info_t& from);
-  port_info_t(port_info_t&& from) noexcept
-    : port_info_t() {
+  port_info_s(const port_info_s& from);
+  port_info_s(port_info_s&& from) noexcept
+    : port_info_s() {
     *this = ::std::move(from);
   }
 
-  inline port_info_t& operator=(const port_info_t& from) {
+  inline port_info_s& operator=(const port_info_s& from) {
     CopyFrom(from);
     return *this;
   }
-  inline port_info_t& operator=(port_info_t&& from) noexcept {
+  inline port_info_s& operator=(port_info_s&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -104,37 +104,37 @@ class port_info_t :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const port_info_t& default_instance();
+  static const port_info_s& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const port_info_t* internal_default_instance() {
-    return reinterpret_cast<const port_info_t*>(
-               &_port_info_t_default_instance_);
+  static inline const port_info_s* internal_default_instance() {
+    return reinterpret_cast<const port_info_s*>(
+               &_port_info_s_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(port_info_t& a, port_info_t& b) {
+  friend void swap(port_info_s& a, port_info_s& b) {
     a.Swap(&b);
   }
-  inline void Swap(port_info_t* other) {
+  inline void Swap(port_info_s* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline port_info_t* New() const final {
-    return CreateMaybeMessage<port_info_t>(nullptr);
+  inline port_info_s* New() const final {
+    return CreateMaybeMessage<port_info_s>(nullptr);
   }
 
-  port_info_t* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<port_info_t>(arena);
+  port_info_s* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<port_info_s>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const port_info_t& from);
-  void MergeFrom(const port_info_t& from);
+  void CopyFrom(const port_info_s& from);
+  void MergeFrom(const port_info_s& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -148,10 +148,10 @@ class port_info_t :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(port_info_t* other);
+  void InternalSwap(port_info_s* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "port_info_t";
+    return "port_info_s";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -282,7 +282,7 @@ class port_info_t :
   std::string* _internal_mutable_component_id();
   public:
 
-  // @@protoc_insertion_point(class_scope:port_info_t)
+  // @@protoc_insertion_point(class_scope:port_info_s)
  private:
   class _Internal;
 
@@ -308,361 +308,361 @@ class port_info_t :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// port_info_t
+// port_info_s
 
 // required bytes id = 1 [default = ""];
-inline bool port_info_t::_internal_has_id() const {
+inline bool port_info_s::_internal_has_id() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool port_info_t::has_id() const {
+inline bool port_info_s::has_id() const {
   return _internal_has_id();
 }
-inline void port_info_t::clear_id() {
+inline void port_info_s::clear_id() {
   id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& port_info_t::id() const {
-  // @@protoc_insertion_point(field_get:port_info_t.id)
+inline const std::string& port_info_s::id() const {
+  // @@protoc_insertion_point(field_get:port_info_s.id)
   return _internal_id();
 }
-inline void port_info_t::set_id(const std::string& value) {
+inline void port_info_s::set_id(const std::string& value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:port_info_t.id)
+  // @@protoc_insertion_point(field_set:port_info_s.id)
 }
-inline std::string* port_info_t::mutable_id() {
-  // @@protoc_insertion_point(field_mutable:port_info_t.id)
+inline std::string* port_info_s::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:port_info_s.id)
   return _internal_mutable_id();
 }
-inline const std::string& port_info_t::_internal_id() const {
+inline const std::string& port_info_s::_internal_id() const {
   return id_.GetNoArena();
 }
-inline void port_info_t::_internal_set_id(const std::string& value) {
+inline void port_info_s::_internal_set_id(const std::string& value) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void port_info_t::set_id(std::string&& value) {
+inline void port_info_s::set_id(std::string&& value) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:port_info_t.id)
+  // @@protoc_insertion_point(field_set_rvalue:port_info_s.id)
 }
-inline void port_info_t::set_id(const char* value) {
+inline void port_info_s::set_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:port_info_t.id)
+  // @@protoc_insertion_point(field_set_char:port_info_s.id)
 }
-inline void port_info_t::set_id(const void* value, size_t size) {
+inline void port_info_s::set_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000001u;
   id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:port_info_t.id)
+  // @@protoc_insertion_point(field_set_pointer:port_info_s.id)
 }
-inline std::string* port_info_t::_internal_mutable_id() {
+inline std::string* port_info_s::_internal_mutable_id() {
   _has_bits_[0] |= 0x00000001u;
   return id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* port_info_t::release_id() {
-  // @@protoc_insertion_point(field_release:port_info_t.id)
+inline std::string* port_info_s::release_id() {
+  // @@protoc_insertion_point(field_release:port_info_s.id)
   if (!_internal_has_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000001u;
   return id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void port_info_t::set_allocated_id(std::string* id) {
+inline void port_info_s::set_allocated_id(std::string* id) {
   if (id != nullptr) {
     _has_bits_[0] |= 0x00000001u;
   } else {
     _has_bits_[0] &= ~0x00000001u;
   }
   id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id);
-  // @@protoc_insertion_point(field_set_allocated:port_info_t.id)
+  // @@protoc_insertion_point(field_set_allocated:port_info_s.id)
 }
 
 // required bytes name_hash = 2 [default = ""];
-inline bool port_info_t::_internal_has_name_hash() const {
+inline bool port_info_s::_internal_has_name_hash() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
-inline bool port_info_t::has_name_hash() const {
+inline bool port_info_s::has_name_hash() const {
   return _internal_has_name_hash();
 }
-inline void port_info_t::clear_name_hash() {
+inline void port_info_s::clear_name_hash() {
   name_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000002u;
 }
-inline const std::string& port_info_t::name_hash() const {
-  // @@protoc_insertion_point(field_get:port_info_t.name_hash)
+inline const std::string& port_info_s::name_hash() const {
+  // @@protoc_insertion_point(field_get:port_info_s.name_hash)
   return _internal_name_hash();
 }
-inline void port_info_t::set_name_hash(const std::string& value) {
+inline void port_info_s::set_name_hash(const std::string& value) {
   _internal_set_name_hash(value);
-  // @@protoc_insertion_point(field_set:port_info_t.name_hash)
+  // @@protoc_insertion_point(field_set:port_info_s.name_hash)
 }
-inline std::string* port_info_t::mutable_name_hash() {
-  // @@protoc_insertion_point(field_mutable:port_info_t.name_hash)
+inline std::string* port_info_s::mutable_name_hash() {
+  // @@protoc_insertion_point(field_mutable:port_info_s.name_hash)
   return _internal_mutable_name_hash();
 }
-inline const std::string& port_info_t::_internal_name_hash() const {
+inline const std::string& port_info_s::_internal_name_hash() const {
   return name_hash_.GetNoArena();
 }
-inline void port_info_t::_internal_set_name_hash(const std::string& value) {
+inline void port_info_s::_internal_set_name_hash(const std::string& value) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void port_info_t::set_name_hash(std::string&& value) {
+inline void port_info_s::set_name_hash(std::string&& value) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:port_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_rvalue:port_info_s.name_hash)
 }
-inline void port_info_t::set_name_hash(const char* value) {
+inline void port_info_s::set_name_hash(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:port_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_char:port_info_s.name_hash)
 }
-inline void port_info_t::set_name_hash(const void* value, size_t size) {
+inline void port_info_s::set_name_hash(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000002u;
   name_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:port_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_pointer:port_info_s.name_hash)
 }
-inline std::string* port_info_t::_internal_mutable_name_hash() {
+inline std::string* port_info_s::_internal_mutable_name_hash() {
   _has_bits_[0] |= 0x00000002u;
   return name_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* port_info_t::release_name_hash() {
-  // @@protoc_insertion_point(field_release:port_info_t.name_hash)
+inline std::string* port_info_s::release_name_hash() {
+  // @@protoc_insertion_point(field_release:port_info_s.name_hash)
   if (!_internal_has_name_hash()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000002u;
   return name_hash_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void port_info_t::set_allocated_name_hash(std::string* name_hash) {
+inline void port_info_s::set_allocated_name_hash(std::string* name_hash) {
   if (name_hash != nullptr) {
     _has_bits_[0] |= 0x00000002u;
   } else {
     _has_bits_[0] &= ~0x00000002u;
   }
   name_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name_hash);
-  // @@protoc_insertion_point(field_set_allocated:port_info_t.name_hash)
+  // @@protoc_insertion_point(field_set_allocated:port_info_s.name_hash)
 }
 
 // required bytes port_type_hash = 3 [default = ""];
-inline bool port_info_t::_internal_has_port_type_hash() const {
+inline bool port_info_s::_internal_has_port_type_hash() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
-inline bool port_info_t::has_port_type_hash() const {
+inline bool port_info_s::has_port_type_hash() const {
   return _internal_has_port_type_hash();
 }
-inline void port_info_t::clear_port_type_hash() {
+inline void port_info_s::clear_port_type_hash() {
   port_type_hash_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000004u;
 }
-inline const std::string& port_info_t::port_type_hash() const {
-  // @@protoc_insertion_point(field_get:port_info_t.port_type_hash)
+inline const std::string& port_info_s::port_type_hash() const {
+  // @@protoc_insertion_point(field_get:port_info_s.port_type_hash)
   return _internal_port_type_hash();
 }
-inline void port_info_t::set_port_type_hash(const std::string& value) {
+inline void port_info_s::set_port_type_hash(const std::string& value) {
   _internal_set_port_type_hash(value);
-  // @@protoc_insertion_point(field_set:port_info_t.port_type_hash)
+  // @@protoc_insertion_point(field_set:port_info_s.port_type_hash)
 }
-inline std::string* port_info_t::mutable_port_type_hash() {
-  // @@protoc_insertion_point(field_mutable:port_info_t.port_type_hash)
+inline std::string* port_info_s::mutable_port_type_hash() {
+  // @@protoc_insertion_point(field_mutable:port_info_s.port_type_hash)
   return _internal_mutable_port_type_hash();
 }
-inline const std::string& port_info_t::_internal_port_type_hash() const {
+inline const std::string& port_info_s::_internal_port_type_hash() const {
   return port_type_hash_.GetNoArena();
 }
-inline void port_info_t::_internal_set_port_type_hash(const std::string& value) {
+inline void port_info_s::_internal_set_port_type_hash(const std::string& value) {
   _has_bits_[0] |= 0x00000004u;
   port_type_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void port_info_t::set_port_type_hash(std::string&& value) {
+inline void port_info_s::set_port_type_hash(std::string&& value) {
   _has_bits_[0] |= 0x00000004u;
   port_type_hash_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:port_info_t.port_type_hash)
+  // @@protoc_insertion_point(field_set_rvalue:port_info_s.port_type_hash)
 }
-inline void port_info_t::set_port_type_hash(const char* value) {
+inline void port_info_s::set_port_type_hash(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000004u;
   port_type_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:port_info_t.port_type_hash)
+  // @@protoc_insertion_point(field_set_char:port_info_s.port_type_hash)
 }
-inline void port_info_t::set_port_type_hash(const void* value, size_t size) {
+inline void port_info_s::set_port_type_hash(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000004u;
   port_type_hash_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:port_info_t.port_type_hash)
+  // @@protoc_insertion_point(field_set_pointer:port_info_s.port_type_hash)
 }
-inline std::string* port_info_t::_internal_mutable_port_type_hash() {
+inline std::string* port_info_s::_internal_mutable_port_type_hash() {
   _has_bits_[0] |= 0x00000004u;
   return port_type_hash_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* port_info_t::release_port_type_hash() {
-  // @@protoc_insertion_point(field_release:port_info_t.port_type_hash)
+inline std::string* port_info_s::release_port_type_hash() {
+  // @@protoc_insertion_point(field_release:port_info_s.port_type_hash)
   if (!_internal_has_port_type_hash()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000004u;
   return port_type_hash_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void port_info_t::set_allocated_port_type_hash(std::string* port_type_hash) {
+inline void port_info_s::set_allocated_port_type_hash(std::string* port_type_hash) {
   if (port_type_hash != nullptr) {
     _has_bits_[0] |= 0x00000004u;
   } else {
     _has_bits_[0] &= ~0x00000004u;
   }
   port_type_hash_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), port_type_hash);
-  // @@protoc_insertion_point(field_set_allocated:port_info_t.port_type_hash)
+  // @@protoc_insertion_point(field_set_allocated:port_info_s.port_type_hash)
 }
 
 // required bytes composition_id = 4 [default = ""];
-inline bool port_info_t::_internal_has_composition_id() const {
+inline bool port_info_s::_internal_has_composition_id() const {
   bool value = (_has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
-inline bool port_info_t::has_composition_id() const {
+inline bool port_info_s::has_composition_id() const {
   return _internal_has_composition_id();
 }
-inline void port_info_t::clear_composition_id() {
+inline void port_info_s::clear_composition_id() {
   composition_id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000008u;
 }
-inline const std::string& port_info_t::composition_id() const {
-  // @@protoc_insertion_point(field_get:port_info_t.composition_id)
+inline const std::string& port_info_s::composition_id() const {
+  // @@protoc_insertion_point(field_get:port_info_s.composition_id)
   return _internal_composition_id();
 }
-inline void port_info_t::set_composition_id(const std::string& value) {
+inline void port_info_s::set_composition_id(const std::string& value) {
   _internal_set_composition_id(value);
-  // @@protoc_insertion_point(field_set:port_info_t.composition_id)
+  // @@protoc_insertion_point(field_set:port_info_s.composition_id)
 }
-inline std::string* port_info_t::mutable_composition_id() {
-  // @@protoc_insertion_point(field_mutable:port_info_t.composition_id)
+inline std::string* port_info_s::mutable_composition_id() {
+  // @@protoc_insertion_point(field_mutable:port_info_s.composition_id)
   return _internal_mutable_composition_id();
 }
-inline const std::string& port_info_t::_internal_composition_id() const {
+inline const std::string& port_info_s::_internal_composition_id() const {
   return composition_id_.GetNoArena();
 }
-inline void port_info_t::_internal_set_composition_id(const std::string& value) {
+inline void port_info_s::_internal_set_composition_id(const std::string& value) {
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void port_info_t::set_composition_id(std::string&& value) {
+inline void port_info_s::set_composition_id(std::string&& value) {
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:port_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_rvalue:port_info_s.composition_id)
 }
-inline void port_info_t::set_composition_id(const char* value) {
+inline void port_info_s::set_composition_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:port_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_char:port_info_s.composition_id)
 }
-inline void port_info_t::set_composition_id(const void* value, size_t size) {
+inline void port_info_s::set_composition_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000008u;
   composition_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:port_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_pointer:port_info_s.composition_id)
 }
-inline std::string* port_info_t::_internal_mutable_composition_id() {
+inline std::string* port_info_s::_internal_mutable_composition_id() {
   _has_bits_[0] |= 0x00000008u;
   return composition_id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* port_info_t::release_composition_id() {
-  // @@protoc_insertion_point(field_release:port_info_t.composition_id)
+inline std::string* port_info_s::release_composition_id() {
+  // @@protoc_insertion_point(field_release:port_info_s.composition_id)
   if (!_internal_has_composition_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000008u;
   return composition_id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void port_info_t::set_allocated_composition_id(std::string* composition_id) {
+inline void port_info_s::set_allocated_composition_id(std::string* composition_id) {
   if (composition_id != nullptr) {
     _has_bits_[0] |= 0x00000008u;
   } else {
     _has_bits_[0] &= ~0x00000008u;
   }
   composition_id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), composition_id);
-  // @@protoc_insertion_point(field_set_allocated:port_info_t.composition_id)
+  // @@protoc_insertion_point(field_set_allocated:port_info_s.composition_id)
 }
 
 // required bytes component_id = 5 [default = ""];
-inline bool port_info_t::_internal_has_component_id() const {
+inline bool port_info_s::_internal_has_component_id() const {
   bool value = (_has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
-inline bool port_info_t::has_component_id() const {
+inline bool port_info_s::has_component_id() const {
   return _internal_has_component_id();
 }
-inline void port_info_t::clear_component_id() {
+inline void port_info_s::clear_component_id() {
   component_id_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000010u;
 }
-inline const std::string& port_info_t::component_id() const {
-  // @@protoc_insertion_point(field_get:port_info_t.component_id)
+inline const std::string& port_info_s::component_id() const {
+  // @@protoc_insertion_point(field_get:port_info_s.component_id)
   return _internal_component_id();
 }
-inline void port_info_t::set_component_id(const std::string& value) {
+inline void port_info_s::set_component_id(const std::string& value) {
   _internal_set_component_id(value);
-  // @@protoc_insertion_point(field_set:port_info_t.component_id)
+  // @@protoc_insertion_point(field_set:port_info_s.component_id)
 }
-inline std::string* port_info_t::mutable_component_id() {
-  // @@protoc_insertion_point(field_mutable:port_info_t.component_id)
+inline std::string* port_info_s::mutable_component_id() {
+  // @@protoc_insertion_point(field_mutable:port_info_s.component_id)
   return _internal_mutable_component_id();
 }
-inline const std::string& port_info_t::_internal_component_id() const {
+inline const std::string& port_info_s::_internal_component_id() const {
   return component_id_.GetNoArena();
 }
-inline void port_info_t::_internal_set_component_id(const std::string& value) {
+inline void port_info_s::_internal_set_component_id(const std::string& value) {
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void port_info_t::set_component_id(std::string&& value) {
+inline void port_info_s::set_component_id(std::string&& value) {
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:port_info_t.component_id)
+  // @@protoc_insertion_point(field_set_rvalue:port_info_s.component_id)
 }
-inline void port_info_t::set_component_id(const char* value) {
+inline void port_info_s::set_component_id(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:port_info_t.component_id)
+  // @@protoc_insertion_point(field_set_char:port_info_s.component_id)
 }
-inline void port_info_t::set_component_id(const void* value, size_t size) {
+inline void port_info_s::set_component_id(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000010u;
   component_id_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:port_info_t.component_id)
+  // @@protoc_insertion_point(field_set_pointer:port_info_s.component_id)
 }
-inline std::string* port_info_t::_internal_mutable_component_id() {
+inline std::string* port_info_s::_internal_mutable_component_id() {
   _has_bits_[0] |= 0x00000010u;
   return component_id_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* port_info_t::release_component_id() {
-  // @@protoc_insertion_point(field_release:port_info_t.component_id)
+inline std::string* port_info_s::release_component_id() {
+  // @@protoc_insertion_point(field_release:port_info_s.component_id)
   if (!_internal_has_component_id()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000010u;
   return component_id_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void port_info_t::set_allocated_component_id(std::string* component_id) {
+inline void port_info_s::set_allocated_component_id(std::string* component_id) {
   if (component_id != nullptr) {
     _has_bits_[0] |= 0x00000010u;
   } else {
     _has_bits_[0] &= ~0x00000010u;
   }
   component_id_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), component_id);
-  // @@protoc_insertion_point(field_set_allocated:port_info_t.component_id)
+  // @@protoc_insertion_point(field_set_allocated:port_info_s.component_id)
 }
 
 #ifdef __GNUC__

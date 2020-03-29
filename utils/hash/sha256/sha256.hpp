@@ -91,6 +91,7 @@ private:
 
 using sha256_hash_type = sha256_hash_t<uint8_t, 32u>;
 sha256_hash_type compute(const void *const data, const size_t size);
+sha256_hash_type compute(const std::string &str);
 sha256_hash_type sha256_from_string(const std::string &data);
 sha256_hash_type sha256_from_array(const void *const data, size_t size);
 

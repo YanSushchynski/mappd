@@ -5,49 +5,45 @@
 
 template <typename RetType, typename... Args>
 struct port_t<RetType(Args...), port_types_t::server_port_types_t::PORT_TYPE_SERVER_SYNC>
-    : public base_server_port_t<runtime_t::RUNTIME_SYNC, RetType(Args...)> {
+  : public base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), RetType(Args...)> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using function_t = RetType(Args...);
-  using base_t = base_server_port_t<runtime_t::RUNTIME_SYNC, function_t>;
+  using base_t = base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_SYNC), function_t>;
   using this_t = port_t<function_t, port_types_t::server_port_types_t::PORT_TYPE_SERVER_SYNC>;
 
-  template <typename NameType> explicit port_t(const NameType &name) : base_t(name){};
-
-  template <typename NameType>
+  explicit port_t(const std::string &name) : base_t(name){};
   explicit port_t(
-      const NameType &name,
+      const std::string &name,
       const std::initializer_list<const std::pair<const std::string &, const std::function<function_t> &>> calls_list)
       : base_t(name, calls_list){};
 
-  template <typename NameType, typename... Functions>
-  explicit port_t(const NameType &name, const std::pair<const std::string &, const Functions &> &... functions)
+  template <typename... Functions>
+  explicit port_t(const std::string &name, const std::pair<const std::string &, const Functions &> &... functions)
       : base_t(name, functions...){};
 };
 
 template <typename RetType, typename... Args>
 struct port_t<RetType(Args...), port_types_t::server_port_types_t::PORT_TYPE_SERVER_ASYNC>
-    : public base_server_port_t<runtime_t::RUNTIME_ASYNC, RetType(Args...)> {
+  : public base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), RetType(Args...)> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using function_t = RetType(Args...);
-  using base_t = base_server_port_t<runtime_t::RUNTIME_ASYNC, function_t>;
+  using base_t = base_server_port_t<static_cast<uint32_t>(runtime_e::RUNTIME_ASYNC), function_t>;
   using this_t = port_t<function_t, port_types_t::server_port_types_t::PORT_TYPE_SERVER_ASYNC>;
 
-  template <typename NameType> explicit port_t(const NameType &name) : base_t(name){};
-
-  template <typename NameType>
+  explicit port_t(const std::string &name) : base_t(name){};
   explicit port_t(
-      const NameType &name,
+      const std::string &name,
       const std::initializer_list<const std::pair<const std::string &, const std::function<function_t> &>> &calls_list)
       : base_t(name, calls_list){};
 
-  template <typename NameType, typename... Functions>
-  explicit port_t(const NameType &name, const std::pair<const std::string &, const Functions &> &... functions)
+  template <typename... Functions>
+  explicit port_t(const std::string &name, const std::pair<const std::string &, const Functions &> &... functions)
       : base_t(name, functions...){};
 };
 
@@ -55,7 +51,7 @@ template <typename Prototype>
 struct sync_server_port_t final : public port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                                                 port_types_t::server_port_types_t::PORT_TYPE_SERVER_SYNC> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using this_t = sync_server_port_t<Prototype>;
@@ -64,7 +60,7 @@ public:
   using function_t = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                             port_types_t::server_port_types_t::PORT_TYPE_SERVER_SYNC>;
 
-  template <typename NameType> explicit sync_server_port_t(const NameType &name) : base_t(name) {
+  explicit sync_server_port_t(const std::string &name) : base_t(name) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -73,9 +69,8 @@ public:
     this->update_info();
   };
 
-  template <typename NameType>
   explicit sync_server_port_t(
-      const NameType &name,
+      const std::string &name,
       const std::initializer_list<
           const std::pair<const std::string &,
                           const std::function<typename std::function_traits::function_traits<Prototype>::function_t> &>>
@@ -89,8 +84,8 @@ public:
     this->update_info();
   };
 
-  template <typename NameType, typename... Functions>
-  explicit sync_server_port_t(const NameType &name,
+  template <typename... Functions>
+  explicit sync_server_port_t(const std::string &name,
                               const std::pair<const std::string &, const Functions &> &... functions)
       : base_t(name, functions...) {
     std::string this_type = typestr<this_t>;
@@ -106,7 +101,7 @@ template <typename Prototype>
 struct async_server_port_t final : public port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                                                  port_types_t::server_port_types_t::PORT_TYPE_SERVER_ASYNC> {
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
 public:
   using this_t = async_server_port_t<Prototype>;
@@ -115,7 +110,7 @@ public:
   using function_t = port_t<typename std::function_traits::function_traits<Prototype>::function_t,
                             port_types_t::server_port_types_t::PORT_TYPE_SERVER_ASYNC>;
 
-  template <typename NameType> explicit async_server_port_t(const NameType &name) : base_t(name) {
+  explicit async_server_port_t(const std::string &name) : base_t(name) {
     std::string this_type = typestr<this_t>;
     sha256::sha256_hash_type hash =
         sha256::compute(reinterpret_cast<const uint8_t *>(this_type.data()), this_type.length());
@@ -124,9 +119,8 @@ public:
     this->update_info();
   };
 
-  template <typename NameType>
   explicit async_server_port_t(
-      const NameType &name,
+      const std::string &name,
       const std::initializer_list<
           const std::pair<const std::string &,
                           const std::function<typename std::function_traits::function_traits<Prototype>::function_t> &>>
@@ -140,8 +134,8 @@ public:
     this->update_info();
   };
 
-  template <typename NameType, typename... Functions>
-  explicit async_server_port_t(const NameType &name,
+  template <typename... Functions>
+  explicit async_server_port_t(const std::string &name,
                                const std::pair<const std::string &, const Functions &> &... functions)
       : base_t(name, functions...) {
     std::string this_type = typestr<this_t>;

@@ -5,30 +5,29 @@
 #include "composition_node.hpp"
 #include "port_list_static.hpp"
 
-template <typename...> struct composition_static_t {};
+template <typename...> struct cmps_static_s {};
 
 template <template <typename...> class ComponentList, typename... Components, template <typename...> class PortList,
           typename... Ports>
-struct composition_static_t<PortList<Ports...>, ComponentList<Components...>> : public composition_node_t {
-  using this_t = composition_static_t<PortList<Ports...>, ComponentList<Components...>>;
+struct cmps_static_s<PortList<Ports...>, ComponentList<Components...>> : public cmps_base_s {
+  using this_t = cmps_static_s<PortList<Ports...>, ComponentList<Components...>>;
   using component_list_static_t = ComponentList<Components...>;
   using port_list_static_t = PortList<Ports...>;
-  using base_t = composition_node_t;
-
+  using base_s = cmps_base_s;
+  
   static constexpr uint32_t port_list_size = sizeof...(Ports);
   static constexpr uint32_t component_list_size = sizeof...(Components);
 
-  template <typename NameType>
-  explicit composition_static_t(const NameType &name, const port_list_static_t &ports,
-                                const component_list_static_t &components)
-      : base_t(name), component_list_(components), port_list_(ports) {
+  explicit cmps_static_s(const std::string &name, const port_list_static_t &ports,
+                         const component_list_static_t &components)
+      : base_s(name), component_list_(components), port_list_(ports) {
     update_info();
   }
 
-  virtual ~composition_static_t() = default;
+  virtual ~cmps_static_s() = default;
 
-  void setenv(struct env_base_t *const p_env) const {
-    this->base_t::setenv(p_env);
+  void setenv(struct env_base_s *const p_env) const {
+    this->base_s::setenv(p_env);
     component_list_.setenv(p_env);
     port_list_.setenv(p_env);
   }
@@ -39,7 +38,7 @@ struct composition_static_t<PortList<Ports...>, ComponentList<Components...>> : 
         sha256::compute(reinterpret_cast<const uint8_t *>(typestr<this_t>.data()), typestr<this_t>.length());
 
     this->info().set_composition_type_hash(type_hash.data(), type_hash.size());
-    this->base_t::update_info_base();
+    this->base_s::update_info_base();
     for (unsigned int i = 0; i < port_list_size; i++)
       std::visit_at(
           i,
@@ -71,27 +70,25 @@ private:
 template <template <typename...> class CompositionList, typename... Compositions,
           template <typename...> class ComponentList, typename... Components, template <typename...> class PortList,
           typename... Ports>
-struct composition_static_t<PortList<Ports...>, ComponentList<Components...>, CompositionList<Compositions...>>
-    : public composition_node_t {
-  using this_t = composition_static_t<PortList<Ports...>, ComponentList<Components...>>;
+struct cmps_static_s<PortList<Ports...>, ComponentList<Components...>, CompositionList<Compositions...>>
+    : public cmps_base_s {
+  using this_t = cmps_static_s<PortList<Ports...>, ComponentList<Components...>>;
   using composition_list_static_t = CompositionList<Compositions...>;
   using component_list_static_t = ComponentList<Components...>;
   using port_list_static_t = PortList<Ports...>;
-  using base_t = composition_node_t;
+  using base_s = cmps_base_s;
 
   static constexpr uint32_t port_list_size = sizeof...(Ports);
   static constexpr uint32_t component_list_size = sizeof...(Components);
   static constexpr uint32_t composition_list_size = sizeof...(Compositions);
 
-  template <typename NameType>
-  explicit composition_static_t(const NameType &name, const port_list_static_t &ports,
-                                const component_list_static_t &components,
-                                const composition_list_static_t &compositions)
-      : base_t(name), composition_list_(compositions), component_list_(components), port_list_(ports) {
+  explicit cmps_static_s(const std::string &name, const port_list_static_t &ports,
+                         const component_list_static_t &components, const composition_list_static_t &compositions)
+      : base_s(name), composition_list_(compositions), component_list_(components), port_list_(ports) {
     update_info();
   }
 
-  virtual ~composition_static_t() = default;
+  virtual ~cmps_static_s() = default;
 
   void update_info() const {
 
@@ -119,8 +116,8 @@ struct composition_static_t<PortList<Ports...>, ComponentList<Components...>, Co
           component_list_);
   }
 
-  void setenv(struct env_base_t *const p_env) const {
-    this->base_t::setenv(p_env);
+  void setenv(struct env_base_s *const p_env) const {
+    this->base_s::setenv(p_env);
     component_list_.setenv(p_env);
     port_list_.setenv(p_env);
   }
@@ -135,15 +132,14 @@ private:
   const port_list_static_t port_list_;
 };
 
-template <typename NameType, typename... Components, typename... Ports>
-explicit composition_static_t(const NameType &, const port_list_static_t<Ports...> &,
-                              const component_list_static_t<Components...> &)
-    ->composition_static_t<port_list_static_t<Ports...>, component_list_static_t<Components...>>;
+template <typename... Components, typename... Ports>
+explicit cmps_static_s(const std::string &, const port_list_static_s<Ports...> &,
+                       const cmp_list_static_s<Components...> &)
+    ->cmps_static_s<port_list_static_s<Ports...>, cmp_list_static_s<Components...>>;
 
-template <typename NameType, typename... Compositions, typename... Components, typename... Ports>
-explicit composition_static_t(const NameType &, const port_list_static_t<Ports...> &,
-                              const component_list_static_t<Components...> &, const std::tuple<Compositions...> &)
-    ->composition_static_t<port_list_static_t<Ports...>, component_list_static_t<Components...>,
-                           std::tuple<Compositions...>>;
+template <typename... Compositions, typename... Components, typename... Ports>
+explicit cmps_static_s(const std::string &, const port_list_static_s<Ports...> &,
+                       const cmp_list_static_s<Components...> &, const std::tuple<Compositions...> &)
+    ->cmps_static_s<port_list_static_s<Ports...>, cmp_list_static_s<Components...>, std::tuple<Compositions...>>;
 
 #endif /* COMPOSITION_HPP */

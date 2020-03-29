@@ -23,7 +23,7 @@ public:
         last_state_(std::remove_reference_t<return_t>()), hash_(types_hash<Class, RetType, Args...>()),
         base_(std::function_traits::to_std_function(function)), sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
   template <typename FunctionType>
   explicit functor_t(Class *p_class, const FunctionType &function)
@@ -32,23 +32,23 @@ public:
         last_state_(std::remove_reference_t<return_t>()), hash_(types_hash<Class, RetType, Args...>()),
         base_(std::function_traits::to_std_function(p_class, function)), sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit functor_t(const NameType &name, const FunctionType &function)
+  template <typename FunctionType>
+  explicit functor_t(const std::string &name, const FunctionType &function)
       : call_count_(0u), id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         last_state_(std::remove_reference_t<return_t>()), hash_(types_hash<Class, RetType, Args...>()),
         base_(std::function_traits::to_std_function(function)), sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit functor_t(const NameType &name, Class *p_class, const FunctionType &function)
+  template <typename FunctionType>
+  explicit functor_t(const std::string &name, Class *p_class, const FunctionType &function)
       : call_count_(0u), id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         last_state_(std::remove_reference_t<return_t>()), hash_(types_hash<Class, RetType, Args...>()),
         base_(std::function_traits::to_std_function(p_class, function)), sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
   virtual ~functor_t() = default;
 
@@ -70,22 +70,25 @@ public:
   const sequence_t<function_t, Class> &get_sequence() const { return sequence_; }
   const std::function<function_t> &get_base() const { return base_; }
 
-  template <typename Function> env_status_t<this_t> set_error_handler(const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  template <typename Function> struct env_status_s<this_t> set_error_handler(const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(function);
-    temp_status.qualifiers.insert(std::make_pair(this->get_id(), funct_errno_t::FUNCT_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(this->get_id(), static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR)));
     return temp_status;
   }
 
   template <typename OwnerClass, typename Function>
-  env_status_t<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(p_class, function);
-    temp_status.qualifiers.insert(std::make_pair(this->get_id(), funct_errno_t::FUNCT_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(this->get_id(), static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR)));
     return temp_status;
   }
 
-  const uint64_t &call_count() const { return call_count_; }
+  const uint64_t &
+  call_count() const {
+    return call_count_;
+  }
   const sha256::sha256_hash_type &get_id() const { return id_; }
 
 private:
@@ -113,7 +116,7 @@ public:
         hash_(types_hash<Class, void, Args...>()), base_(std::function_traits::to_std_function(function)),
         sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
   template <typename FunctionType>
   explicit functor_t(Class *p_class, const FunctionType &function)
@@ -122,23 +125,23 @@ public:
         hash_(types_hash<Class, void, Args...>()), base_(std::function_traits::to_std_function(p_class, function)),
         sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit functor_t(const NameType &name, const FunctionType &function)
+  template <typename FunctionType>
+  explicit functor_t(const std::string &name, const FunctionType &function)
       : call_count_(0u), id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         hash_(types_hash<Class, void, Args...>()), base_(std::function_traits::to_std_function(function)),
         sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit functor_t(const NameType &name, Class *p_class, const FunctionType &function)
+  template <typename FunctionType>
+  explicit functor_t(const std::string &name, Class *p_class, const FunctionType &function)
       : call_count_(0u), id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         hash_(types_hash<Class, void, Args...>()), base_(std::function_traits::to_std_function(p_class, function)),
         sequence_(sequence_t(base_)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &,
-                          const uint32_t & = error_case_t::ERROR_CASE_RUNTIME) -> void {}){};
+                          const uint32_t & = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {}){};
 
   virtual ~functor_t() = default;
 
@@ -159,22 +162,25 @@ public:
   const sequence_t<function_t, Class> &get_sequence() const { return sequence_; }
   const std::function<function_t> &get_base() const { return base_; }
 
-  template <typename Function> env_status_t<this_t> set_error_handler(const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  template <typename Function> struct env_status_s<this_t> set_error_handler(const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(function);
-    temp_status.qualifiers.insert(std::make_pair(this->get_id(), funct_errno_t::FUNCT_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(this->get_id(), static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR)));
     return temp_status;
   }
 
   template <typename OwnerClass, typename Function>
-  env_status_t<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(p_class, function);
-    temp_status.qualifiers.insert(std::make_pair(this->get_id(), funct_errno_t::FUNCT_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(this->get_id(), static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR)));
     return temp_status;
   }
 
-  const uint64_t &call_count() const { return call_count_; }
+  const uint64_t &
+  call_count() const {
+    return call_count_;
+  }
   const sha256::sha256_hash_type &get_id() const { return id_; }
 
 private:

@@ -13,7 +13,7 @@ public:
   using name_t = typename base_t::name_t;
 
 private:
-  friend struct env_base_t;
+  friend struct env_base_s;
 
   using buffer_t_ = std::vector<data_t>;
 
@@ -27,69 +27,81 @@ private:
   const hook_t<void(const data_t &)> &get_on_receive_() const { return hook_; }
   const functor_t<data_t &(data_t &), this_t> &get_reader_() const { return reader_; }
 
-  template <typename Function> env_status_t<this_t> set_reader_(Function function) {
-    env_status_t<this_t> temp(this);
+  template <typename Function> struct env_status_s<this_t> set_reader_(Function function) {
+    struct env_status_s<this_t> temp(this);
     reader_.assign(functor_t<data_t &(data_t &), this_t>(function));
-    temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_CLEAR));
+    temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_CLEAR));
     return temp;
   }
 
-  env_status_t<this_t> reset_reader_() {
-    env_status_t<this_t> temp(this);
+  struct env_status_s<this_t>
+  reset_reader_() {
+    struct env_status_s<this_t> temp(this);
     reader_.assign(functor_t<data_t &(data_t &), this_t>([](data_t &lvr_data) -> data_t & { return lvr_data; }));
-    temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_CLEAR));
+    temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_CLEAR));
     return temp;
   }
 
-  env_data_t<data_t, this_t> dequeue_data_() {
-    env_data_t<data_t, this_t> temp(this);
+  struct env_data_s<data_t, this_t>
+  dequeue_data_() {
+    struct env_data_s<data_t, this_t> temp(this);
 
     if (buffer_.empty()) {
 
-      temp.status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_BUFFER_EMPTY));
+      temp.status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_BUFFER_EMPTY));
       this->error_handler()(this->get_id(), temp.status.qualifiers.at(this->get_id()),
-                            error_case_t::ERROR_CASE_RUNTIME);
+                            error_case_e::ERROR_CASE_RUNTIME);
       return temp;
 
     } else {
 
-      temp.status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_CLEAR));
+      temp.status.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_CLEAR));
       temp.data = reader_(buffer_.front());
       buffer_.erase(buffer_.begin());
       return temp;
     }
   }
 
-  env_status_t<this_t> enqueue_data_(const data_t &data) {
-    env_status_t<this_t> temp(this);
+  struct env_status_s<this_t>
+  enqueue_data_(const data_t &data) {
+    struct env_status_s<this_t> temp(this);
 
     if (buffer_.size() < queue_size_) {
 
       buffer_.push_back(data);
-      temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_CLEAR));
+      temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_CLEAR));
       return temp;
 
     } else {
 
-      temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_t::ENV_BUFFER_OVERFLOW));
-      this->error_handler()(this->get_id(), temp.qualifiers.at(this->get_id()), error_case_t::ERROR_CASE_RUNTIME);
+      temp.qualifiers.insert(std::make_pair(this->get_id(), env_errno_e::ENV_BUFFER_OVERFLOW));
+      this->error_handler()(this->get_id(), temp.qualifiers.at(this->get_id()), error_case_e::ERROR_CASE_RUNTIME);
       return temp;
     }
   }
 
-public:
-  const uint64_t &buffer_size() const { return buffer_size_(); }
+  public : const uint64_t &
+           buffer_size() const {
+    return buffer_size_();
+  }
   const uint64_t &read_count() const { return read_count_(); }
-  template <typename Function> env_status_t<this_t> set_reader(Function function) { return set_reader_(function); }
+  template <typename Function> struct env_status_s<this_t> set_reader(Function function) {
+    return set_reader_(function);
+  }
 
-  env_status_t<this_t> reset_reader() { return reset_reader_(); }
-  env_data_t<data_t, this_t> dequeue_data() { return dequeue_data_(); }
-  env_status_t<this_t> enqueue_data(const data_t &data) { return enqueue_data_(data); }
-  const hook_t<void(const data_t &)> &on_receive() const { return get_on_receive_(); }
+  struct env_status_s<this_t>
+  reset_reader() {
+    return reset_reader_();
+  } struct env_data_s<data_t, this_t> dequeue_data() {
+    return dequeue_data_();
+  } struct env_status_s<this_t> enqueue_data(const data_t &data) {
+    return enqueue_data_(data);
+  } const hook_t<void(const data_t &)> &on_receive() const {
+    return get_on_receive_();
+  }
   const functor_t<data_t &(data_t &), this_t> &reader() const { return reader_(); }
 
-  template <typename NameType>
-  explicit base_receiver_port_t(const NameType &name)
+  explicit base_receiver_port_t(const std::string &name)
       : base_t(name), queue_size_(this->BUFFER_SIZE),
         reader_(functor_t([](data_t &lvr_data) -> data_t & { return lvr_data; })){};
 };

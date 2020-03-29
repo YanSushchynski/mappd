@@ -30,16 +30,16 @@ TEST(Functor, copy_count_check) {
     functor_t functor_(&test_, &Test::slot_copy_check); /* +0 because return type is void, so
                                                            functor_t does not has last state */
 
-    uint32_t functor_error_id = funct_errno_t::FUNCT_CLEAR;
+    uint32_t functor_error_id = static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR);
     auto op = functor_
                   .set_error_handler(
                       [&functor_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                          const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                          const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         functor_error_id = error_id;
                       })
                   .qualifiers.at(functor_.get_id());
 
-    EXPECT_EQ(op, funct_errno_t::FUNCT_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR));
 
     {
       for (unsigned int i = 0u; i < 10u; i++)
@@ -65,16 +65,16 @@ TEST(Functor, copy_count_check) {
     Copyable c; /* +1 */
     Test test_;
     functor_t functor_(&test_, &Test::slot_copy_check); /* +1 because functor_t has last state */
-    uint32_t functor_error_id = funct_errno_t::FUNCT_CLEAR;
+    uint32_t functor_error_id = static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR);
     auto op = functor_
                   .set_error_handler(
                       [&functor_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                          const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                          const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         functor_error_id = error_id;
                       })
                   .qualifiers.at(functor_.get_id());
 
-    EXPECT_EQ(op, funct_errno_t::FUNCT_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(funct_errno_e::FUNCT_CLEAR));
 
     {
       for (unsigned int i = 0u; i < 10u; i++)

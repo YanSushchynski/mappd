@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-message env_config_header_t {
+message env_cfg_header_s {
   required bytes env_name = 1 [default = ""];
   required int32 env_ipv4_stream_port = 2 [default = 0];
   required int32 env_ipv6_stream_port = 3 [default = 0];
@@ -10,7 +10,7 @@ message env_config_header_t {
   required bytes domain_stream_socket_path = 7 [default = ""];
 };
 
-message env_config_t {
+message env_cfg_s {
   required bytes env_name = 1 [default = ""];
   required bytes env_headers_path = 2 [default = ""];
   required bytes env_mountpoint = 3 [default = ""];

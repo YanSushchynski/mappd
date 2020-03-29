@@ -29,21 +29,21 @@ TEST(Sequence, copy_count_check) {
     Copyable c(copy_count, call_count); /* +1 */
     Test test_;
     sequence_t sequence_(&test_, &Test::slot_copy_check);
-    uint32_t sequence_error_id = seq_errno_t::SEQ_CLEAR;
+    uint32_t sequence_error_id = static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR);
     auto op = sequence_
                   .set_error_handler(
                       [&sequence_error_id](const sha256::sha256_hash_type &id, const uint32_t &error_id,
-                                           const uint32_t &error_case_id = error_case_t::ERROR_CASE_RUNTIME) -> void {
+                                           const uint32_t &error_case_id = static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME)) -> void {
                         sequence_error_id = error_id;
                       })
                   .qualifiers.at(sequence_.get_id());
 
-    EXPECT_EQ(op, seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(op, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
 
     {
       auto add_result = sequence_.add("Copy", &test_, &Test::slot_seq);
 
-      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+      EXPECT_EQ(add_result.status.qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
       EXPECT_EQ(add_result.data.first, sha256::compute(reinterpret_cast<const uint8_t *>("Copy"), std::strlen("Copy")));
 
       for (unsigned int i = 0u; i < 10u; i++)
@@ -53,6 +53,6 @@ TEST(Sequence, copy_count_check) {
       EXPECT_EQ(call_count, 10u);
     }
 
-    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), seq_errno_t::SEQ_CLEAR);
+    EXPECT_EQ(sequence_.clear().qualifiers.at(sequence_.get_id()), static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR));
   }
 }

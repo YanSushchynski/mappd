@@ -31,15 +31,15 @@ public:
         hash_(types_hash<Class, RetType, Args...>()), base_(std::function_traits::to_std_function(p_class, function)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit sequence_t(const NameType &name, const FunctionType &function)
+  template <typename FunctionType>
+  explicit sequence_t(const std::string &name, const FunctionType &function)
       : current_number_(0u), call_count_(0u),
         id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         hash_(types_hash<Class, RetType, Args...>()), base_(std::function_traits::to_std_function(function)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit sequence_t(const NameType &name, Class *p_class, const FunctionType &function)
+  template <typename FunctionType>
+  explicit sequence_t(const std::string &name, Class *p_class, const FunctionType &function)
       : current_number_(0u), call_count_(0u),
         id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         hash_(types_hash<Class, RetType, Args...>()), base_(std::function_traits::to_std_function(p_class, function)),
@@ -48,15 +48,15 @@ public:
   virtual ~sequence_t() { clear(); };
 
   template <typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> add(const std::string &name,
-                                                                                       const Function &function) {
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  add(const std::string &name, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
     return add_(unique_id, std::function_traits::to_std_function(function));
   }
 
   template <typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add(const std::string &name, const uint64_t &number, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
@@ -64,7 +64,7 @@ public:
   }
 
   template <typename OwnerClass, typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add(const std::string &name, OwnerClass *p_class, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
@@ -72,29 +72,30 @@ public:
   }
 
   template <typename OwnerClass, typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add(const std::string &name, const uint64_t &number, OwnerClass *p_class, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
     return add_(unique_id, number, std::function_traits::to_std_function(p_class, function));
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove(const std::string &name) {
+  struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t>
+  remove(const std::string &name) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
     return remove_(unique_id);
   }
 
   template <typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   replace(const std::string &name, const std::string &new_name, const Function &function) {
-    env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
 
-    if (remove_result.status.qualifiers.at(id_) != seq_errno_t::SEQ_CLEAR) {
+    if (remove_result.status.qualifiers.at(id_) != static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)) {
 
-      env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
+      struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
       temp_data.status.qualifiers.insert(std::make_pair(id_, remove_result.status.qualifiers.at(id_)));
-      error_handler_(id_, temp_data.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      error_handler_(id_, temp_data.status.qualifiers.at(id_), static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_data.data = std::make_pair(remove_result.data.first, nullptr);
       return temp_data;
 
@@ -105,15 +106,15 @@ public:
   }
 
   template <typename OwnerClass, typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   replace(const std::string &name, const std::string &new_name, OwnerClass *p_class, const Function &function) {
-    env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
 
-    if (remove_result.status.qualifiers.at(id_) != seq_errno_t::SEQ_CLEAR) {
+    if (remove_result.status.qualifiers.at(id_) != static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)) {
 
-      env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
+      struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
       temp_data.status.qualifiers.insert(std::make_pair(id_, remove_result.status.qualifiers.at(id_)));
-      error_handler_(id_, temp_data.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      error_handler_(id_, temp_data.status.qualifiers.at(id_), static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_data.data = std::make_pair(remove_result.data.first, nullptr);
       return temp_data;
 
@@ -123,27 +124,36 @@ public:
     }
   }
 
-  return_t operator()(const Args &... args) const { return run_(args...); }
-  env_status_t<this_t> clear() { return clear_(); }
-  const uint64_t &call_count() const { return call_count_; }
+  return_t
+  operator()(const Args &... args) const {
+    return run_(args...);
+  }
+  struct env_status_s<this_t> clear() {
+    return clear_();
+  } const uint64_t &call_count() const {
+    return call_count_;
+  }
   const std::function<function_t> &get_base() const { return base_; }
 
-  template <typename Function> env_status_t<this_t> set_error_handler(const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  template <typename Function> struct env_status_s<this_t> set_error_handler(const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(function);
-    temp_status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
     return temp_status;
   }
 
   template <typename OwnerClass, typename Function>
-  env_status_t<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(p_class, function);
-    temp_status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
     return temp_status;
   }
 
-  const sha256::sha256_hash_type &get_id() const { return id_; }
+  const sha256::sha256_hash_type &
+  get_id() const {
+    return id_;
+  }
 
 private:
   std::function<void(const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &)> error_handler_;
@@ -167,69 +177,74 @@ private:
       return true;
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add_(const sha256::sha256_hash_type &id, const std::function<part_t> &part) {
-    env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
 
     if (!part_exists_(id)) {
 
       parts_.insert(std::make_pair(current_number_++, std::make_pair(id, part)));
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     } else {
 
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_EXISTS));
-      error_handler_(id_, temp_result.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_EXISTS)));
+      error_handler_(id_, temp_result.status.qualifiers.at(id_),
+                     static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     }
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add_(const sha256::sha256_hash_type &id, const uint64_t &number, const std::function<part_t> &part) {
-    env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
 
     if ((!part_exists_(id)) && (parts_.find(number) == parts_.end())) {
 
       parts_.insert(std::make_pair(number, std::make_pair(id, part)));
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     } else {
 
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_EXISTS));
-      error_handler_(id_, temp_result.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_EXISTS)));
+      error_handler_(id_, temp_result.status.qualifiers.at(id_),
+                     static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     }
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_(const sha256::sha256_hash_type &id) {
-    env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> temp_result(this);
+  struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t>
+  remove_(const sha256::sha256_hash_type &id) {
+    struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> temp_result(this);
     uint64_t number = 0u;
 
     if (part_exists_(id)) {
 
       number = find_part_(id)->first;
       parts_.erase(find_part_(id));
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
       temp_result.data = std::make_pair(id, number);
       return temp_result;
     } else {
 
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_MISSING));
-      error_handler_(id_, temp_result.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_MISSING)));
+      error_handler_(id_, temp_result.status.qualifiers.at(id_),
+                     static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_result.data = std::make_pair(id, number);
       return temp_result;
     }
   }
 
-  return_t run_(const Args &... args) const {
+  return_t
+  run_(const Args &... args) const {
     return_t temp = base_(args...);
     for (auto it = parts_.begin(); it != parts_.end(); it++)
       temp = it->second.second(temp);
@@ -237,11 +252,11 @@ private:
     return temp;
   }
 
-  env_status_t<this_t> clear_() {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_t> clear_() {
+    struct env_status_s<this_t> temp_status(this);
     current_number_ = 0u;
     parts_.clear();
-    temp_status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
     return temp_status;
   }
 };
@@ -266,15 +281,15 @@ public:
         hash_(types_hash<Class, void, Args...>()), base_(std::function_traits::to_std_function(p_class, function)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit sequence_t(const NameType &name, const FunctionType &function)
+  template <typename FunctionType>
+  explicit sequence_t(const std::string &name, const FunctionType &function)
       : current_number_(0u), call_count_(0u),
         id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         hash_(types_hash<Class, void, Args...>()), base_(std::function_traits::to_std_function(function)),
         error_handler_([](const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &) -> void {}){};
 
-  template <typename NameType, typename FunctionType>
-  explicit sequence_t(const NameType &name, Class *p_class, const FunctionType &function)
+  template <typename FunctionType>
+  explicit sequence_t(const std::string &name, Class *p_class, const FunctionType &function)
       : current_number_(0u), call_count_(0u),
         id_(sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length())),
         hash_(types_hash<Class, void, Args...>()), base_(std::function_traits::to_std_function(p_class, function)),
@@ -283,15 +298,15 @@ public:
   virtual ~sequence_t() { clear(); };
 
   template <typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> add(const std::string &name,
-                                                                                       const Function &function) {
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  add(const std::string &name, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
     return add_(unique_id, std::function_traits::to_std_function(function));
   }
 
   template <typename OwnerClass, typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add(const std::string &name, OwnerClass *p_class, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
@@ -299,7 +314,7 @@ public:
   }
 
   template <typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add(const std::string &name, const uint64_t &number, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
@@ -307,29 +322,30 @@ public:
   }
 
   template <typename OwnerClass, typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add(const std::string &name, const uint64_t &number, OwnerClass *p_class, const Function &function) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
     return add_(unique_id, number, std::function_traits::to_std_function(p_class, function));
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove(const std::string &name) {
+  struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t>
+  remove(const std::string &name) {
     const sha256::sha256_hash_type unique_id =
         sha256::compute(reinterpret_cast<const uint8_t *>(name.data()), name.length());
     return remove_(unique_id);
   }
 
   template <typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   replace(const std::string &name, const std::string &new_name, const Function &function) {
-    env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
 
-    if (remove_result.status.qualifiers.at(id_) != seq_errno_t::SEQ_CLEAR) {
+    if (remove_result.status.qualifiers.at(id_) != static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)) {
 
-      env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
+      struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
       temp_data.status.qualifiers.insert(std::make_pair(id_, remove_result.status.qualifiers.at(id_)));
-      error_handler_(id_, temp_data.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      error_handler_(id_, temp_data.status.qualifiers.at(id_), static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_data.data = std::make_pair(remove_result.data.first, nullptr);
       return temp_data;
     } else {
@@ -339,15 +355,15 @@ public:
   }
 
   template <typename OwnerClass, typename Function>
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   replace(const std::string &name, const std::string &new_name, OwnerClass *p_class, const Function &function) {
-    env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_result = remove(name);
 
-    if (remove_result.status.qualifiers.at(id_) != seq_errno_t::SEQ_CLEAR) {
+    if (remove_result.status.qualifiers.at(id_) != static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)) {
 
-      env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
+      struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_data(this);
       temp_data.status.qualifiers.insert(std::make_pair(id_, remove_result.status.qualifiers.at(id_)));
-      error_handler_(id_, temp_data.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      error_handler_(id_, temp_data.status.qualifiers.at(id_), static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_data.data = std::make_pair(remove_result.data.first, nullptr);
       return temp_data;
     } else {
@@ -356,27 +372,36 @@ public:
     }
   }
 
-  void operator()(const Args &... args) const { run_(args...); }
-  env_status_t<this_t> clear() { return clear_(); }
-  const uint64_t &call_count() const { return call_count_; }
+  void
+  operator()(const Args &... args) const {
+    run_(args...);
+  }
+  struct env_status_s<this_t> clear() {
+    return clear_();
+  } const uint64_t &call_count() const {
+    return call_count_;
+  }
   const std::function<function_t> &get_base() const { return base_; }
 
-  template <typename Function> env_status_t<this_t> set_error_handler(const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  template <typename Function> struct env_status_s<this_t> set_error_handler(const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(function);
-    temp_status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
     return temp_status;
   }
 
   template <typename OwnerClass, typename Function>
-  env_status_t<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_t> set_error_handler(OwnerClass *p_class, const Function &function) {
+    struct env_status_s<this_t> temp_status(this);
     error_handler_ = std::function_traits::to_std_function(p_class, function);
-    temp_status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
     return temp_status;
   }
 
-  const sha256::sha256_hash_type &get_id() const { return id_; }
+  const sha256::sha256_hash_type &
+  get_id() const {
+    return id_;
+  }
 
 private:
   std::function<void(const sha256::sha256_hash_type &, const uint32_t &, const uint32_t &)> error_handler_;
@@ -400,80 +425,85 @@ private:
       return true;
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add_(const sha256::sha256_hash_type &id, const std::function<part_t> &part) {
-    env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
 
     if (!part_exists_(id)) {
 
       parts_.insert(std::make_pair(current_number_++, std::make_pair(id, part)));
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     } else {
 
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_EXISTS));
-      error_handler_(id_, temp_result.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_EXISTS)));
+      error_handler_(id_, temp_result.status.qualifiers.at(id_),
+                     static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     }
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
+  struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t>
   add_(const sha256::sha256_hash_type &id, const uint64_t &number, const std::function<part_t> &part) {
-    env_data_t<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
+    struct env_data_s<std::pair<sha256::sha256_hash_type, std::function<part_t> *>, this_t> temp_result(this);
 
     if ((!part_exists_(id)) && (parts_.find(number) == parts_.end())) {
 
       parts_.insert(std::make_pair(number, std::make_pair(id, part)));
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     } else {
 
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_EXISTS));
-      error_handler_(id_, temp_result.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_EXISTS)));
+      error_handler_(id_, temp_result.status.qualifiers.at(id_),
+                     static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_result.data.first = id;
       temp_result.data.second = const_cast<std::function<part_t> *>(&find_part_(id)->second.second);
       return temp_result;
     }
   }
 
-  env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> remove_(const sha256::sha256_hash_type &id) {
-    env_data_t<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> temp_result(this);
+  struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t>
+  remove_(const sha256::sha256_hash_type &id) {
+    struct env_data_s<std::pair<sha256::sha256_hash_type, uint64_t>, this_t> temp_result(this);
     uint64_t number = 0u;
 
     if (part_exists_(id)) {
 
       number = find_part_(id)->first;
       parts_.erase(find_part_(id));
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
       temp_result.data = std::make_pair(id, number);
       return temp_result;
     } else {
 
-      temp_result.status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_MISSING));
-      error_handler_(id_, temp_result.status.qualifiers.at(id_), error_case_t::ERROR_CASE_RUNTIME);
+      temp_result.status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_MISSING)));
+      error_handler_(id_, temp_result.status.qualifiers.at(id_),
+                     static_cast<uint32_t>(error_case_e::ERROR_CASE_RUNTIME));
       temp_result.data = std::make_pair(id, number);
       return temp_result;
     }
   }
 
-  void run_(const Args &... args) const {
+  void
+  run_(const Args &... args) const {
     base_(args...);
     for (auto it = parts_.begin(); it != parts_.end(); it++)
       it->second.second();
     call_count_++;
   }
 
-  env_status_t<this_t> clear_() {
-    env_status_t<this_t> temp_status(this);
+  struct env_status_s<this_t> clear_() {
+    struct env_status_s<this_t> temp_status(this);
     current_number_ = 0u;
     parts_.clear();
-    temp_status.qualifiers.insert(std::make_pair(id_, seq_errno_t::SEQ_CLEAR));
+    temp_status.qualifiers.insert(std::make_pair(id_, static_cast<uint32_t>(seq_errno_e::SEQ_CLEAR)));
     return temp_status;
   }
 };

@@ -54,36 +54,36 @@ struct TableStruct_env_5finfo_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_env_5finfo_2eproto;
-class env_config_header_t;
-class env_config_header_tDefaultTypeInternal;
-extern env_config_header_tDefaultTypeInternal _env_config_header_t_default_instance_;
-class env_config_t;
-class env_config_tDefaultTypeInternal;
-extern env_config_tDefaultTypeInternal _env_config_t_default_instance_;
+class env_cfg_header_s;
+class env_cfg_header_sDefaultTypeInternal;
+extern env_cfg_header_sDefaultTypeInternal _env_cfg_header_s_default_instance_;
+class env_cfg_s;
+class env_cfg_sDefaultTypeInternal;
+extern env_cfg_sDefaultTypeInternal _env_cfg_s_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
-template<> ::env_config_header_t* Arena::CreateMaybeMessage<::env_config_header_t>(Arena*);
-template<> ::env_config_t* Arena::CreateMaybeMessage<::env_config_t>(Arena*);
+template<> ::env_cfg_header_s* Arena::CreateMaybeMessage<::env_cfg_header_s>(Arena*);
+template<> ::env_cfg_s* Arena::CreateMaybeMessage<::env_cfg_s>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 // ===================================================================
 
-class env_config_header_t :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:env_config_header_t) */ {
+class env_cfg_header_s :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:env_cfg_header_s) */ {
  public:
-  env_config_header_t();
-  virtual ~env_config_header_t();
+  env_cfg_header_s();
+  virtual ~env_cfg_header_s();
 
-  env_config_header_t(const env_config_header_t& from);
-  env_config_header_t(env_config_header_t&& from) noexcept
-    : env_config_header_t() {
+  env_cfg_header_s(const env_cfg_header_s& from);
+  env_cfg_header_s(env_cfg_header_s&& from) noexcept
+    : env_cfg_header_s() {
     *this = ::std::move(from);
   }
 
-  inline env_config_header_t& operator=(const env_config_header_t& from) {
+  inline env_cfg_header_s& operator=(const env_cfg_header_s& from) {
     CopyFrom(from);
     return *this;
   }
-  inline env_config_header_t& operator=(env_config_header_t&& from) noexcept {
+  inline env_cfg_header_s& operator=(env_cfg_header_s&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -108,37 +108,37 @@ class env_config_header_t :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const env_config_header_t& default_instance();
+  static const env_cfg_header_s& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const env_config_header_t* internal_default_instance() {
-    return reinterpret_cast<const env_config_header_t*>(
-               &_env_config_header_t_default_instance_);
+  static inline const env_cfg_header_s* internal_default_instance() {
+    return reinterpret_cast<const env_cfg_header_s*>(
+               &_env_cfg_header_s_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(env_config_header_t& a, env_config_header_t& b) {
+  friend void swap(env_cfg_header_s& a, env_cfg_header_s& b) {
     a.Swap(&b);
   }
-  inline void Swap(env_config_header_t* other) {
+  inline void Swap(env_cfg_header_s* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline env_config_header_t* New() const final {
-    return CreateMaybeMessage<env_config_header_t>(nullptr);
+  inline env_cfg_header_s* New() const final {
+    return CreateMaybeMessage<env_cfg_header_s>(nullptr);
   }
 
-  env_config_header_t* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<env_config_header_t>(arena);
+  env_cfg_header_s* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<env_cfg_header_s>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const env_config_header_t& from);
-  void MergeFrom(const env_config_header_t& from);
+  void CopyFrom(const env_cfg_header_s& from);
+  void MergeFrom(const env_cfg_header_s& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -152,10 +152,10 @@ class env_config_header_t :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(env_config_header_t* other);
+  void InternalSwap(env_cfg_header_s* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "env_config_header_t";
+    return "env_cfg_header_s";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -307,7 +307,7 @@ class env_config_header_t :
   void _internal_set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:env_config_header_t)
+  // @@protoc_insertion_point(class_scope:env_cfg_header_s)
  private:
   class _Internal;
 
@@ -328,23 +328,23 @@ class env_config_header_t :
 };
 // -------------------------------------------------------------------
 
-class env_config_t :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:env_config_t) */ {
+class env_cfg_s :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:env_cfg_s) */ {
  public:
-  env_config_t();
-  virtual ~env_config_t();
+  env_cfg_s();
+  virtual ~env_cfg_s();
 
-  env_config_t(const env_config_t& from);
-  env_config_t(env_config_t&& from) noexcept
-    : env_config_t() {
+  env_cfg_s(const env_cfg_s& from);
+  env_cfg_s(env_cfg_s&& from) noexcept
+    : env_cfg_s() {
     *this = ::std::move(from);
   }
 
-  inline env_config_t& operator=(const env_config_t& from) {
+  inline env_cfg_s& operator=(const env_cfg_s& from) {
     CopyFrom(from);
     return *this;
   }
-  inline env_config_t& operator=(env_config_t&& from) noexcept {
+  inline env_cfg_s& operator=(env_cfg_s&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -369,37 +369,37 @@ class env_config_t :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const env_config_t& default_instance();
+  static const env_cfg_s& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const env_config_t* internal_default_instance() {
-    return reinterpret_cast<const env_config_t*>(
-               &_env_config_t_default_instance_);
+  static inline const env_cfg_s* internal_default_instance() {
+    return reinterpret_cast<const env_cfg_s*>(
+               &_env_cfg_s_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(env_config_t& a, env_config_t& b) {
+  friend void swap(env_cfg_s& a, env_cfg_s& b) {
     a.Swap(&b);
   }
-  inline void Swap(env_config_t* other) {
+  inline void Swap(env_cfg_s* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline env_config_t* New() const final {
-    return CreateMaybeMessage<env_config_t>(nullptr);
+  inline env_cfg_s* New() const final {
+    return CreateMaybeMessage<env_cfg_s>(nullptr);
   }
 
-  env_config_t* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<env_config_t>(arena);
+  env_cfg_s* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<env_cfg_s>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const env_config_t& from);
-  void MergeFrom(const env_config_t& from);
+  void CopyFrom(const env_cfg_s& from);
+  void MergeFrom(const env_cfg_s& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -413,10 +413,10 @@ class env_config_t :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(env_config_t* other);
+  void InternalSwap(env_cfg_s* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "env_config_t";
+    return "env_cfg_s";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -890,7 +890,7 @@ class env_config_t :
   void _internal_set_env_broadcast_interval_ms(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:env_config_t)
+  // @@protoc_insertion_point(class_scope:env_cfg_s)
  private:
   class _Internal;
 
@@ -936,1680 +936,1680 @@ class env_config_t :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// env_config_header_t
+// env_cfg_header_s
 
 // required bytes env_name = 1 [default = ""];
-inline bool env_config_header_t::_internal_has_env_name() const {
+inline bool env_cfg_header_s::_internal_has_env_name() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool env_config_header_t::has_env_name() const {
+inline bool env_cfg_header_s::has_env_name() const {
   return _internal_has_env_name();
 }
-inline void env_config_header_t::clear_env_name() {
+inline void env_cfg_header_s::clear_env_name() {
   env_name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& env_config_header_t::env_name() const {
-  // @@protoc_insertion_point(field_get:env_config_header_t.env_name)
+inline const std::string& env_cfg_header_s::env_name() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_name)
   return _internal_env_name();
 }
-inline void env_config_header_t::set_env_name(const std::string& value) {
+inline void env_cfg_header_s::set_env_name(const std::string& value) {
   _internal_set_env_name(value);
-  // @@protoc_insertion_point(field_set:env_config_header_t.env_name)
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_name)
 }
-inline std::string* env_config_header_t::mutable_env_name() {
-  // @@protoc_insertion_point(field_mutable:env_config_header_t.env_name)
+inline std::string* env_cfg_header_s::mutable_env_name() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_header_s.env_name)
   return _internal_mutable_env_name();
 }
-inline const std::string& env_config_header_t::_internal_env_name() const {
+inline const std::string& env_cfg_header_s::_internal_env_name() const {
   return env_name_.GetNoArena();
 }
-inline void env_config_header_t::_internal_set_env_name(const std::string& value) {
+inline void env_cfg_header_s::_internal_set_env_name(const std::string& value) {
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_header_t::set_env_name(std::string&& value) {
+inline void env_cfg_header_s::set_env_name(std::string&& value) {
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_header_t.env_name)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_header_s.env_name)
 }
-inline void env_config_header_t::set_env_name(const char* value) {
+inline void env_cfg_header_s::set_env_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_header_t.env_name)
+  // @@protoc_insertion_point(field_set_char:env_cfg_header_s.env_name)
 }
-inline void env_config_header_t::set_env_name(const void* value, size_t size) {
+inline void env_cfg_header_s::set_env_name(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_header_t.env_name)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_header_s.env_name)
 }
-inline std::string* env_config_header_t::_internal_mutable_env_name() {
+inline std::string* env_cfg_header_s::_internal_mutable_env_name() {
   _has_bits_[0] |= 0x00000001u;
   return env_name_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_header_t::release_env_name() {
-  // @@protoc_insertion_point(field_release:env_config_header_t.env_name)
+inline std::string* env_cfg_header_s::release_env_name() {
+  // @@protoc_insertion_point(field_release:env_cfg_header_s.env_name)
   if (!_internal_has_env_name()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000001u;
   return env_name_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_header_t::set_allocated_env_name(std::string* env_name) {
+inline void env_cfg_header_s::set_allocated_env_name(std::string* env_name) {
   if (env_name != nullptr) {
     _has_bits_[0] |= 0x00000001u;
   } else {
     _has_bits_[0] &= ~0x00000001u;
   }
   env_name_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_name);
-  // @@protoc_insertion_point(field_set_allocated:env_config_header_t.env_name)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.env_name)
 }
 
 // required int32 env_ipv4_stream_port = 2 [default = 0];
-inline bool env_config_header_t::_internal_has_env_ipv4_stream_port() const {
+inline bool env_cfg_header_s::_internal_has_env_ipv4_stream_port() const {
   bool value = (_has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
-inline bool env_config_header_t::has_env_ipv4_stream_port() const {
+inline bool env_cfg_header_s::has_env_ipv4_stream_port() const {
   return _internal_has_env_ipv4_stream_port();
 }
-inline void env_config_header_t::clear_env_ipv4_stream_port() {
+inline void env_cfg_header_s::clear_env_ipv4_stream_port() {
   env_ipv4_stream_port_ = 0;
   _has_bits_[0] &= ~0x00000010u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_header_t::_internal_env_ipv4_stream_port() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::_internal_env_ipv4_stream_port() const {
   return env_ipv4_stream_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_header_t::env_ipv4_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_config_header_t.env_ipv4_stream_port)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::env_ipv4_stream_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_ipv4_stream_port)
   return _internal_env_ipv4_stream_port();
 }
-inline void env_config_header_t::_internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::_internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00000010u;
   env_ipv4_stream_port_ = value;
 }
-inline void env_config_header_t::set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_ipv4_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_config_header_t.env_ipv4_stream_port)
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_ipv4_stream_port)
 }
 
 // required int32 env_ipv6_stream_port = 3 [default = 0];
-inline bool env_config_header_t::_internal_has_env_ipv6_stream_port() const {
+inline bool env_cfg_header_s::_internal_has_env_ipv6_stream_port() const {
   bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
-inline bool env_config_header_t::has_env_ipv6_stream_port() const {
+inline bool env_cfg_header_s::has_env_ipv6_stream_port() const {
   return _internal_has_env_ipv6_stream_port();
 }
-inline void env_config_header_t::clear_env_ipv6_stream_port() {
+inline void env_cfg_header_s::clear_env_ipv6_stream_port() {
   env_ipv6_stream_port_ = 0;
   _has_bits_[0] &= ~0x00000020u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_header_t::_internal_env_ipv6_stream_port() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::_internal_env_ipv6_stream_port() const {
   return env_ipv6_stream_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_header_t::env_ipv6_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_config_header_t.env_ipv6_stream_port)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::env_ipv6_stream_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_ipv6_stream_port)
   return _internal_env_ipv6_stream_port();
 }
-inline void env_config_header_t::_internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::_internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00000020u;
   env_ipv6_stream_port_ = value;
 }
-inline void env_config_header_t::set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_ipv6_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_config_header_t.env_ipv6_stream_port)
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_ipv6_stream_port)
 }
 
 // required int32 env_pid = 4 [default = 0];
-inline bool env_config_header_t::_internal_has_env_pid() const {
+inline bool env_cfg_header_s::_internal_has_env_pid() const {
   bool value = (_has_bits_[0] & 0x00000040u) != 0;
   return value;
 }
-inline bool env_config_header_t::has_env_pid() const {
+inline bool env_cfg_header_s::has_env_pid() const {
   return _internal_has_env_pid();
 }
-inline void env_config_header_t::clear_env_pid() {
+inline void env_cfg_header_s::clear_env_pid() {
   env_pid_ = 0;
   _has_bits_[0] &= ~0x00000040u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_header_t::_internal_env_pid() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::_internal_env_pid() const {
   return env_pid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_header_t::env_pid() const {
-  // @@protoc_insertion_point(field_get:env_config_header_t.env_pid)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_header_s::env_pid() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_pid)
   return _internal_env_pid();
 }
-inline void env_config_header_t::_internal_set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::_internal_set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00000040u;
   env_pid_ = value;
 }
-inline void env_config_header_t::set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_header_s::set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_pid(value);
-  // @@protoc_insertion_point(field_set:env_config_header_t.env_pid)
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_pid)
 }
 
 // required bytes env_host_name = 5 [default = ""];
-inline bool env_config_header_t::_internal_has_env_host_name() const {
+inline bool env_cfg_header_s::_internal_has_env_host_name() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
-inline bool env_config_header_t::has_env_host_name() const {
+inline bool env_cfg_header_s::has_env_host_name() const {
   return _internal_has_env_host_name();
 }
-inline void env_config_header_t::clear_env_host_name() {
+inline void env_cfg_header_s::clear_env_host_name() {
   env_host_name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000002u;
 }
-inline const std::string& env_config_header_t::env_host_name() const {
-  // @@protoc_insertion_point(field_get:env_config_header_t.env_host_name)
+inline const std::string& env_cfg_header_s::env_host_name() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_host_name)
   return _internal_env_host_name();
 }
-inline void env_config_header_t::set_env_host_name(const std::string& value) {
+inline void env_cfg_header_s::set_env_host_name(const std::string& value) {
   _internal_set_env_host_name(value);
-  // @@protoc_insertion_point(field_set:env_config_header_t.env_host_name)
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_host_name)
 }
-inline std::string* env_config_header_t::mutable_env_host_name() {
-  // @@protoc_insertion_point(field_mutable:env_config_header_t.env_host_name)
+inline std::string* env_cfg_header_s::mutable_env_host_name() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_header_s.env_host_name)
   return _internal_mutable_env_host_name();
 }
-inline const std::string& env_config_header_t::_internal_env_host_name() const {
+inline const std::string& env_cfg_header_s::_internal_env_host_name() const {
   return env_host_name_.GetNoArena();
 }
-inline void env_config_header_t::_internal_set_env_host_name(const std::string& value) {
+inline void env_cfg_header_s::_internal_set_env_host_name(const std::string& value) {
   _has_bits_[0] |= 0x00000002u;
   env_host_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_header_t::set_env_host_name(std::string&& value) {
+inline void env_cfg_header_s::set_env_host_name(std::string&& value) {
   _has_bits_[0] |= 0x00000002u;
   env_host_name_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_header_t.env_host_name)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_header_s.env_host_name)
 }
-inline void env_config_header_t::set_env_host_name(const char* value) {
+inline void env_cfg_header_s::set_env_host_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000002u;
   env_host_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_header_t.env_host_name)
+  // @@protoc_insertion_point(field_set_char:env_cfg_header_s.env_host_name)
 }
-inline void env_config_header_t::set_env_host_name(const void* value, size_t size) {
+inline void env_cfg_header_s::set_env_host_name(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000002u;
   env_host_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_header_t.env_host_name)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_header_s.env_host_name)
 }
-inline std::string* env_config_header_t::_internal_mutable_env_host_name() {
+inline std::string* env_cfg_header_s::_internal_mutable_env_host_name() {
   _has_bits_[0] |= 0x00000002u;
   return env_host_name_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_header_t::release_env_host_name() {
-  // @@protoc_insertion_point(field_release:env_config_header_t.env_host_name)
+inline std::string* env_cfg_header_s::release_env_host_name() {
+  // @@protoc_insertion_point(field_release:env_cfg_header_s.env_host_name)
   if (!_internal_has_env_host_name()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000002u;
   return env_host_name_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_header_t::set_allocated_env_host_name(std::string* env_host_name) {
+inline void env_cfg_header_s::set_allocated_env_host_name(std::string* env_host_name) {
   if (env_host_name != nullptr) {
     _has_bits_[0] |= 0x00000002u;
   } else {
     _has_bits_[0] &= ~0x00000002u;
   }
   env_host_name_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_host_name);
-  // @@protoc_insertion_point(field_set_allocated:env_config_header_t.env_host_name)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.env_host_name)
 }
 
 // required bytes env_invite = 6 [default = ""];
-inline bool env_config_header_t::_internal_has_env_invite() const {
+inline bool env_cfg_header_s::_internal_has_env_invite() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
-inline bool env_config_header_t::has_env_invite() const {
+inline bool env_cfg_header_s::has_env_invite() const {
   return _internal_has_env_invite();
 }
-inline void env_config_header_t::clear_env_invite() {
+inline void env_cfg_header_s::clear_env_invite() {
   env_invite_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000004u;
 }
-inline const std::string& env_config_header_t::env_invite() const {
-  // @@protoc_insertion_point(field_get:env_config_header_t.env_invite)
+inline const std::string& env_cfg_header_s::env_invite() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.env_invite)
   return _internal_env_invite();
 }
-inline void env_config_header_t::set_env_invite(const std::string& value) {
+inline void env_cfg_header_s::set_env_invite(const std::string& value) {
   _internal_set_env_invite(value);
-  // @@protoc_insertion_point(field_set:env_config_header_t.env_invite)
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.env_invite)
 }
-inline std::string* env_config_header_t::mutable_env_invite() {
-  // @@protoc_insertion_point(field_mutable:env_config_header_t.env_invite)
+inline std::string* env_cfg_header_s::mutable_env_invite() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_header_s.env_invite)
   return _internal_mutable_env_invite();
 }
-inline const std::string& env_config_header_t::_internal_env_invite() const {
+inline const std::string& env_cfg_header_s::_internal_env_invite() const {
   return env_invite_.GetNoArena();
 }
-inline void env_config_header_t::_internal_set_env_invite(const std::string& value) {
+inline void env_cfg_header_s::_internal_set_env_invite(const std::string& value) {
   _has_bits_[0] |= 0x00000004u;
   env_invite_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_header_t::set_env_invite(std::string&& value) {
+inline void env_cfg_header_s::set_env_invite(std::string&& value) {
   _has_bits_[0] |= 0x00000004u;
   env_invite_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_header_t.env_invite)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_header_s.env_invite)
 }
-inline void env_config_header_t::set_env_invite(const char* value) {
+inline void env_cfg_header_s::set_env_invite(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000004u;
   env_invite_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_header_t.env_invite)
+  // @@protoc_insertion_point(field_set_char:env_cfg_header_s.env_invite)
 }
-inline void env_config_header_t::set_env_invite(const void* value, size_t size) {
+inline void env_cfg_header_s::set_env_invite(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000004u;
   env_invite_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_header_t.env_invite)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_header_s.env_invite)
 }
-inline std::string* env_config_header_t::_internal_mutable_env_invite() {
+inline std::string* env_cfg_header_s::_internal_mutable_env_invite() {
   _has_bits_[0] |= 0x00000004u;
   return env_invite_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_header_t::release_env_invite() {
-  // @@protoc_insertion_point(field_release:env_config_header_t.env_invite)
+inline std::string* env_cfg_header_s::release_env_invite() {
+  // @@protoc_insertion_point(field_release:env_cfg_header_s.env_invite)
   if (!_internal_has_env_invite()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000004u;
   return env_invite_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_header_t::set_allocated_env_invite(std::string* env_invite) {
+inline void env_cfg_header_s::set_allocated_env_invite(std::string* env_invite) {
   if (env_invite != nullptr) {
     _has_bits_[0] |= 0x00000004u;
   } else {
     _has_bits_[0] &= ~0x00000004u;
   }
   env_invite_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_invite);
-  // @@protoc_insertion_point(field_set_allocated:env_config_header_t.env_invite)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.env_invite)
 }
 
 // required bytes domain_stream_socket_path = 7 [default = ""];
-inline bool env_config_header_t::_internal_has_domain_stream_socket_path() const {
+inline bool env_cfg_header_s::_internal_has_domain_stream_socket_path() const {
   bool value = (_has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
-inline bool env_config_header_t::has_domain_stream_socket_path() const {
+inline bool env_cfg_header_s::has_domain_stream_socket_path() const {
   return _internal_has_domain_stream_socket_path();
 }
-inline void env_config_header_t::clear_domain_stream_socket_path() {
+inline void env_cfg_header_s::clear_domain_stream_socket_path() {
   domain_stream_socket_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000008u;
 }
-inline const std::string& env_config_header_t::domain_stream_socket_path() const {
-  // @@protoc_insertion_point(field_get:env_config_header_t.domain_stream_socket_path)
+inline const std::string& env_cfg_header_s::domain_stream_socket_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_header_s.domain_stream_socket_path)
   return _internal_domain_stream_socket_path();
 }
-inline void env_config_header_t::set_domain_stream_socket_path(const std::string& value) {
+inline void env_cfg_header_s::set_domain_stream_socket_path(const std::string& value) {
   _internal_set_domain_stream_socket_path(value);
-  // @@protoc_insertion_point(field_set:env_config_header_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set:env_cfg_header_s.domain_stream_socket_path)
 }
-inline std::string* env_config_header_t::mutable_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_mutable:env_config_header_t.domain_stream_socket_path)
+inline std::string* env_cfg_header_s::mutable_domain_stream_socket_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_header_s.domain_stream_socket_path)
   return _internal_mutable_domain_stream_socket_path();
 }
-inline const std::string& env_config_header_t::_internal_domain_stream_socket_path() const {
+inline const std::string& env_cfg_header_s::_internal_domain_stream_socket_path() const {
   return domain_stream_socket_path_.GetNoArena();
 }
-inline void env_config_header_t::_internal_set_domain_stream_socket_path(const std::string& value) {
+inline void env_cfg_header_s::_internal_set_domain_stream_socket_path(const std::string& value) {
   _has_bits_[0] |= 0x00000008u;
   domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_header_t::set_domain_stream_socket_path(std::string&& value) {
+inline void env_cfg_header_s::set_domain_stream_socket_path(std::string&& value) {
   _has_bits_[0] |= 0x00000008u;
   domain_stream_socket_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_header_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_header_s.domain_stream_socket_path)
 }
-inline void env_config_header_t::set_domain_stream_socket_path(const char* value) {
+inline void env_cfg_header_s::set_domain_stream_socket_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000008u;
   domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_header_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_char:env_cfg_header_s.domain_stream_socket_path)
 }
-inline void env_config_header_t::set_domain_stream_socket_path(const void* value, size_t size) {
+inline void env_cfg_header_s::set_domain_stream_socket_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000008u;
   domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_header_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_header_s.domain_stream_socket_path)
 }
-inline std::string* env_config_header_t::_internal_mutable_domain_stream_socket_path() {
+inline std::string* env_cfg_header_s::_internal_mutable_domain_stream_socket_path() {
   _has_bits_[0] |= 0x00000008u;
   return domain_stream_socket_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_header_t::release_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_release:env_config_header_t.domain_stream_socket_path)
+inline std::string* env_cfg_header_s::release_domain_stream_socket_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_header_s.domain_stream_socket_path)
   if (!_internal_has_domain_stream_socket_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000008u;
   return domain_stream_socket_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_header_t::set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path) {
+inline void env_cfg_header_s::set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path) {
   if (domain_stream_socket_path != nullptr) {
     _has_bits_[0] |= 0x00000008u;
   } else {
     _has_bits_[0] &= ~0x00000008u;
   }
   domain_stream_socket_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), domain_stream_socket_path);
-  // @@protoc_insertion_point(field_set_allocated:env_config_header_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_header_s.domain_stream_socket_path)
 }
 
 // -------------------------------------------------------------------
 
-// env_config_t
+// env_cfg_s
 
 // required bytes env_name = 1 [default = ""];
-inline bool env_config_t::_internal_has_env_name() const {
+inline bool env_cfg_s::_internal_has_env_name() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_name() const {
+inline bool env_cfg_s::has_env_name() const {
   return _internal_has_env_name();
 }
-inline void env_config_t::clear_env_name() {
+inline void env_cfg_s::clear_env_name() {
   env_name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& env_config_t::env_name() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_name)
+inline const std::string& env_cfg_s::env_name() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_name)
   return _internal_env_name();
 }
-inline void env_config_t::set_env_name(const std::string& value) {
+inline void env_cfg_s::set_env_name(const std::string& value) {
   _internal_set_env_name(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_name)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_name)
 }
-inline std::string* env_config_t::mutable_env_name() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_name)
+inline std::string* env_cfg_s::mutable_env_name() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_name)
   return _internal_mutable_env_name();
 }
-inline const std::string& env_config_t::_internal_env_name() const {
+inline const std::string& env_cfg_s::_internal_env_name() const {
   return env_name_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_name(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_name(const std::string& value) {
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_name(std::string&& value) {
+inline void env_cfg_s::set_env_name(std::string&& value) {
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_name)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_name)
 }
-inline void env_config_t::set_env_name(const char* value) {
+inline void env_cfg_s::set_env_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_name)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_name)
 }
-inline void env_config_t::set_env_name(const void* value, size_t size) {
+inline void env_cfg_s::set_env_name(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000001u;
   env_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_name)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_name)
 }
-inline std::string* env_config_t::_internal_mutable_env_name() {
+inline std::string* env_cfg_s::_internal_mutable_env_name() {
   _has_bits_[0] |= 0x00000001u;
   return env_name_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_name() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_name)
+inline std::string* env_cfg_s::release_env_name() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_name)
   if (!_internal_has_env_name()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000001u;
   return env_name_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_name(std::string* env_name) {
+inline void env_cfg_s::set_allocated_env_name(std::string* env_name) {
   if (env_name != nullptr) {
     _has_bits_[0] |= 0x00000001u;
   } else {
     _has_bits_[0] &= ~0x00000001u;
   }
   env_name_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_name);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_name)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_name)
 }
 
 // required bytes env_headers_path = 2 [default = ""];
-inline bool env_config_t::_internal_has_env_headers_path() const {
+inline bool env_cfg_s::_internal_has_env_headers_path() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_headers_path() const {
+inline bool env_cfg_s::has_env_headers_path() const {
   return _internal_has_env_headers_path();
 }
-inline void env_config_t::clear_env_headers_path() {
+inline void env_cfg_s::clear_env_headers_path() {
   env_headers_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000002u;
 }
-inline const std::string& env_config_t::env_headers_path() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_headers_path)
+inline const std::string& env_cfg_s::env_headers_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_headers_path)
   return _internal_env_headers_path();
 }
-inline void env_config_t::set_env_headers_path(const std::string& value) {
+inline void env_cfg_s::set_env_headers_path(const std::string& value) {
   _internal_set_env_headers_path(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_headers_path)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_headers_path)
 }
-inline std::string* env_config_t::mutable_env_headers_path() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_headers_path)
+inline std::string* env_cfg_s::mutable_env_headers_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_headers_path)
   return _internal_mutable_env_headers_path();
 }
-inline const std::string& env_config_t::_internal_env_headers_path() const {
+inline const std::string& env_cfg_s::_internal_env_headers_path() const {
   return env_headers_path_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_headers_path(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_headers_path(const std::string& value) {
   _has_bits_[0] |= 0x00000002u;
   env_headers_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_headers_path(std::string&& value) {
+inline void env_cfg_s::set_env_headers_path(std::string&& value) {
   _has_bits_[0] |= 0x00000002u;
   env_headers_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_headers_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_headers_path)
 }
-inline void env_config_t::set_env_headers_path(const char* value) {
+inline void env_cfg_s::set_env_headers_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000002u;
   env_headers_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_headers_path)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_headers_path)
 }
-inline void env_config_t::set_env_headers_path(const void* value, size_t size) {
+inline void env_cfg_s::set_env_headers_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000002u;
   env_headers_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_headers_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_headers_path)
 }
-inline std::string* env_config_t::_internal_mutable_env_headers_path() {
+inline std::string* env_cfg_s::_internal_mutable_env_headers_path() {
   _has_bits_[0] |= 0x00000002u;
   return env_headers_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_headers_path() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_headers_path)
+inline std::string* env_cfg_s::release_env_headers_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_headers_path)
   if (!_internal_has_env_headers_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000002u;
   return env_headers_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_headers_path(std::string* env_headers_path) {
+inline void env_cfg_s::set_allocated_env_headers_path(std::string* env_headers_path) {
   if (env_headers_path != nullptr) {
     _has_bits_[0] |= 0x00000002u;
   } else {
     _has_bits_[0] &= ~0x00000002u;
   }
   env_headers_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_headers_path);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_headers_path)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_headers_path)
 }
 
 // required bytes env_mountpoint = 3 [default = ""];
-inline bool env_config_t::_internal_has_env_mountpoint() const {
+inline bool env_cfg_s::_internal_has_env_mountpoint() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_mountpoint() const {
+inline bool env_cfg_s::has_env_mountpoint() const {
   return _internal_has_env_mountpoint();
 }
-inline void env_config_t::clear_env_mountpoint() {
+inline void env_cfg_s::clear_env_mountpoint() {
   env_mountpoint_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000004u;
 }
-inline const std::string& env_config_t::env_mountpoint() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_mountpoint)
+inline const std::string& env_cfg_s::env_mountpoint() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_mountpoint)
   return _internal_env_mountpoint();
 }
-inline void env_config_t::set_env_mountpoint(const std::string& value) {
+inline void env_cfg_s::set_env_mountpoint(const std::string& value) {
   _internal_set_env_mountpoint(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_mountpoint)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_mountpoint)
 }
-inline std::string* env_config_t::mutable_env_mountpoint() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_mountpoint)
+inline std::string* env_cfg_s::mutable_env_mountpoint() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_mountpoint)
   return _internal_mutable_env_mountpoint();
 }
-inline const std::string& env_config_t::_internal_env_mountpoint() const {
+inline const std::string& env_cfg_s::_internal_env_mountpoint() const {
   return env_mountpoint_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_mountpoint(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_mountpoint(const std::string& value) {
   _has_bits_[0] |= 0x00000004u;
   env_mountpoint_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_mountpoint(std::string&& value) {
+inline void env_cfg_s::set_env_mountpoint(std::string&& value) {
   _has_bits_[0] |= 0x00000004u;
   env_mountpoint_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_mountpoint)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_mountpoint)
 }
-inline void env_config_t::set_env_mountpoint(const char* value) {
+inline void env_cfg_s::set_env_mountpoint(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000004u;
   env_mountpoint_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_mountpoint)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_mountpoint)
 }
-inline void env_config_t::set_env_mountpoint(const void* value, size_t size) {
+inline void env_cfg_s::set_env_mountpoint(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000004u;
   env_mountpoint_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_mountpoint)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_mountpoint)
 }
-inline std::string* env_config_t::_internal_mutable_env_mountpoint() {
+inline std::string* env_cfg_s::_internal_mutable_env_mountpoint() {
   _has_bits_[0] |= 0x00000004u;
   return env_mountpoint_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_mountpoint() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_mountpoint)
+inline std::string* env_cfg_s::release_env_mountpoint() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_mountpoint)
   if (!_internal_has_env_mountpoint()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000004u;
   return env_mountpoint_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_mountpoint(std::string* env_mountpoint) {
+inline void env_cfg_s::set_allocated_env_mountpoint(std::string* env_mountpoint) {
   if (env_mountpoint != nullptr) {
     _has_bits_[0] |= 0x00000004u;
   } else {
     _has_bits_[0] &= ~0x00000004u;
   }
   env_mountpoint_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_mountpoint);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_mountpoint)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_mountpoint)
 }
 
 // required bytes env_components_path = 4 [default = ""];
-inline bool env_config_t::_internal_has_env_components_path() const {
+inline bool env_cfg_s::_internal_has_env_components_path() const {
   bool value = (_has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_components_path() const {
+inline bool env_cfg_s::has_env_components_path() const {
   return _internal_has_env_components_path();
 }
-inline void env_config_t::clear_env_components_path() {
+inline void env_cfg_s::clear_env_components_path() {
   env_components_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000008u;
 }
-inline const std::string& env_config_t::env_components_path() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_components_path)
+inline const std::string& env_cfg_s::env_components_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_components_path)
   return _internal_env_components_path();
 }
-inline void env_config_t::set_env_components_path(const std::string& value) {
+inline void env_cfg_s::set_env_components_path(const std::string& value) {
   _internal_set_env_components_path(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_components_path)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_components_path)
 }
-inline std::string* env_config_t::mutable_env_components_path() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_components_path)
+inline std::string* env_cfg_s::mutable_env_components_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_components_path)
   return _internal_mutable_env_components_path();
 }
-inline const std::string& env_config_t::_internal_env_components_path() const {
+inline const std::string& env_cfg_s::_internal_env_components_path() const {
   return env_components_path_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_components_path(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_components_path(const std::string& value) {
   _has_bits_[0] |= 0x00000008u;
   env_components_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_components_path(std::string&& value) {
+inline void env_cfg_s::set_env_components_path(std::string&& value) {
   _has_bits_[0] |= 0x00000008u;
   env_components_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_components_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_components_path)
 }
-inline void env_config_t::set_env_components_path(const char* value) {
+inline void env_cfg_s::set_env_components_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000008u;
   env_components_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_components_path)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_components_path)
 }
-inline void env_config_t::set_env_components_path(const void* value, size_t size) {
+inline void env_cfg_s::set_env_components_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000008u;
   env_components_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_components_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_components_path)
 }
-inline std::string* env_config_t::_internal_mutable_env_components_path() {
+inline std::string* env_cfg_s::_internal_mutable_env_components_path() {
   _has_bits_[0] |= 0x00000008u;
   return env_components_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_components_path() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_components_path)
+inline std::string* env_cfg_s::release_env_components_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_components_path)
   if (!_internal_has_env_components_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000008u;
   return env_components_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_components_path(std::string* env_components_path) {
+inline void env_cfg_s::set_allocated_env_components_path(std::string* env_components_path) {
   if (env_components_path != nullptr) {
     _has_bits_[0] |= 0x00000008u;
   } else {
     _has_bits_[0] &= ~0x00000008u;
   }
   env_components_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_components_path);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_components_path)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_components_path)
 }
 
 // required bytes env_x509_certificate_path = 5 [default = ""];
-inline bool env_config_t::_internal_has_env_x509_certificate_path() const {
+inline bool env_cfg_s::_internal_has_env_x509_certificate_path() const {
   bool value = (_has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_x509_certificate_path() const {
+inline bool env_cfg_s::has_env_x509_certificate_path() const {
   return _internal_has_env_x509_certificate_path();
 }
-inline void env_config_t::clear_env_x509_certificate_path() {
+inline void env_cfg_s::clear_env_x509_certificate_path() {
   env_x509_certificate_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000010u;
 }
-inline const std::string& env_config_t::env_x509_certificate_path() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_x509_certificate_path)
+inline const std::string& env_cfg_s::env_x509_certificate_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_x509_certificate_path)
   return _internal_env_x509_certificate_path();
 }
-inline void env_config_t::set_env_x509_certificate_path(const std::string& value) {
+inline void env_cfg_s::set_env_x509_certificate_path(const std::string& value) {
   _internal_set_env_x509_certificate_path(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_x509_certificate_path)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_x509_certificate_path)
 }
-inline std::string* env_config_t::mutable_env_x509_certificate_path() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_x509_certificate_path)
+inline std::string* env_cfg_s::mutable_env_x509_certificate_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_x509_certificate_path)
   return _internal_mutable_env_x509_certificate_path();
 }
-inline const std::string& env_config_t::_internal_env_x509_certificate_path() const {
+inline const std::string& env_cfg_s::_internal_env_x509_certificate_path() const {
   return env_x509_certificate_path_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_x509_certificate_path(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_x509_certificate_path(const std::string& value) {
   _has_bits_[0] |= 0x00000010u;
   env_x509_certificate_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_x509_certificate_path(std::string&& value) {
+inline void env_cfg_s::set_env_x509_certificate_path(std::string&& value) {
   _has_bits_[0] |= 0x00000010u;
   env_x509_certificate_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_x509_certificate_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_x509_certificate_path)
 }
-inline void env_config_t::set_env_x509_certificate_path(const char* value) {
+inline void env_cfg_s::set_env_x509_certificate_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000010u;
   env_x509_certificate_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_x509_certificate_path)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_x509_certificate_path)
 }
-inline void env_config_t::set_env_x509_certificate_path(const void* value, size_t size) {
+inline void env_cfg_s::set_env_x509_certificate_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000010u;
   env_x509_certificate_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_x509_certificate_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_x509_certificate_path)
 }
-inline std::string* env_config_t::_internal_mutable_env_x509_certificate_path() {
+inline std::string* env_cfg_s::_internal_mutable_env_x509_certificate_path() {
   _has_bits_[0] |= 0x00000010u;
   return env_x509_certificate_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_x509_certificate_path() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_x509_certificate_path)
+inline std::string* env_cfg_s::release_env_x509_certificate_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_x509_certificate_path)
   if (!_internal_has_env_x509_certificate_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000010u;
   return env_x509_certificate_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_x509_certificate_path(std::string* env_x509_certificate_path) {
+inline void env_cfg_s::set_allocated_env_x509_certificate_path(std::string* env_x509_certificate_path) {
   if (env_x509_certificate_path != nullptr) {
     _has_bits_[0] |= 0x00000010u;
   } else {
     _has_bits_[0] &= ~0x00000010u;
   }
   env_x509_certificate_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_x509_certificate_path);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_x509_certificate_path)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_x509_certificate_path)
 }
 
 // required bytes env_network_ifname = 6 [default = ""];
-inline bool env_config_t::_internal_has_env_network_ifname() const {
+inline bool env_cfg_s::_internal_has_env_network_ifname() const {
   bool value = (_has_bits_[0] & 0x00000020u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_network_ifname() const {
+inline bool env_cfg_s::has_env_network_ifname() const {
   return _internal_has_env_network_ifname();
 }
-inline void env_config_t::clear_env_network_ifname() {
+inline void env_cfg_s::clear_env_network_ifname() {
   env_network_ifname_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000020u;
 }
-inline const std::string& env_config_t::env_network_ifname() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_network_ifname)
+inline const std::string& env_cfg_s::env_network_ifname() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_network_ifname)
   return _internal_env_network_ifname();
 }
-inline void env_config_t::set_env_network_ifname(const std::string& value) {
+inline void env_cfg_s::set_env_network_ifname(const std::string& value) {
   _internal_set_env_network_ifname(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_network_ifname)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_network_ifname)
 }
-inline std::string* env_config_t::mutable_env_network_ifname() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_network_ifname)
+inline std::string* env_cfg_s::mutable_env_network_ifname() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_network_ifname)
   return _internal_mutable_env_network_ifname();
 }
-inline const std::string& env_config_t::_internal_env_network_ifname() const {
+inline const std::string& env_cfg_s::_internal_env_network_ifname() const {
   return env_network_ifname_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_network_ifname(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_network_ifname(const std::string& value) {
   _has_bits_[0] |= 0x00000020u;
   env_network_ifname_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_network_ifname(std::string&& value) {
+inline void env_cfg_s::set_env_network_ifname(std::string&& value) {
   _has_bits_[0] |= 0x00000020u;
   env_network_ifname_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_network_ifname)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_network_ifname)
 }
-inline void env_config_t::set_env_network_ifname(const char* value) {
+inline void env_cfg_s::set_env_network_ifname(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000020u;
   env_network_ifname_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_network_ifname)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_network_ifname)
 }
-inline void env_config_t::set_env_network_ifname(const void* value, size_t size) {
+inline void env_cfg_s::set_env_network_ifname(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000020u;
   env_network_ifname_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_network_ifname)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_network_ifname)
 }
-inline std::string* env_config_t::_internal_mutable_env_network_ifname() {
+inline std::string* env_cfg_s::_internal_mutable_env_network_ifname() {
   _has_bits_[0] |= 0x00000020u;
   return env_network_ifname_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_network_ifname() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_network_ifname)
+inline std::string* env_cfg_s::release_env_network_ifname() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_network_ifname)
   if (!_internal_has_env_network_ifname()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000020u;
   return env_network_ifname_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_network_ifname(std::string* env_network_ifname) {
+inline void env_cfg_s::set_allocated_env_network_ifname(std::string* env_network_ifname) {
   if (env_network_ifname != nullptr) {
     _has_bits_[0] |= 0x00000020u;
   } else {
     _has_bits_[0] &= ~0x00000020u;
   }
   env_network_ifname_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_network_ifname);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_network_ifname)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_network_ifname)
 }
 
 // required bytes env_ipv4_multicast_group_addr = 7 [default = ""];
-inline bool env_config_t::_internal_has_env_ipv4_multicast_group_addr() const {
+inline bool env_cfg_s::_internal_has_env_ipv4_multicast_group_addr() const {
   bool value = (_has_bits_[0] & 0x00000040u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv4_multicast_group_addr() const {
+inline bool env_cfg_s::has_env_ipv4_multicast_group_addr() const {
   return _internal_has_env_ipv4_multicast_group_addr();
 }
-inline void env_config_t::clear_env_ipv4_multicast_group_addr() {
+inline void env_cfg_s::clear_env_ipv4_multicast_group_addr() {
   env_ipv4_multicast_group_addr_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000040u;
 }
-inline const std::string& env_config_t::env_ipv4_multicast_group_addr() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv4_multicast_group_addr)
+inline const std::string& env_cfg_s::env_ipv4_multicast_group_addr() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv4_multicast_group_addr)
   return _internal_env_ipv4_multicast_group_addr();
 }
-inline void env_config_t::set_env_ipv4_multicast_group_addr(const std::string& value) {
+inline void env_cfg_s::set_env_ipv4_multicast_group_addr(const std::string& value) {
   _internal_set_env_ipv4_multicast_group_addr(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv4_multicast_group_addr)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_multicast_group_addr)
 }
-inline std::string* env_config_t::mutable_env_ipv4_multicast_group_addr() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_ipv4_multicast_group_addr)
+inline std::string* env_cfg_s::mutable_env_ipv4_multicast_group_addr() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_ipv4_multicast_group_addr)
   return _internal_mutable_env_ipv4_multicast_group_addr();
 }
-inline const std::string& env_config_t::_internal_env_ipv4_multicast_group_addr() const {
+inline const std::string& env_cfg_s::_internal_env_ipv4_multicast_group_addr() const {
   return env_ipv4_multicast_group_addr_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_ipv4_multicast_group_addr(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_ipv4_multicast_group_addr(const std::string& value) {
   _has_bits_[0] |= 0x00000040u;
   env_ipv4_multicast_group_addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_ipv4_multicast_group_addr(std::string&& value) {
+inline void env_cfg_s::set_env_ipv4_multicast_group_addr(std::string&& value) {
   _has_bits_[0] |= 0x00000040u;
   env_ipv4_multicast_group_addr_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_ipv4_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_ipv4_multicast_group_addr)
 }
-inline void env_config_t::set_env_ipv4_multicast_group_addr(const char* value) {
+inline void env_cfg_s::set_env_ipv4_multicast_group_addr(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000040u;
   env_ipv4_multicast_group_addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_ipv4_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_ipv4_multicast_group_addr)
 }
-inline void env_config_t::set_env_ipv4_multicast_group_addr(const void* value, size_t size) {
+inline void env_cfg_s::set_env_ipv4_multicast_group_addr(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000040u;
   env_ipv4_multicast_group_addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_ipv4_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_ipv4_multicast_group_addr)
 }
-inline std::string* env_config_t::_internal_mutable_env_ipv4_multicast_group_addr() {
+inline std::string* env_cfg_s::_internal_mutable_env_ipv4_multicast_group_addr() {
   _has_bits_[0] |= 0x00000040u;
   return env_ipv4_multicast_group_addr_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_ipv4_multicast_group_addr() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_ipv4_multicast_group_addr)
+inline std::string* env_cfg_s::release_env_ipv4_multicast_group_addr() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_ipv4_multicast_group_addr)
   if (!_internal_has_env_ipv4_multicast_group_addr()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000040u;
   return env_ipv4_multicast_group_addr_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_ipv4_multicast_group_addr(std::string* env_ipv4_multicast_group_addr) {
+inline void env_cfg_s::set_allocated_env_ipv4_multicast_group_addr(std::string* env_ipv4_multicast_group_addr) {
   if (env_ipv4_multicast_group_addr != nullptr) {
     _has_bits_[0] |= 0x00000040u;
   } else {
     _has_bits_[0] &= ~0x00000040u;
   }
   env_ipv4_multicast_group_addr_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_ipv4_multicast_group_addr);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_ipv4_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_ipv4_multicast_group_addr)
 }
 
 // required int32 env_ipv4_broadcast_port = 8 [default = 0];
-inline bool env_config_t::_internal_has_env_ipv4_broadcast_port() const {
+inline bool env_cfg_s::_internal_has_env_ipv4_broadcast_port() const {
   bool value = (_has_bits_[0] & 0x00004000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv4_broadcast_port() const {
+inline bool env_cfg_s::has_env_ipv4_broadcast_port() const {
   return _internal_has_env_ipv4_broadcast_port();
 }
-inline void env_config_t::clear_env_ipv4_broadcast_port() {
+inline void env_cfg_s::clear_env_ipv4_broadcast_port() {
   env_ipv4_broadcast_port_ = 0;
   _has_bits_[0] &= ~0x00004000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::_internal_env_ipv4_broadcast_port() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv4_broadcast_port() const {
   return env_ipv4_broadcast_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::env_ipv4_broadcast_port() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv4_broadcast_port)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv4_broadcast_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv4_broadcast_port)
   return _internal_env_ipv4_broadcast_port();
 }
-inline void env_config_t::_internal_set_env_ipv4_broadcast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_ipv4_broadcast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00004000u;
   env_ipv4_broadcast_port_ = value;
 }
-inline void env_config_t::set_env_ipv4_broadcast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::set_env_ipv4_broadcast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_ipv4_broadcast_port(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv4_broadcast_port)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_broadcast_port)
 }
 
 // required int32 env_ipv4_multicast_port = 9 [default = 0];
-inline bool env_config_t::_internal_has_env_ipv4_multicast_port() const {
+inline bool env_cfg_s::_internal_has_env_ipv4_multicast_port() const {
   bool value = (_has_bits_[0] & 0x00008000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv4_multicast_port() const {
+inline bool env_cfg_s::has_env_ipv4_multicast_port() const {
   return _internal_has_env_ipv4_multicast_port();
 }
-inline void env_config_t::clear_env_ipv4_multicast_port() {
+inline void env_cfg_s::clear_env_ipv4_multicast_port() {
   env_ipv4_multicast_port_ = 0;
   _has_bits_[0] &= ~0x00008000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::_internal_env_ipv4_multicast_port() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv4_multicast_port() const {
   return env_ipv4_multicast_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::env_ipv4_multicast_port() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv4_multicast_port)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv4_multicast_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv4_multicast_port)
   return _internal_env_ipv4_multicast_port();
 }
-inline void env_config_t::_internal_set_env_ipv4_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_ipv4_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00008000u;
   env_ipv4_multicast_port_ = value;
 }
-inline void env_config_t::set_env_ipv4_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::set_env_ipv4_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_ipv4_multicast_port(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv4_multicast_port)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_multicast_port)
 }
 
 // required int32 env_ipv4_stream_port = 10 [default = 0];
-inline bool env_config_t::_internal_has_env_ipv4_stream_port() const {
+inline bool env_cfg_s::_internal_has_env_ipv4_stream_port() const {
   bool value = (_has_bits_[0] & 0x00010000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv4_stream_port() const {
+inline bool env_cfg_s::has_env_ipv4_stream_port() const {
   return _internal_has_env_ipv4_stream_port();
 }
-inline void env_config_t::clear_env_ipv4_stream_port() {
+inline void env_cfg_s::clear_env_ipv4_stream_port() {
   env_ipv4_stream_port_ = 0;
   _has_bits_[0] &= ~0x00010000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::_internal_env_ipv4_stream_port() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv4_stream_port() const {
   return env_ipv4_stream_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::env_ipv4_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv4_stream_port)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv4_stream_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv4_stream_port)
   return _internal_env_ipv4_stream_port();
 }
-inline void env_config_t::_internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00010000u;
   env_ipv4_stream_port_ = value;
 }
-inline void env_config_t::set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::set_env_ipv4_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_ipv4_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv4_stream_port)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_stream_port)
 }
 
 // required bytes env_ipv6_multicast_group_addr = 11 [default = ""];
-inline bool env_config_t::_internal_has_env_ipv6_multicast_group_addr() const {
+inline bool env_cfg_s::_internal_has_env_ipv6_multicast_group_addr() const {
   bool value = (_has_bits_[0] & 0x00000080u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv6_multicast_group_addr() const {
+inline bool env_cfg_s::has_env_ipv6_multicast_group_addr() const {
   return _internal_has_env_ipv6_multicast_group_addr();
 }
-inline void env_config_t::clear_env_ipv6_multicast_group_addr() {
+inline void env_cfg_s::clear_env_ipv6_multicast_group_addr() {
   env_ipv6_multicast_group_addr_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000080u;
 }
-inline const std::string& env_config_t::env_ipv6_multicast_group_addr() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv6_multicast_group_addr)
+inline const std::string& env_cfg_s::env_ipv6_multicast_group_addr() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv6_multicast_group_addr)
   return _internal_env_ipv6_multicast_group_addr();
 }
-inline void env_config_t::set_env_ipv6_multicast_group_addr(const std::string& value) {
+inline void env_cfg_s::set_env_ipv6_multicast_group_addr(const std::string& value) {
   _internal_set_env_ipv6_multicast_group_addr(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv6_multicast_group_addr)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_multicast_group_addr)
 }
-inline std::string* env_config_t::mutable_env_ipv6_multicast_group_addr() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_ipv6_multicast_group_addr)
+inline std::string* env_cfg_s::mutable_env_ipv6_multicast_group_addr() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_ipv6_multicast_group_addr)
   return _internal_mutable_env_ipv6_multicast_group_addr();
 }
-inline const std::string& env_config_t::_internal_env_ipv6_multicast_group_addr() const {
+inline const std::string& env_cfg_s::_internal_env_ipv6_multicast_group_addr() const {
   return env_ipv6_multicast_group_addr_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_ipv6_multicast_group_addr(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_ipv6_multicast_group_addr(const std::string& value) {
   _has_bits_[0] |= 0x00000080u;
   env_ipv6_multicast_group_addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_ipv6_multicast_group_addr(std::string&& value) {
+inline void env_cfg_s::set_env_ipv6_multicast_group_addr(std::string&& value) {
   _has_bits_[0] |= 0x00000080u;
   env_ipv6_multicast_group_addr_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_ipv6_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_ipv6_multicast_group_addr)
 }
-inline void env_config_t::set_env_ipv6_multicast_group_addr(const char* value) {
+inline void env_cfg_s::set_env_ipv6_multicast_group_addr(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000080u;
   env_ipv6_multicast_group_addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_ipv6_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_ipv6_multicast_group_addr)
 }
-inline void env_config_t::set_env_ipv6_multicast_group_addr(const void* value, size_t size) {
+inline void env_cfg_s::set_env_ipv6_multicast_group_addr(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000080u;
   env_ipv6_multicast_group_addr_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_ipv6_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_ipv6_multicast_group_addr)
 }
-inline std::string* env_config_t::_internal_mutable_env_ipv6_multicast_group_addr() {
+inline std::string* env_cfg_s::_internal_mutable_env_ipv6_multicast_group_addr() {
   _has_bits_[0] |= 0x00000080u;
   return env_ipv6_multicast_group_addr_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_ipv6_multicast_group_addr() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_ipv6_multicast_group_addr)
+inline std::string* env_cfg_s::release_env_ipv6_multicast_group_addr() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_ipv6_multicast_group_addr)
   if (!_internal_has_env_ipv6_multicast_group_addr()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000080u;
   return env_ipv6_multicast_group_addr_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_ipv6_multicast_group_addr(std::string* env_ipv6_multicast_group_addr) {
+inline void env_cfg_s::set_allocated_env_ipv6_multicast_group_addr(std::string* env_ipv6_multicast_group_addr) {
   if (env_ipv6_multicast_group_addr != nullptr) {
     _has_bits_[0] |= 0x00000080u;
   } else {
     _has_bits_[0] &= ~0x00000080u;
   }
   env_ipv6_multicast_group_addr_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_ipv6_multicast_group_addr);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_ipv6_multicast_group_addr)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_ipv6_multicast_group_addr)
 }
 
 // required int32 env_ipv6_multicast_port = 12 [default = 0];
-inline bool env_config_t::_internal_has_env_ipv6_multicast_port() const {
+inline bool env_cfg_s::_internal_has_env_ipv6_multicast_port() const {
   bool value = (_has_bits_[0] & 0x00020000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv6_multicast_port() const {
+inline bool env_cfg_s::has_env_ipv6_multicast_port() const {
   return _internal_has_env_ipv6_multicast_port();
 }
-inline void env_config_t::clear_env_ipv6_multicast_port() {
+inline void env_cfg_s::clear_env_ipv6_multicast_port() {
   env_ipv6_multicast_port_ = 0;
   _has_bits_[0] &= ~0x00020000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::_internal_env_ipv6_multicast_port() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv6_multicast_port() const {
   return env_ipv6_multicast_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::env_ipv6_multicast_port() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv6_multicast_port)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv6_multicast_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv6_multicast_port)
   return _internal_env_ipv6_multicast_port();
 }
-inline void env_config_t::_internal_set_env_ipv6_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_ipv6_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00020000u;
   env_ipv6_multicast_port_ = value;
 }
-inline void env_config_t::set_env_ipv6_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::set_env_ipv6_multicast_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_ipv6_multicast_port(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv6_multicast_port)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_multicast_port)
 }
 
 // required int32 env_ipv6_stream_port = 13 [default = 0];
-inline bool env_config_t::_internal_has_env_ipv6_stream_port() const {
+inline bool env_cfg_s::_internal_has_env_ipv6_stream_port() const {
   bool value = (_has_bits_[0] & 0x00040000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv6_stream_port() const {
+inline bool env_cfg_s::has_env_ipv6_stream_port() const {
   return _internal_has_env_ipv6_stream_port();
 }
-inline void env_config_t::clear_env_ipv6_stream_port() {
+inline void env_cfg_s::clear_env_ipv6_stream_port() {
   env_ipv6_stream_port_ = 0;
   _has_bits_[0] &= ~0x00040000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::_internal_env_ipv6_stream_port() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_ipv6_stream_port() const {
   return env_ipv6_stream_port_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::env_ipv6_stream_port() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv6_stream_port)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_ipv6_stream_port() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv6_stream_port)
   return _internal_env_ipv6_stream_port();
 }
-inline void env_config_t::_internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00040000u;
   env_ipv6_stream_port_ = value;
 }
-inline void env_config_t::set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::set_env_ipv6_stream_port(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_ipv6_stream_port(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv6_stream_port)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_stream_port)
 }
 
 // required bool env_ipv4_enabled = 14 [default = true];
-inline bool env_config_t::_internal_has_env_ipv4_enabled() const {
+inline bool env_cfg_s::_internal_has_env_ipv4_enabled() const {
   bool value = (_has_bits_[0] & 0x00800000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv4_enabled() const {
+inline bool env_cfg_s::has_env_ipv4_enabled() const {
   return _internal_has_env_ipv4_enabled();
 }
-inline void env_config_t::clear_env_ipv4_enabled() {
+inline void env_cfg_s::clear_env_ipv4_enabled() {
   env_ipv4_enabled_ = true;
   _has_bits_[0] &= ~0x00800000u;
 }
-inline bool env_config_t::_internal_env_ipv4_enabled() const {
+inline bool env_cfg_s::_internal_env_ipv4_enabled() const {
   return env_ipv4_enabled_;
 }
-inline bool env_config_t::env_ipv4_enabled() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv4_enabled)
+inline bool env_cfg_s::env_ipv4_enabled() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv4_enabled)
   return _internal_env_ipv4_enabled();
 }
-inline void env_config_t::_internal_set_env_ipv4_enabled(bool value) {
+inline void env_cfg_s::_internal_set_env_ipv4_enabled(bool value) {
   _has_bits_[0] |= 0x00800000u;
   env_ipv4_enabled_ = value;
 }
-inline void env_config_t::set_env_ipv4_enabled(bool value) {
+inline void env_cfg_s::set_env_ipv4_enabled(bool value) {
   _internal_set_env_ipv4_enabled(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv4_enabled)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv4_enabled)
 }
 
 // required bool env_ipv6_enabled = 15 [default = false];
-inline bool env_config_t::_internal_has_env_ipv6_enabled() const {
+inline bool env_cfg_s::_internal_has_env_ipv6_enabled() const {
   bool value = (_has_bits_[0] & 0x00080000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ipv6_enabled() const {
+inline bool env_cfg_s::has_env_ipv6_enabled() const {
   return _internal_has_env_ipv6_enabled();
 }
-inline void env_config_t::clear_env_ipv6_enabled() {
+inline void env_cfg_s::clear_env_ipv6_enabled() {
   env_ipv6_enabled_ = false;
   _has_bits_[0] &= ~0x00080000u;
 }
-inline bool env_config_t::_internal_env_ipv6_enabled() const {
+inline bool env_cfg_s::_internal_env_ipv6_enabled() const {
   return env_ipv6_enabled_;
 }
-inline bool env_config_t::env_ipv6_enabled() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ipv6_enabled)
+inline bool env_cfg_s::env_ipv6_enabled() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ipv6_enabled)
   return _internal_env_ipv6_enabled();
 }
-inline void env_config_t::_internal_set_env_ipv6_enabled(bool value) {
+inline void env_cfg_s::_internal_set_env_ipv6_enabled(bool value) {
   _has_bits_[0] |= 0x00080000u;
   env_ipv6_enabled_ = value;
 }
-inline void env_config_t::set_env_ipv6_enabled(bool value) {
+inline void env_cfg_s::set_env_ipv6_enabled(bool value) {
   _internal_set_env_ipv6_enabled(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ipv6_enabled)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ipv6_enabled)
 }
 
 // required bytes domain_stream_socket_path = 16 [default = ""];
-inline bool env_config_t::_internal_has_domain_stream_socket_path() const {
+inline bool env_cfg_s::_internal_has_domain_stream_socket_path() const {
   bool value = (_has_bits_[0] & 0x00000100u) != 0;
   return value;
 }
-inline bool env_config_t::has_domain_stream_socket_path() const {
+inline bool env_cfg_s::has_domain_stream_socket_path() const {
   return _internal_has_domain_stream_socket_path();
 }
-inline void env_config_t::clear_domain_stream_socket_path() {
+inline void env_cfg_s::clear_domain_stream_socket_path() {
   domain_stream_socket_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000100u;
 }
-inline const std::string& env_config_t::domain_stream_socket_path() const {
-  // @@protoc_insertion_point(field_get:env_config_t.domain_stream_socket_path)
+inline const std::string& env_cfg_s::domain_stream_socket_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.domain_stream_socket_path)
   return _internal_domain_stream_socket_path();
 }
-inline void env_config_t::set_domain_stream_socket_path(const std::string& value) {
+inline void env_cfg_s::set_domain_stream_socket_path(const std::string& value) {
   _internal_set_domain_stream_socket_path(value);
-  // @@protoc_insertion_point(field_set:env_config_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set:env_cfg_s.domain_stream_socket_path)
 }
-inline std::string* env_config_t::mutable_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.domain_stream_socket_path)
+inline std::string* env_cfg_s::mutable_domain_stream_socket_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.domain_stream_socket_path)
   return _internal_mutable_domain_stream_socket_path();
 }
-inline const std::string& env_config_t::_internal_domain_stream_socket_path() const {
+inline const std::string& env_cfg_s::_internal_domain_stream_socket_path() const {
   return domain_stream_socket_path_.GetNoArena();
 }
-inline void env_config_t::_internal_set_domain_stream_socket_path(const std::string& value) {
+inline void env_cfg_s::_internal_set_domain_stream_socket_path(const std::string& value) {
   _has_bits_[0] |= 0x00000100u;
   domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_domain_stream_socket_path(std::string&& value) {
+inline void env_cfg_s::set_domain_stream_socket_path(std::string&& value) {
   _has_bits_[0] |= 0x00000100u;
   domain_stream_socket_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.domain_stream_socket_path)
 }
-inline void env_config_t::set_domain_stream_socket_path(const char* value) {
+inline void env_cfg_s::set_domain_stream_socket_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000100u;
   domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.domain_stream_socket_path)
 }
-inline void env_config_t::set_domain_stream_socket_path(const void* value, size_t size) {
+inline void env_cfg_s::set_domain_stream_socket_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000100u;
   domain_stream_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.domain_stream_socket_path)
 }
-inline std::string* env_config_t::_internal_mutable_domain_stream_socket_path() {
+inline std::string* env_cfg_s::_internal_mutable_domain_stream_socket_path() {
   _has_bits_[0] |= 0x00000100u;
   return domain_stream_socket_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_domain_stream_socket_path() {
-  // @@protoc_insertion_point(field_release:env_config_t.domain_stream_socket_path)
+inline std::string* env_cfg_s::release_domain_stream_socket_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.domain_stream_socket_path)
   if (!_internal_has_domain_stream_socket_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000100u;
   return domain_stream_socket_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path) {
+inline void env_cfg_s::set_allocated_domain_stream_socket_path(std::string* domain_stream_socket_path) {
   if (domain_stream_socket_path != nullptr) {
     _has_bits_[0] |= 0x00000100u;
   } else {
     _has_bits_[0] &= ~0x00000100u;
   }
   domain_stream_socket_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), domain_stream_socket_path);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.domain_stream_socket_path)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.domain_stream_socket_path)
 }
 
 // required bytes domain_udp_socket_path = 17 [default = ""];
-inline bool env_config_t::_internal_has_domain_udp_socket_path() const {
+inline bool env_cfg_s::_internal_has_domain_udp_socket_path() const {
   bool value = (_has_bits_[0] & 0x00000200u) != 0;
   return value;
 }
-inline bool env_config_t::has_domain_udp_socket_path() const {
+inline bool env_cfg_s::has_domain_udp_socket_path() const {
   return _internal_has_domain_udp_socket_path();
 }
-inline void env_config_t::clear_domain_udp_socket_path() {
+inline void env_cfg_s::clear_domain_udp_socket_path() {
   domain_udp_socket_path_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000200u;
 }
-inline const std::string& env_config_t::domain_udp_socket_path() const {
-  // @@protoc_insertion_point(field_get:env_config_t.domain_udp_socket_path)
+inline const std::string& env_cfg_s::domain_udp_socket_path() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.domain_udp_socket_path)
   return _internal_domain_udp_socket_path();
 }
-inline void env_config_t::set_domain_udp_socket_path(const std::string& value) {
+inline void env_cfg_s::set_domain_udp_socket_path(const std::string& value) {
   _internal_set_domain_udp_socket_path(value);
-  // @@protoc_insertion_point(field_set:env_config_t.domain_udp_socket_path)
+  // @@protoc_insertion_point(field_set:env_cfg_s.domain_udp_socket_path)
 }
-inline std::string* env_config_t::mutable_domain_udp_socket_path() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.domain_udp_socket_path)
+inline std::string* env_cfg_s::mutable_domain_udp_socket_path() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.domain_udp_socket_path)
   return _internal_mutable_domain_udp_socket_path();
 }
-inline const std::string& env_config_t::_internal_domain_udp_socket_path() const {
+inline const std::string& env_cfg_s::_internal_domain_udp_socket_path() const {
   return domain_udp_socket_path_.GetNoArena();
 }
-inline void env_config_t::_internal_set_domain_udp_socket_path(const std::string& value) {
+inline void env_cfg_s::_internal_set_domain_udp_socket_path(const std::string& value) {
   _has_bits_[0] |= 0x00000200u;
   domain_udp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_domain_udp_socket_path(std::string&& value) {
+inline void env_cfg_s::set_domain_udp_socket_path(std::string&& value) {
   _has_bits_[0] |= 0x00000200u;
   domain_udp_socket_path_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.domain_udp_socket_path)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.domain_udp_socket_path)
 }
-inline void env_config_t::set_domain_udp_socket_path(const char* value) {
+inline void env_cfg_s::set_domain_udp_socket_path(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000200u;
   domain_udp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.domain_udp_socket_path)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.domain_udp_socket_path)
 }
-inline void env_config_t::set_domain_udp_socket_path(const void* value, size_t size) {
+inline void env_cfg_s::set_domain_udp_socket_path(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000200u;
   domain_udp_socket_path_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.domain_udp_socket_path)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.domain_udp_socket_path)
 }
-inline std::string* env_config_t::_internal_mutable_domain_udp_socket_path() {
+inline std::string* env_cfg_s::_internal_mutable_domain_udp_socket_path() {
   _has_bits_[0] |= 0x00000200u;
   return domain_udp_socket_path_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_domain_udp_socket_path() {
-  // @@protoc_insertion_point(field_release:env_config_t.domain_udp_socket_path)
+inline std::string* env_cfg_s::release_domain_udp_socket_path() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.domain_udp_socket_path)
   if (!_internal_has_domain_udp_socket_path()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000200u;
   return domain_udp_socket_path_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_domain_udp_socket_path(std::string* domain_udp_socket_path) {
+inline void env_cfg_s::set_allocated_domain_udp_socket_path(std::string* domain_udp_socket_path) {
   if (domain_udp_socket_path != nullptr) {
     _has_bits_[0] |= 0x00000200u;
   } else {
     _has_bits_[0] &= ~0x00000200u;
   }
   domain_udp_socket_path_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), domain_udp_socket_path);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.domain_udp_socket_path)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.domain_udp_socket_path)
 }
 
 // required int32 env_max_buffsize = 18 [default = 0];
-inline bool env_config_t::_internal_has_env_max_buffsize() const {
+inline bool env_cfg_s::_internal_has_env_max_buffsize() const {
   bool value = (_has_bits_[0] & 0x00200000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_max_buffsize() const {
+inline bool env_cfg_s::has_env_max_buffsize() const {
   return _internal_has_env_max_buffsize();
 }
-inline void env_config_t::clear_env_max_buffsize() {
+inline void env_cfg_s::clear_env_max_buffsize() {
   env_max_buffsize_ = 0;
   _has_bits_[0] &= ~0x00200000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::_internal_env_max_buffsize() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_max_buffsize() const {
   return env_max_buffsize_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::env_max_buffsize() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_max_buffsize)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_max_buffsize() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_max_buffsize)
   return _internal_env_max_buffsize();
 }
-inline void env_config_t::_internal_set_env_max_buffsize(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_max_buffsize(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00200000u;
   env_max_buffsize_ = value;
 }
-inline void env_config_t::set_env_max_buffsize(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::set_env_max_buffsize(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_max_buffsize(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_max_buffsize)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_max_buffsize)
 }
 
 // required uint32 env_broadcast_interval_ms = 19 [default = 1000];
-inline bool env_config_t::_internal_has_env_broadcast_interval_ms() const {
+inline bool env_cfg_s::_internal_has_env_broadcast_interval_ms() const {
   bool value = (_has_bits_[0] & 0x01000000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_broadcast_interval_ms() const {
+inline bool env_cfg_s::has_env_broadcast_interval_ms() const {
   return _internal_has_env_broadcast_interval_ms();
 }
-inline void env_config_t::clear_env_broadcast_interval_ms() {
+inline void env_cfg_s::clear_env_broadcast_interval_ms() {
   env_broadcast_interval_ms_ = 1000u;
   _has_bits_[0] &= ~0x01000000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 env_config_t::_internal_env_broadcast_interval_ms() const {
+inline ::PROTOBUF_NAMESPACE_ID::uint32 env_cfg_s::_internal_env_broadcast_interval_ms() const {
   return env_broadcast_interval_ms_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 env_config_t::env_broadcast_interval_ms() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_broadcast_interval_ms)
+inline ::PROTOBUF_NAMESPACE_ID::uint32 env_cfg_s::env_broadcast_interval_ms() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_broadcast_interval_ms)
   return _internal_env_broadcast_interval_ms();
 }
-inline void env_config_t::_internal_set_env_broadcast_interval_ms(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void env_cfg_s::_internal_set_env_broadcast_interval_ms(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _has_bits_[0] |= 0x01000000u;
   env_broadcast_interval_ms_ = value;
 }
-inline void env_config_t::set_env_broadcast_interval_ms(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void env_cfg_s::set_env_broadcast_interval_ms(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_env_broadcast_interval_ms(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_broadcast_interval_ms)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_broadcast_interval_ms)
 }
 
 // required int32 env_pid = 20 [default = -1];
-inline bool env_config_t::_internal_has_env_pid() const {
+inline bool env_cfg_s::_internal_has_env_pid() const {
   bool value = (_has_bits_[0] & 0x00400000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_pid() const {
+inline bool env_cfg_s::has_env_pid() const {
   return _internal_has_env_pid();
 }
-inline void env_config_t::clear_env_pid() {
+inline void env_cfg_s::clear_env_pid() {
   env_pid_ = -1;
   _has_bits_[0] &= ~0x00400000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::_internal_env_pid() const {
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::_internal_env_pid() const {
   return env_pid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 env_config_t::env_pid() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_pid)
+inline ::PROTOBUF_NAMESPACE_ID::int32 env_cfg_s::env_pid() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_pid)
   return _internal_env_pid();
 }
-inline void env_config_t::_internal_set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::_internal_set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _has_bits_[0] |= 0x00400000u;
   env_pid_ = value;
 }
-inline void env_config_t::set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void env_cfg_s::set_env_pid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_env_pid(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_pid)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_pid)
 }
 
 // required bytes env_host_name = 21 [default = ""];
-inline bool env_config_t::_internal_has_env_host_name() const {
+inline bool env_cfg_s::_internal_has_env_host_name() const {
   bool value = (_has_bits_[0] & 0x00000400u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_host_name() const {
+inline bool env_cfg_s::has_env_host_name() const {
   return _internal_has_env_host_name();
 }
-inline void env_config_t::clear_env_host_name() {
+inline void env_cfg_s::clear_env_host_name() {
   env_host_name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000400u;
 }
-inline const std::string& env_config_t::env_host_name() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_host_name)
+inline const std::string& env_cfg_s::env_host_name() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_host_name)
   return _internal_env_host_name();
 }
-inline void env_config_t::set_env_host_name(const std::string& value) {
+inline void env_cfg_s::set_env_host_name(const std::string& value) {
   _internal_set_env_host_name(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_host_name)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_host_name)
 }
-inline std::string* env_config_t::mutable_env_host_name() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_host_name)
+inline std::string* env_cfg_s::mutable_env_host_name() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_host_name)
   return _internal_mutable_env_host_name();
 }
-inline const std::string& env_config_t::_internal_env_host_name() const {
+inline const std::string& env_cfg_s::_internal_env_host_name() const {
   return env_host_name_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_host_name(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_host_name(const std::string& value) {
   _has_bits_[0] |= 0x00000400u;
   env_host_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_host_name(std::string&& value) {
+inline void env_cfg_s::set_env_host_name(std::string&& value) {
   _has_bits_[0] |= 0x00000400u;
   env_host_name_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_host_name)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_host_name)
 }
-inline void env_config_t::set_env_host_name(const char* value) {
+inline void env_cfg_s::set_env_host_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000400u;
   env_host_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_host_name)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_host_name)
 }
-inline void env_config_t::set_env_host_name(const void* value, size_t size) {
+inline void env_cfg_s::set_env_host_name(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000400u;
   env_host_name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_host_name)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_host_name)
 }
-inline std::string* env_config_t::_internal_mutable_env_host_name() {
+inline std::string* env_cfg_s::_internal_mutable_env_host_name() {
   _has_bits_[0] |= 0x00000400u;
   return env_host_name_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_host_name() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_host_name)
+inline std::string* env_cfg_s::release_env_host_name() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_host_name)
   if (!_internal_has_env_host_name()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000400u;
   return env_host_name_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_host_name(std::string* env_host_name) {
+inline void env_cfg_s::set_allocated_env_host_name(std::string* env_host_name) {
   if (env_host_name != nullptr) {
     _has_bits_[0] |= 0x00000400u;
   } else {
     _has_bits_[0] &= ~0x00000400u;
   }
   env_host_name_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_host_name);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_host_name)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_host_name)
 }
 
 // required bytes env_ca_cert_file = 22 [default = ""];
-inline bool env_config_t::_internal_has_env_ca_cert_file() const {
+inline bool env_cfg_s::_internal_has_env_ca_cert_file() const {
   bool value = (_has_bits_[0] & 0x00000800u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ca_cert_file() const {
+inline bool env_cfg_s::has_env_ca_cert_file() const {
   return _internal_has_env_ca_cert_file();
 }
-inline void env_config_t::clear_env_ca_cert_file() {
+inline void env_cfg_s::clear_env_ca_cert_file() {
   env_ca_cert_file_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00000800u;
 }
-inline const std::string& env_config_t::env_ca_cert_file() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ca_cert_file)
+inline const std::string& env_cfg_s::env_ca_cert_file() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ca_cert_file)
   return _internal_env_ca_cert_file();
 }
-inline void env_config_t::set_env_ca_cert_file(const std::string& value) {
+inline void env_cfg_s::set_env_ca_cert_file(const std::string& value) {
   _internal_set_env_ca_cert_file(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ca_cert_file)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ca_cert_file)
 }
-inline std::string* env_config_t::mutable_env_ca_cert_file() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_ca_cert_file)
+inline std::string* env_cfg_s::mutable_env_ca_cert_file() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_ca_cert_file)
   return _internal_mutable_env_ca_cert_file();
 }
-inline const std::string& env_config_t::_internal_env_ca_cert_file() const {
+inline const std::string& env_cfg_s::_internal_env_ca_cert_file() const {
   return env_ca_cert_file_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_ca_cert_file(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_ca_cert_file(const std::string& value) {
   _has_bits_[0] |= 0x00000800u;
   env_ca_cert_file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_ca_cert_file(std::string&& value) {
+inline void env_cfg_s::set_env_ca_cert_file(std::string&& value) {
   _has_bits_[0] |= 0x00000800u;
   env_ca_cert_file_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_ca_cert_file)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_ca_cert_file)
 }
-inline void env_config_t::set_env_ca_cert_file(const char* value) {
+inline void env_cfg_s::set_env_ca_cert_file(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000800u;
   env_ca_cert_file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_ca_cert_file)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_ca_cert_file)
 }
-inline void env_config_t::set_env_ca_cert_file(const void* value, size_t size) {
+inline void env_cfg_s::set_env_ca_cert_file(const void* value, size_t size) {
   _has_bits_[0] |= 0x00000800u;
   env_ca_cert_file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_ca_cert_file)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_ca_cert_file)
 }
-inline std::string* env_config_t::_internal_mutable_env_ca_cert_file() {
+inline std::string* env_cfg_s::_internal_mutable_env_ca_cert_file() {
   _has_bits_[0] |= 0x00000800u;
   return env_ca_cert_file_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_ca_cert_file() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_ca_cert_file)
+inline std::string* env_cfg_s::release_env_ca_cert_file() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_ca_cert_file)
   if (!_internal_has_env_ca_cert_file()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00000800u;
   return env_ca_cert_file_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_ca_cert_file(std::string* env_ca_cert_file) {
+inline void env_cfg_s::set_allocated_env_ca_cert_file(std::string* env_ca_cert_file) {
   if (env_ca_cert_file != nullptr) {
     _has_bits_[0] |= 0x00000800u;
   } else {
     _has_bits_[0] &= ~0x00000800u;
   }
   env_ca_cert_file_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_ca_cert_file);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_ca_cert_file)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_ca_cert_file)
 }
 
 // required bytes env_ca_priv_key_file = 23 [default = ""];
-inline bool env_config_t::_internal_has_env_ca_priv_key_file() const {
+inline bool env_cfg_s::_internal_has_env_ca_priv_key_file() const {
   bool value = (_has_bits_[0] & 0x00001000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_ca_priv_key_file() const {
+inline bool env_cfg_s::has_env_ca_priv_key_file() const {
   return _internal_has_env_ca_priv_key_file();
 }
-inline void env_config_t::clear_env_ca_priv_key_file() {
+inline void env_cfg_s::clear_env_ca_priv_key_file() {
   env_ca_priv_key_file_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00001000u;
 }
-inline const std::string& env_config_t::env_ca_priv_key_file() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_ca_priv_key_file)
+inline const std::string& env_cfg_s::env_ca_priv_key_file() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_ca_priv_key_file)
   return _internal_env_ca_priv_key_file();
 }
-inline void env_config_t::set_env_ca_priv_key_file(const std::string& value) {
+inline void env_cfg_s::set_env_ca_priv_key_file(const std::string& value) {
   _internal_set_env_ca_priv_key_file(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_ca_priv_key_file)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_ca_priv_key_file)
 }
-inline std::string* env_config_t::mutable_env_ca_priv_key_file() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_ca_priv_key_file)
+inline std::string* env_cfg_s::mutable_env_ca_priv_key_file() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_ca_priv_key_file)
   return _internal_mutable_env_ca_priv_key_file();
 }
-inline const std::string& env_config_t::_internal_env_ca_priv_key_file() const {
+inline const std::string& env_cfg_s::_internal_env_ca_priv_key_file() const {
   return env_ca_priv_key_file_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_ca_priv_key_file(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_ca_priv_key_file(const std::string& value) {
   _has_bits_[0] |= 0x00001000u;
   env_ca_priv_key_file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_ca_priv_key_file(std::string&& value) {
+inline void env_cfg_s::set_env_ca_priv_key_file(std::string&& value) {
   _has_bits_[0] |= 0x00001000u;
   env_ca_priv_key_file_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_ca_priv_key_file)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_ca_priv_key_file)
 }
-inline void env_config_t::set_env_ca_priv_key_file(const char* value) {
+inline void env_cfg_s::set_env_ca_priv_key_file(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00001000u;
   env_ca_priv_key_file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_ca_priv_key_file)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_ca_priv_key_file)
 }
-inline void env_config_t::set_env_ca_priv_key_file(const void* value, size_t size) {
+inline void env_cfg_s::set_env_ca_priv_key_file(const void* value, size_t size) {
   _has_bits_[0] |= 0x00001000u;
   env_ca_priv_key_file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_ca_priv_key_file)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_ca_priv_key_file)
 }
-inline std::string* env_config_t::_internal_mutable_env_ca_priv_key_file() {
+inline std::string* env_cfg_s::_internal_mutable_env_ca_priv_key_file() {
   _has_bits_[0] |= 0x00001000u;
   return env_ca_priv_key_file_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_ca_priv_key_file() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_ca_priv_key_file)
+inline std::string* env_cfg_s::release_env_ca_priv_key_file() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_ca_priv_key_file)
   if (!_internal_has_env_ca_priv_key_file()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00001000u;
   return env_ca_priv_key_file_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_ca_priv_key_file(std::string* env_ca_priv_key_file) {
+inline void env_cfg_s::set_allocated_env_ca_priv_key_file(std::string* env_ca_priv_key_file) {
   if (env_ca_priv_key_file != nullptr) {
     _has_bits_[0] |= 0x00001000u;
   } else {
     _has_bits_[0] &= ~0x00001000u;
   }
   env_ca_priv_key_file_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_ca_priv_key_file);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_ca_priv_key_file)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_ca_priv_key_file)
 }
 
 // required bytes env_cert_info = 24 [default = ""];
-inline bool env_config_t::_internal_has_env_cert_info() const {
+inline bool env_cfg_s::_internal_has_env_cert_info() const {
   bool value = (_has_bits_[0] & 0x00002000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_cert_info() const {
+inline bool env_cfg_s::has_env_cert_info() const {
   return _internal_has_env_cert_info();
 }
-inline void env_config_t::clear_env_cert_info() {
+inline void env_cfg_s::clear_env_cert_info() {
   env_cert_info_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   _has_bits_[0] &= ~0x00002000u;
 }
-inline const std::string& env_config_t::env_cert_info() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_cert_info)
+inline const std::string& env_cfg_s::env_cert_info() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_cert_info)
   return _internal_env_cert_info();
 }
-inline void env_config_t::set_env_cert_info(const std::string& value) {
+inline void env_cfg_s::set_env_cert_info(const std::string& value) {
   _internal_set_env_cert_info(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_cert_info)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_cert_info)
 }
-inline std::string* env_config_t::mutable_env_cert_info() {
-  // @@protoc_insertion_point(field_mutable:env_config_t.env_cert_info)
+inline std::string* env_cfg_s::mutable_env_cert_info() {
+  // @@protoc_insertion_point(field_mutable:env_cfg_s.env_cert_info)
   return _internal_mutable_env_cert_info();
 }
-inline const std::string& env_config_t::_internal_env_cert_info() const {
+inline const std::string& env_cfg_s::_internal_env_cert_info() const {
   return env_cert_info_.GetNoArena();
 }
-inline void env_config_t::_internal_set_env_cert_info(const std::string& value) {
+inline void env_cfg_s::_internal_set_env_cert_info(const std::string& value) {
   _has_bits_[0] |= 0x00002000u;
   env_cert_info_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
 }
-inline void env_config_t::set_env_cert_info(std::string&& value) {
+inline void env_cfg_s::set_env_cert_info(std::string&& value) {
   _has_bits_[0] |= 0x00002000u;
   env_cert_info_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:env_config_t.env_cert_info)
+  // @@protoc_insertion_point(field_set_rvalue:env_cfg_s.env_cert_info)
 }
-inline void env_config_t::set_env_cert_info(const char* value) {
+inline void env_cfg_s::set_env_cert_info(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00002000u;
   env_cert_info_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:env_config_t.env_cert_info)
+  // @@protoc_insertion_point(field_set_char:env_cfg_s.env_cert_info)
 }
-inline void env_config_t::set_env_cert_info(const void* value, size_t size) {
+inline void env_cfg_s::set_env_cert_info(const void* value, size_t size) {
   _has_bits_[0] |= 0x00002000u;
   env_cert_info_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:env_config_t.env_cert_info)
+  // @@protoc_insertion_point(field_set_pointer:env_cfg_s.env_cert_info)
 }
-inline std::string* env_config_t::_internal_mutable_env_cert_info() {
+inline std::string* env_cfg_s::_internal_mutable_env_cert_info() {
   _has_bits_[0] |= 0x00002000u;
   return env_cert_info_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* env_config_t::release_env_cert_info() {
-  // @@protoc_insertion_point(field_release:env_config_t.env_cert_info)
+inline std::string* env_cfg_s::release_env_cert_info() {
+  // @@protoc_insertion_point(field_release:env_cfg_s.env_cert_info)
   if (!_internal_has_env_cert_info()) {
     return nullptr;
   }
   _has_bits_[0] &= ~0x00002000u;
   return env_cert_info_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void env_config_t::set_allocated_env_cert_info(std::string* env_cert_info) {
+inline void env_cfg_s::set_allocated_env_cert_info(std::string* env_cert_info) {
   if (env_cert_info != nullptr) {
     _has_bits_[0] |= 0x00002000u;
   } else {
     _has_bits_[0] &= ~0x00002000u;
   }
   env_cert_info_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), env_cert_info);
-  // @@protoc_insertion_point(field_set_allocated:env_config_t.env_cert_info)
+  // @@protoc_insertion_point(field_set_allocated:env_cfg_s.env_cert_info)
 }
 
 // required uint64 env_cert_exp_time = 25 [default = 0];
-inline bool env_config_t::_internal_has_env_cert_exp_time() const {
+inline bool env_cfg_s::_internal_has_env_cert_exp_time() const {
   bool value = (_has_bits_[0] & 0x00100000u) != 0;
   return value;
 }
-inline bool env_config_t::has_env_cert_exp_time() const {
+inline bool env_cfg_s::has_env_cert_exp_time() const {
   return _internal_has_env_cert_exp_time();
 }
-inline void env_config_t::clear_env_cert_exp_time() {
+inline void env_cfg_s::clear_env_cert_exp_time() {
   env_cert_exp_time_ = PROTOBUF_ULONGLONG(0);
   _has_bits_[0] &= ~0x00100000u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 env_config_t::_internal_env_cert_exp_time() const {
+inline ::PROTOBUF_NAMESPACE_ID::uint64 env_cfg_s::_internal_env_cert_exp_time() const {
   return env_cert_exp_time_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint64 env_config_t::env_cert_exp_time() const {
-  // @@protoc_insertion_point(field_get:env_config_t.env_cert_exp_time)
+inline ::PROTOBUF_NAMESPACE_ID::uint64 env_cfg_s::env_cert_exp_time() const {
+  // @@protoc_insertion_point(field_get:env_cfg_s.env_cert_exp_time)
   return _internal_env_cert_exp_time();
 }
-inline void env_config_t::_internal_set_env_cert_exp_time(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+inline void env_cfg_s::_internal_set_env_cert_exp_time(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _has_bits_[0] |= 0x00100000u;
   env_cert_exp_time_ = value;
 }
-inline void env_config_t::set_env_cert_exp_time(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+inline void env_cfg_s::set_env_cert_exp_time(::PROTOBUF_NAMESPACE_ID::uint64 value) {
   _internal_set_env_cert_exp_time(value);
-  // @@protoc_insertion_point(field_set:env_config_t.env_cert_exp_time)
+  // @@protoc_insertion_point(field_set:env_cfg_s.env_cert_exp_time)
 }
 
 #ifdef __GNUC__
