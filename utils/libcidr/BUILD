@@ -1,8 +1,9 @@
 cc_library(
-    name = "array",
+    name = "libcidr",
+    srcs = glob(["src/*"]),
     hdrs = glob(["inc/*"]),
     visibility = [
-        "//utils/tuple:__pkg__",
+        "//utils/env:__pkg__",
     ],
     includes = [
         "inc",

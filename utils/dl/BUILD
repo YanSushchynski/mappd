@@ -3,12 +3,9 @@ cc_library(
     srcs = glob(["src/dl.cpp"]),
     hdrs = glob(["inc/dl.hpp"]),
     visibility = ["//src:__pkg__"],
-    includes = ["inc"]
-    # copts = ["-Iinc"]
+    includes = ["inc"],
+    deps = [
+        "//utils/jit:jit",
+    ]
 )
 
-cc_library(
-    name = "dl_hdr",
-    srcs = glob(["inc/dl.cpp"]),
-    visibility = ["//src:__pkg__"],
-)

@@ -1,8 +1,8 @@
 cc_library(
-    name = "array",
+    name = "string",
     hdrs = glob(["inc/*"]),
     visibility = [
-        "//utils/tuple:__pkg__",
+        "//utils/hash/fnv1a:__pkg__",
     ],
     includes = [
         "inc",

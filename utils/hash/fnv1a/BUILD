@@ -1,8 +1,11 @@
 cc_library(
-    name = "array",
+    name = "fnv1a",
     hdrs = glob(["inc/*"]),
     visibility = [
-        "//utils/tuple:__pkg__",
+        "//utils/jit:__pkg__"
+    ],
+    deps = [
+        "//utils/string:string",
     ],
     includes = [
         "inc",
