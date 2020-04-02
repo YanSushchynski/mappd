@@ -16,7 +16,7 @@ def _impl(ctx):
         ),
         tool_path(
             name = "clang++",
-            path = "/usr/bin/clang++"
+            path = "clang++.sh"
         ),
         tool_path(
             name = "cpp",

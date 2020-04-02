@@ -6,11 +6,6 @@ http_archive(
     urls = ["https://github.com/google/googletest/archive/v1.10.x.tar.gz"],
 )
 
-http_archive(
-    name = "protobuf",
-    urls = ["https://github.com/google/googletest/archive/v1.10.x.tar.gz"],
-)
-
 
 git_repository(
     name = "protobuf",
@@ -18,12 +13,14 @@ git_repository(
     remote = "https://github.com/protocolbuffers/protobuf.git",
 )
 
-git_repository(
-    name = "com_github_nelhage_rules_boost",
-    commit = "9f9fb8b2f0213989247c9d5c0e814a8451d18d7f",
-    remote = "https://github.com/nelhage/rules_boost",
-    shallow_since = "1570056263 -0700",
+new_local_repository(
+    name = "boost",
+    path = "/usr/lib/x86_64-linux-gnu/",
+    build_file = "boost.BUILD",
 )
 
-load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
-boost_deps()
+new_local_repository(
+    name = "openssl",
+    path = "/usr/include/",
+    build_file = "openssl.BUILD",
+)

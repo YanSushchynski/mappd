@@ -8,10 +8,14 @@ load("//tests/src:tests.bzl", "test_gen")
         copts = [
             "-Iexternal/gtest/include",
             "-pthread",
+            "-lcrypto",
+            "-lgdi32",
+            "-lssl" 
         ],
         deps = [
             "@gtest//googletest-1.10.x:gtest",
-            "@protobuf//:protobuf",
+            # "@protobuf//:protobuf",
+            "@openssl//:openssl",
             "//env:env",
             "//tests/src:main_test",
             "//utils/tuple:tuple",

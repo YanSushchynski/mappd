@@ -8,7 +8,9 @@ cc_library(
             "-Iinc/",
     ],
     deps = [
-        "//utils/env:env"
+        "//utils/env:env",
+        "@boost//:libboost",
+        "@openssl//:openssl",
     ],
 )
 
