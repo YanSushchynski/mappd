@@ -1,7 +1,7 @@
 cc_library(
     name = "function",
     hdrs = glob(["inc/*"]),
-    visibility = ["//utils/jit:__pkg__"],
+    visibility = ["//visibility:public"],
     includes = [
         "inc"
     ],

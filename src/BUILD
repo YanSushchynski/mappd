@@ -5,5 +5,12 @@ cc_binary(
         "//utils/dl:dl", 
         "//env/traits:traits", 
         "//env:env", 
+        "@gtest//googletest-1.10.x:gtest",
+        "@boost//:format"
     ],
+    copts = [
+        "-std=gnu++17",
+        "-g",
+        "-ldl"
+    ]
 )
