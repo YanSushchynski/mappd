@@ -8,6 +8,7 @@ load("//tests/src:tests.bzl", "test_gen")
         copts = [
             "-Iexternal/gtest/include",
             "-pthread",
+            "-std=gnu++17",
         ],
         deps = [
             "@gtest//googletest-1.10.x:gtest",

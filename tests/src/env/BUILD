@@ -9,6 +9,7 @@ load("//tests/src:tests.bzl", "test_gen")
             "-Iexternal/gtest/include",
             "-pthread",
             "-lcrypto",
+            "-std=gnu++17",
             "-lgdi32",
             "-lssl" 
         ],

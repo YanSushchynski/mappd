@@ -6,7 +6,6 @@ cc_binary(
         "//env/traits:traits", 
         "//env:env", 
         "@gtest//googletest-1.10.x:gtest",
-        "@boost//:format"
     ],
     copts = [
         "-std=gnu++17",

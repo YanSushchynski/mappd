@@ -7,5 +7,8 @@ cc_library(
         # "@openssl//:openssl",
     ],
     includes = ["inc"],
+    copts = [
+            "-Iinc/",
+    ],
 )
 

@@ -1,11 +1,10 @@
+package(default_visibility = ["//visibility:public"])
+
+
 cc_library(
     name = "env",
     srcs = glob(["src/*"]),
     hdrs = glob(["inc/*"]),
-    visibility = [
-        "//utils/jit:__pkg__",
-        "//env:__pkg__",
-    ],
     includes = [
         "inc"
     ],

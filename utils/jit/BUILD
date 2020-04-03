@@ -4,11 +4,17 @@ cc_library(
     hdrs = glob(["inc/*"]),
     visibility = ["//utils/dl:__pkg__"],
     includes = ["inc"],
+    copts = [
+        "-ldl",
+        "-std=gnu++17",
+
+    ],
     deps = [
         "//utils/env:env", 
         "//utils/hash/sha256:sha256", 
         "//utils/hash/fnv1a:fnv1a", 
         "//utils/function:function", 
         "//utils/tuple:tuple", 
+        "@boost//:libboost"
     ],
 )

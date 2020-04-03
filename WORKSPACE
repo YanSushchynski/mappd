@@ -7,6 +7,12 @@ http_archive(
 )
 
 
+http_archive(
+    name = "arm-linux",
+    urls = ["https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/gcc-linaro-7.5.0-2019.12-i686_arm-linux-gnueabihf.tar.xz"],
+    build_file = "//:arm-linux.BUILD",
+)
+
 git_repository(
     name = "protobuf",
     commit = "243558921f9b257d8137cfb4436e9ee774ce95f9",
