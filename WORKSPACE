@@ -9,8 +9,9 @@ http_archive(
 
 http_archive(
     name = "arm-linux",
-    urls = ["https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/gcc-linaro-7.5.0-2019.12-i686_arm-linux-gnueabihf.tar.xz"],
+    urls = ["https://releases.linaro.org/components/toolchain/binaries/latest-7/armv8l-linux-gnueabihf/gcc-linaro-7.5.0-2019.12-x86_64_armv8l-linux-gnueabihf.tar.xz"],
     build_file = "//:arm-linux.BUILD",
+    strip_prefix = "gcc-linaro-7.5.0-2019.12-x86_64_armv8l-linux-gnueabihf"
 )
 
 git_repository(
@@ -30,3 +31,10 @@ new_local_repository(
     path = "/usr/include/",
     build_file = "openssl.BUILD",
 )
+
+
+# new_local_repository(
+#     name = "arm_linux",
+#     path = "/home/yan/work/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu",
+#     build_file = "//:arm-linux.BUILD",
+# )

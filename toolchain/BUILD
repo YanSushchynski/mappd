@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
 load(":cc_toolchain_config.bzl", "cc_toolchain_config")
 
 cc_toolchain_config(name = "clang++_toolchain_config")
@@ -6,6 +8,7 @@ cc_toolchain_suite(
     name = "gcc",
     toolchains = {
         "k8": ":k8_toolchain",
+        "arm64": ":k8_toolchain",
     },
 )
 

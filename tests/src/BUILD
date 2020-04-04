@@ -8,8 +8,21 @@ cc_library(
     srcs = ["main.cpp"] ,
     copts = [
         "-Iexternal/gtest/include",
-    ] ,
+            ] ,
     deps = [
         "@gtest//googletest-1.10.x:gtest",
     ]
+)
+
+config_setting(
+    name = "arm_build",
+    values = {"cpu": "arm"},
+)
+
+config_setting(
+    name = "x86_debug_build",
+    values = {
+        "cpu": "x86",
+        "compilation_mode": "dbg",
+    },
 )

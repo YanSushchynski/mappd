@@ -14,9 +14,8 @@ build:gcc --crosstool_top=//toolchain:gcc
 
 # Use --cpu as a differentiator.
 
-build:gcc --cpu=k8
+build:arm64-gcc --cpu=arm64
 
-build:gcc --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+build:arm64-gcc --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
 
-
-# build --cxxopt='-std=gnu++17'
+build --cxxopt='-std=gnu++17'

@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-echo `ls`
+C_INCLUDE_PATH=external/arm-linux
 
-external/arm-linux/gcc-linaro-7.5.0-2019.12-i686_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++  -ld "$@"
+external/arm-linux/bin/armv8l-linux-gnueabihf-gcc-7.5.0  "$@"
 
  # Remove the first line of .d file
-#  find . -name "*.d" -exec sed -i '2d' {} \;
+find . -name "*.d" -exec sed -i '2d' {} \;
