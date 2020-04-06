@@ -14,7 +14,7 @@ def _impl(ctx):
     tool_paths = [
         tool_path(
             name = "gcc",
-            path = "clang++.sh",
+            path = "arm64.sh",
         ),
         tool_path(
             name = "ld",
@@ -22,7 +22,6 @@ def _impl(ctx):
         ),
         tool_path(
             name = "ar",
-            # path = ARM_LINUX_PATH_FMT % "bin/armv8l-linux-gnueabihf-ar",
             path = "/usr/bin/ar",
         ),
         tool_path(
@@ -82,8 +81,6 @@ def _impl(ctx):
                             "external/arm-linux/armv8l-linux-gnueabihf/include/",
                             "-isystem",
                             "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0",
-                            # "-isystem",
-                            # "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0/armv8l-linux-gnueabihf/bits/",
                             "-isystem",
                             "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0/armv8l-linux-gnueabihf",
                         ],
@@ -95,7 +92,7 @@ def _impl(ctx):
     return cc_common.create_cc_toolchain_config_info(
         ctx = ctx,
         toolchain_identifier = "k8-toolchain",
-        host_system_name = "i686-unknown-linux-gnu",
+        host_system_name = "x86_64-unknown-linux-gnu",
         target_system_name = "i686-unknown-linux-gnu",
         target_cpu = "k8",
         target_libc = "unknown",
@@ -107,7 +104,7 @@ def _impl(ctx):
     )
 
 
-cc_toolchain_config = rule(
+cc_arm64_toolchain_config = rule(
     implementation = _impl,
     attrs = {},
     provides = [CcToolchainConfigInfo],

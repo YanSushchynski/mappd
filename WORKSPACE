@@ -31,10 +31,3 @@ new_local_repository(
     path = "/usr/include/",
     build_file = "openssl.BUILD",
 )
-
-
-# new_local_repository(
-#     name = "arm_linux",
-#     path = "/home/yan/work/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu",
-#     build_file = "//:arm-linux.BUILD",
-# )

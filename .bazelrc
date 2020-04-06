@@ -1,21 +1,11 @@
 # Use our custom-configured c++ toolchain.
 
-build:clang++ --crosstool_top=//toolchain:clang++
+build:arm64 --crosstool_top=//toolchain:arm64
 
 # Use --cpu as a differentiator.
 
-build:clang++ --cpu=k8
+build:arm64 --cpu=k8
 
-build:clang++ --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-
-# Use our custom-configured c++ toolchain.
-
-build:gcc --crosstool_top=//toolchain:gcc
-
-# Use --cpu as a differentiator.
-
-build:arm64-gcc --cpu=arm64
-
-build:arm64-gcc --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+build:arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
 
 build --cxxopt='-std=gnu++17'

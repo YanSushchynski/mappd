@@ -1,14 +1,15 @@
 package(default_visibility = ["//visibility:public"])
 
-load(":cc_toolchain_config.bzl", "cc_toolchain_config")
+load(":cc_arm64_toolchain_config.bzl", "cc_arm64_toolchain_config")
 
-cc_toolchain_config(name = "clang++_toolchain_config")
+cc_arm64_toolchain_config(
+    name = "arm64_toolchain_config"
+)
 
 cc_toolchain_suite(
-    name = "gcc",
+    name = "arm64",
     toolchains = {
-        "k8": ":k8_toolchain",
-        "arm64": ":k8_toolchain",
+        "k8": ":k8_linux_arm_toolchain",
     },
 )
 
@@ -17,16 +18,16 @@ filegroup(name = "empty")
 filegroup(
     name = "all",
     srcs = [
-        "clang++.sh",
+        "arm64.sh",
         "@arm-linux//:all",
     ],
 )
 
 
 cc_toolchain(
-    name = "k8_toolchain",
-    toolchain_identifier = "clang++-toolchain",
-    toolchain_config = ":clang++_toolchain_config",
+    name = "k8_linux_arm_toolchain",
+    toolchain_identifier = "arm64-toolchain",
+    toolchain_config = ":arm64_toolchain_config",
     all_files = ":all",
     compiler_files = ":all",
     dwp_files = ":empty",
