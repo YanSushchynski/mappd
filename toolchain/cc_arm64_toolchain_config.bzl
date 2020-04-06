@@ -9,6 +9,7 @@ load(
 
 
 ARM_LINUX_PATH_FMT = "external/arm-linux/%s"
+WINDOWS_PATH_FMT = "external/indows_arm_linux/bin/armv8l-linux-gnueabihf-%s.exe"
 
 def _impl(ctx):
     tool_paths = [
@@ -106,6 +107,62 @@ def _impl(ctx):
 
 cc_arm64_toolchain_config = rule(
     implementation = _impl,
+    attrs = {},
+    provides = [CcToolchainConfigInfo],
+)
+
+def _impl_x64_windows(ctx):
+    tool_paths = [
+        tool_path(
+            name = "gcc",
+            # path = WINDOWS_PATH_FMT % "gcc",
+            path = "win_arm.bat",
+        ),
+        tool_path(
+            name = "ld",
+            path = WINDOWS_PATH_FMT % "ld",
+        ),
+        tool_path(
+            name = "ar",
+            path = WINDOWS_PATH_FMT % "ar",
+        ),
+        tool_path(
+            name = "cpp",
+            path = WINDOWS_PATH_FMT % "cpp",
+        ),
+        tool_path(
+            name = "gcov",
+            path = WINDOWS_PATH_FMT % "gcov",
+        ),
+        tool_path(
+            name = "nm",
+            path = WINDOWS_PATH_FMT % "nm",
+        ),
+        tool_path(
+            name = "objdump",
+            path = WINDOWS_PATH_FMT % "objdump",
+        ),
+        tool_path(
+            name = "strip",
+            path = WINDOWS_PATH_FMT % "strip",
+        ),
+    ]
+    return cc_common.create_cc_toolchain_config_info(
+        ctx = ctx,
+        toolchain_identifier = "x64_windows-toolchain",
+        host_system_name = "x86_64-unknown-windows-gnu",
+        target_system_name = "i686-unknown-linux-gnu",
+        target_cpu = "arm7l",
+        target_libc = "unknown",
+        compiler = "gcc",
+        abi_version = "unknown",
+        abi_libc_version = "unknown",
+        tool_paths = tool_paths,
+    )
+
+
+cc_x64_windows_arm64_toolchain_config = rule(
+    implementation = _impl_x64_windows,
     attrs = {},
     provides = [CcToolchainConfigInfo],
 )

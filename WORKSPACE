@@ -31,3 +31,10 @@ new_local_repository(
     path = "/usr/include/",
     build_file = "openssl.BUILD",
 )
+
+
+new_local_repository(
+    name = "windows_arm_linux",
+    path = "C:/Users/Yan_Sushchynski/work/toolchain/gcc-linaro-7.5.0-2019.12-i686-mingw32_armv8l-linux-gnueabihf",
+    build_file = "arm-linux.BUILD",
+)

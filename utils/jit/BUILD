@@ -15,6 +15,6 @@ cc_library(
         "//utils/hash/fnv1a:fnv1a", 
         "//utils/function:function", 
         "//utils/tuple:tuple", 
-        "@boost//:libboost"
+        # "@boost//:libboost"
     ],
 )

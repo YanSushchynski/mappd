@@ -8,4 +8,15 @@ build:arm64 --cpu=k8
 
 build:arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
 
-build --cxxopt='-std=gnu++17'
+build --cxxopt='-std=C++17'
+
+
+# Use our custom-configured c++ toolchain.
+
+build:x64_win-arm64 --crosstool_top=//toolchain:arm64
+
+# Use --cpu as a differentiator.
+
+build:x64_win-arm64 --cpu=x64_windows
+
+build:x64_win-arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
