@@ -65,3 +65,5 @@ user.bazelrc
 *.out
 *.app
 *.elf
+
+.vs/
