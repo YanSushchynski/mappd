@@ -120,11 +120,11 @@ def _impl_x64_windows(ctx):
         ),
         tool_path(
             name = "ld",
-            path = WINDOWS_PATH_FMT % "ld",
+            path = "win_arm.bat",
         ),
         tool_path(
             name = "ar",
-            path = WINDOWS_PATH_FMT % "ar",
+            path = "win_ar_arm.bat",
         ),
         tool_path(
             name = "cpp",
