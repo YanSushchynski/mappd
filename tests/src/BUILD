@@ -11,6 +11,7 @@ cc_library(
             ] ,
     deps = [
         "@gtest//googletest-1.10.x:gtest",
+	    "@protobuf//:protobuf_lite",
     ]
 )
 
