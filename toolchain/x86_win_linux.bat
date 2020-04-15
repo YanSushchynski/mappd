@@ -1,0 +1,1 @@
+external\win_lin\bin\x86_64-unknown-linux-gnu-gcc.exe %* 

@@ -4,11 +4,10 @@ build:arm64 --crosstool_top=//toolchain:arm64
 
 # Use --cpu as a differentiator.
 
-build:arm64 --cpu=k8
+# build:arm64 --cpu=k8
 
 build:arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
 
-build --cxxopt='-std=c++17'
 
 
 # Use our custom-configured c++ toolchain.
@@ -20,3 +19,36 @@ build:x64_win-arm64 --crosstool_top=//toolchain:arm64
 build:x64_win-arm64 --cpu=x64_windows
 
 build:x64_win-arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+
+# Use our custom-configured c++ toolchain.
+
+build:x64_win_linux --crosstool_top=//toolchain:x64_linux
+
+# Use --cpu as a differentiator.
+
+# build:x64_win_linux --cpu=x64_windows
+
+build:x64_win_linux --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+build:remote --remote_cache=grpc://192.168.56.101:8980
+build:remote --remote_executor=grpc://192.168.56.101:8980
+
+build:remote --spawn_strategy=remote
+build:remote --strategy=Javac=remote
+build:remote --strategy=Closure=remote
+build:remote --strategy=Genrule=remote
+build:remote --define=EXECUTOR=remote
+
+# Toolchain/platform flags that work with rbe_autoconfig rule.
+# Note target name must be set to "rbe_autoconfig_autogen_ubuntu1604" to use these flags as is.
+build:remote --cpu=k8
+build:remote --crosstool_top=@rbe_default//cc:toolchain
+build:remote --host_javabase=@rbe_default//java:jdk
+build:remote --javabase=@rbe_default//java:jdk
+build:remote --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
+build:remote --java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
+build:remote --extra_execution_platforms=@rbe_default//config:platform
+build:remote --host_platform=//:linux_x86
+build:remote --platforms=@rbe_default//config:platform
+build:remote --extra_toolchains=@rbe_default//config:cc-toolchain
