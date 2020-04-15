@@ -50,14 +50,32 @@ constraint_value(
 )
 
 
+constraint_setting(name = "cc_compiler")
+
+constraint_value(
+    name = "clang",
+    constraint_setting = ":cc_compiler",
+)
+
 platform(
     name = "linux_x86",
     constraint_values = [
         "@platforms//os:linux",
-        # "@platforms//cpu:x86_64",
-        ":k8"
+        "@platforms//cpu:x86_64",
+        "@bazel_tools//tools/cpp:clang"
+        # ":k8"
         # ":glibc_2_25"
     ],
+    remote_execution_properties = """
+        properties: {
+          name: "container-image"
+          value:"docker://gcr.io/gcp-runtimes/ubuntu_16_0_4@sha256:096632d8fb3e78fbd58ae6a2b25ed46020dc70e65d89bca774af6f7b2de6898c"
+        }
+        properties {
+           name: "OSFamily"
+           value:  "Linux"
+        }
+        """,
 
 )
 
@@ -67,6 +85,7 @@ platform(
     constraint_values = [
         "@platforms//os:windows",
         "@platforms//cpu:x86_64"
+
         # ":glibc_2_25"
     ],
 
