@@ -15,7 +15,7 @@ def _impl(ctx):
     tool_paths = [
         tool_path(
             name = "gcc",
-            path = "arm64",
+            path = "arm64.sh",
         ),
         tool_path(
             name = "ld",
@@ -63,31 +63,31 @@ def _impl(ctx):
                     ACTION_NAMES.lto_backend,
                     ACTION_NAMES.clif_match,
                 ],
-                # flag_groups = [
-                #     flag_group(
-                #         flags = [
-                #             # "-isystem",
-                #             # "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0/",
-                #             # "-isystem",
-                #             # "external/arm-linux/lib/gcc/armv8l-linux-gnueabihf/7.5.0/include/",
-                #             # "-isystem",
-                #             # "external/arm-linux/lib/gcc/armv8l-linux-gnueabihf/7.5.0/include-fixed/",
-                #             # "-isystem",
-                #             # "external/arm-linux/armv8l-linux-gnueabihf/",
-                #             # "-isystem",
-                #             # "external/arm-linux/armv8l-linux-gnueabihf/libc",
-                #             # "-isystem",
-                #             # "external/arm-linux/armv8l-linux-gnueabihf/libc/usr/include/",
-                #             # "-isystem",
-                #             # "external/arm-linux/armv8l-linux-gnueabihf/include/",
-                #             # "-isystem",
-                #             # "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0",
-                #             # "-isystem",
-                #             # "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0/armv8l-linux-gnueabihf",
-                #             # "--std=gnu++17"
-                #         ],
-                #     ),
-                # ],
+                flag_groups = [
+                    flag_group(
+                        flags = [
+                            "-isystem",
+                            "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0/",
+                            "-isystem",
+                            "external/arm-linux/lib/gcc/armv8l-linux-gnueabihf/7.5.0/include/",
+                            "-isystem",
+                            "external/arm-linux/lib/gcc/armv8l-linux-gnueabihf/7.5.0/include-fixed/",
+                            "-isystem",
+                            "external/arm-linux/armv8l-linux-gnueabihf/",
+                            "-isystem",
+                            "external/arm-linux/armv8l-linux-gnueabihf/libc",
+                            "-isystem",
+                            "external/arm-linux/armv8l-linux-gnueabihf/libc/usr/include/",
+                            "-isystem",
+                            "external/arm-linux/armv8l-linux-gnueabihf/include/",
+                            "-isystem",
+                            "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0",
+                            "-isystem",
+                            "external/arm-linux/armv8l-linux-gnueabihf/include/c++/7.5.0/armv8l-linux-gnueabihf",
+                            "--std=gnu++17"
+                        ],
+                    ),
+                ],
             ),
         ],
     )

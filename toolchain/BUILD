@@ -26,7 +26,7 @@ cc_toolchain_suite(
     name = "arm64",
     toolchains = {
         "k8": ":k8_linux_arm_toolchain",
-        "x64_windows": ":x64_windows_linux_arm_toolchain",
+        # "x64_windows": ":x64_windows_linux_arm_toolchain",
     },
 )
 
@@ -48,22 +48,7 @@ filegroup(
     ],
 )
 
-filegroup(
-    name = "windows-arm-toolchain-files",
-    srcs = [
-        "@windows_arm_linux//:all",
-        "win_arm.bat"
-    ]
-)
 
-
-filegroup(
-    name = "x86_64-unknown-linux-gnu-toolchain-files",
-    srcs = [
-        "@win_lin//:all",
-        "win_linux.bat"
-    ]
-)
 
 cc_toolchain(
     name = "k8_linux_arm_toolchain",

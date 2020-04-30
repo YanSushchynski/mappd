@@ -83,7 +83,6 @@ http_archive(
     strip_prefix = "platforms-441afe1bfdadd6236988e9cac159df6b5a9f5a98"
 )
 
-register_execution_platforms("//:linux_x86")
 
 http_archive(
     name = "bazel_toolchains",
@@ -105,10 +104,3 @@ load("@bazel_toolchains//rules:rbe_repo.bzl", "rbe_autoconfig")
 rbe_autoconfig(name = "rbe_default")
 
 
-register_execution_platforms(
-      ":linux_x86"
-  )
-
-register_toolchains(
-    "//:win_linux_toolchain",
-)
