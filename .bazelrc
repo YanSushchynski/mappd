@@ -1,13 +1,5 @@
-# Use our custom-configured c++ toolchain.
-
 build:arm64 --crosstool_top=//toolchain:arm64
-
-# Use --cpu as a differentiator.
-
-# build:arm64 --cpu=k8
-
 build:arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-
 
 
 # Use our custom-configured c++ toolchain.
@@ -30,44 +22,3 @@ build:x64_win_linux --crosstool_top=//toolchain:x64_linux
 # build:x64_win_linux --cpu=x64_windows
 
 build:x64_win_linux --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-
-build:remote --remote_cache=grpc://192.168.56.101:8980
-build:remote --remote_executor=grpc://192.168.56.101:8980
-
-# Set several flags related to specifying the platform, toolchain and java
-# properties.
-# These flags are duplicated rather than imported from (for example)
-# %workspace%/configs/ubuntu16_04_clang/1.2/toolchain.bazelrc to make this
-# bazelrc a standalone file that can be copied more easily.
-# These flags should only be used as is for the rbe-ubuntu16-04 container
-# and need to be adapted to work with other toolchain containers.
-
-build:remote --host_javabase=@bazel_toolchains//configs/ubuntu16_04_clang/1.2:jdk8
-build:remote --javabase=@bazel_toolchains//configs/ubuntu16_04_clang/1.2:jdk8
-build:remote --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
-build:remote --java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
-# build:remote --crosstool_top=@bazel_toolchains//configs/ubuntu16_04_clang/11.0.0/bazel_3.0.0/cc:toolchain
-# build:remote --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
-# Platform flags:
-# The toolchain container used for execution is defined in the target indicated
-# by "extra_execution_platforms", "host_platform" and "platforms".
-# If you are using your own toolchain container, you need to create a platform
-# target with "constraint_values" that allow for the toolchain specified with
-# "extra_toolchains" to be selected (given constraints defined in
-# "exec_compatible_with").
-# More about platforms: https://docs.bazel.build/versions/master/platforms.html
-build:remote --extra_toolchains=@bazel_toolchains//configs/ubuntu16_04_clang/11.0.0/bazel_3.0.0/config:cc-toolchain
-build:remote --extra_execution_platforms=//:linux_x86
-build:remote --host_platform=//:linux_x86
-build:remote --platforms=//:linux_x86
-# Set various strategies so that all actions execute remotely. Mixing remote
-# and local execution will lead to errors unless the toolchain and remote
-# machine exactly match the host machine.
-build:remote --spawn_strategy=remote,worker
-build:remote --strategy=Javac=remote
-build:remote --strategy=Closure=remote
-# build:remote --strategy=Genrule=remote
-build:remote --define=EXECUTOR=remote
-# Enable the remote cache so action results can be shared across machines,
-# Set a higher timeout value, just in case.
-build:remote --remote_timeout=3600

@@ -6,11 +6,11 @@ cc_library(
     includes = ["inc"],
     copts = [
             "-Iinc/",
+            "-lssl"
     ],
     deps = [
         "//utils/env:env",
-        # "@boost//:libboost",
-        # "@openssl//:openssl",
+        "@boost//:format",
     ],
 )
 
