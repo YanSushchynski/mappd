@@ -1,1 +1,1 @@
-external\windows_arm_linux\bin\armv8l-linux-gnueabihf-ar.exe %*
+external\windows_arm_linux\bin\aarch64-linux-gnu-gcc-ar.exe %*

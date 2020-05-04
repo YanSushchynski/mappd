@@ -42,6 +42,15 @@ filegroup(
 )
 
 
+filegroup(
+    name = "windows-arm-toolchain-files",
+    srcs = [
+        "@windows_arm_linux//:all",
+        "win_arm.bat",
+        "win_ar_arm.bat"
+    ]
+)
+
 
 cc_toolchain(
     name = "k8_linux_arm_toolchain",
