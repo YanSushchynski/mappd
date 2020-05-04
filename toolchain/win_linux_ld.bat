@@ -1,1 +1,0 @@
-external\win_lin\bin\lld.exe %* 

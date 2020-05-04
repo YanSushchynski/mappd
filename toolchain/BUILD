@@ -4,10 +4,7 @@ load(
     ":cc_arm64_toolchain_config.bzl", 
     "cc_arm64_toolchain_config", 
     "cc_x64_windows_arm64_toolchain_config",
-    "cc_x86_64_unknown_linux_gnu_toolchain_config"
 )
-
-# load( ":cc_x86_64_unknown_linux_gnu_toolchain_config.bzl", "cc_x86_64_unknown_linux_gnu_toolchain_config") 
 
 cc_arm64_toolchain_config(
     name = "arm64_toolchain_config"
@@ -18,15 +15,11 @@ cc_x64_windows_arm64_toolchain_config(
     name = "x64_windows_arm64_toolchain_config"
 )
 
-cc_x86_64_unknown_linux_gnu_toolchain_config(
-    name = "x86_64_unknown_linux_gnu_toolchain_config"
-)
-
 cc_toolchain_suite(
     name = "arm64",
     toolchains = {
         "k8": ":k8_linux_arm_toolchain",
-        # "x64_windows": ":x64_windows_linux_arm_toolchain",
+        "x64_windows": ":x64_windows_linux_arm_toolchain",
     },
 )
 

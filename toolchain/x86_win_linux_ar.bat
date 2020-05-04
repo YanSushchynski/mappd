@@ -1,1 +1,0 @@
-external\x86_64_unknown_linux_gnu\bin\x86_64-unknown-linux-gnu-gcc-ar.exe %*
