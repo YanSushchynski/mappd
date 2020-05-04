@@ -1,9 +1,9 @@
-// #include "cx_json_parser.hpp"
-// #include <cstdio>
+#include "cx_json_parser.hpp"
+#include <cstdio>
 
-// int main(int argc, char *argv[]) {
-//   using namespace std::literals;
-//   using namespace std::json::literals;
+int main(int argc, char *argv[]) {
+  using namespace std::literals;
+  using namespace std::json::literals;
 
 //   constexpr auto true_val = std::json::bool_parser()("true"sv);
 //   static_assert(true_val && true_val->first);
@@ -305,4 +305,4 @@
 //   constexpr auto jsv4 = R"({1)"_json;
 //   constexpr auto jsv5 = R"({"a":1)"_json;
 //   constexpr auto jsv6 = R"([1,])"_json;
-// }
+}
