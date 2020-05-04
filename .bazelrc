@@ -1,24 +1,2 @@
 build:arm64 --crosstool_top=//toolchain:arm64
 build:arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-
-
-# Use our custom-configured c++ toolchain.
-
-build:x64_win-arm64 --crosstool_top=//toolchain:arm64
-
-# Use --cpu as a differentiator.
-
-build:x64_win-arm64 --cpu=x64_windows
-
-build:x64_win-arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-
-
-# Use our custom-configured c++ toolchain.
-
-build:x64_win_linux --crosstool_top=//toolchain:x64_linux
-
-# Use --cpu as a differentiator.
-
-# build:x64_win_linux --cpu=x64_windows
-
-build:x64_win_linux --host_crosstool_top=@bazel_tools//tools/cpp:toolchain

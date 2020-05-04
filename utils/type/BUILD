@@ -3,8 +3,5 @@ cc_library(
     hdrs = glob(["inc/*"]),
     visibility = ["//utils/function:__pkg__"],
     includes = ["inc"],
-    deps = [
-        # "//utils/type:type",
-    ]
 )
 
