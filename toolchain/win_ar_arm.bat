@@ -1,0 +1,1 @@
+external\windows_arm_linux\bin\aarch64-linux-gnu-gcc-ar.exe %*

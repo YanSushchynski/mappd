@@ -1,0 +1,2 @@
+build:arm64 --crosstool_top=//toolchain:arm64
+build:arm64 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
