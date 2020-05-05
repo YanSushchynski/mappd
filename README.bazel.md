@@ -1,3 +1,11 @@
+# 
+
+This project requires opens-ssl to be preinstalled. 
+```
+apt-get install libssl-dev
+```
+There is a problem with openssl/configuration.h.in which is generated into openssl/configuration.h during apt-install.
+
 # Testing
 
 Tests work under Linux or WSL2.
